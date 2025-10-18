@@ -3,7 +3,6 @@
 namespace Sholokhov\Exchange\Source;
 
 use ArrayIterator;
-use Bitrix\Main\Diag\Debug;
 use Iterator;
 use EmptyIterator;
 

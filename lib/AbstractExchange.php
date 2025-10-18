@@ -69,6 +69,7 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
     }
 
     /**
+     * @todo: Сделать возможность передачи объекта с настройками  - так будет проще настраивать обмен
      * @param array $options Конфигурация обмена
      * @throws Exception
      */
@@ -115,7 +116,7 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
     }
 
     /**
-     * Получение хэша импорта
+     * Получение хэша обмена
      *
      * @return string
      * @throws ContainerExceptionInterface

@@ -2,9 +2,10 @@
 
 namespace Sholokhov\Exchange\Factory\Exchange;
 
+use Sholokhov\Exchange\Helper\Config;
 use Sholokhov\Exchange\Helper\Helper;
 use Sholokhov\Exchange\ExchangeInterface;
-use Sholokhov\Exchange\Preparation\FieldPreparationPipeline;
+use Sholokhov\Exchange\Normalizers\NormalizerInterface;
 use Sholokhov\Exchange\Preparation\FieldPreparationPipelineInterface;
 
 use Bitrix\Main\Event;
@@ -23,7 +24,7 @@ class FieldPreparationPipelineFactory
      */
     public static function create(ExchangeInterface $exchange): FieldPreparationPipelineInterface
     {
-        return self::resolve($exchange) ?: new FieldPreparationPipeline(ValueNormalizerFactory::create($exchange));
+        return self::resolve($exchange) ?: self::makeByExchange($exchange);
     }
 
     /**
@@ -51,5 +52,38 @@ class FieldPreparationPipelineFactory
         }
 
         return null;
+    }
+
+    /**
+     * Создание преобразователя на основе обмена
+     *
+     * Если у обмена отсутствует собственный преобразователь,
+     * то вернется преобразователь по умолчанию
+     *
+     * @param ExchangeInterface $exchange
+     * @return FieldPreparationPipelineInterface
+     */
+    private static function makeByExchange(ExchangeInterface $exchange): FieldPreparationPipelineInterface
+    {
+        $normalizer = ValueNormalizerFactory::create($exchange);
+        $entity = Config::get('target')['preparation'][$exchange::class] ?? null;
+
+        if (is_subclass_of($entity, FieldPreparationPipelineInterface::class)) {
+            return new $entity($normalizer);
+        }
+
+        return self::makeDefault($normalizer);
+    }
+
+    /**
+     * Создание преобразователя по умолчанию
+     *
+     * @param NormalizerInterface $normalizer
+     * @return FieldPreparationPipelineInterface
+     */
+    private static function makeDefault(NormalizerInterface $normalizer): FieldPreparationPipelineInterface
+    {
+        $entity = Config::get('target')['preparation']['default'];
+        return new $entity($normalizer);
     }
 }

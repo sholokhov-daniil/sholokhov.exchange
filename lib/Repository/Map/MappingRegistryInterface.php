@@ -14,7 +14,7 @@ interface MappingRegistryInterface
     /**
      * Указание карты обмена
      *
-     * @param array $map
+     * @param FieldInterface[] $map
      * @return $this
      */
     public function setFields(array $map): static;
@@ -22,7 +22,7 @@ interface MappingRegistryInterface
     /**
      * Получение карты обмена
      *
-     * @return array
+     * @return FieldInterface[]
      */
     public function getFields(): array;
 
