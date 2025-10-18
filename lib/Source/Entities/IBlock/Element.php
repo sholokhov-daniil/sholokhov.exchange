@@ -2,7 +2,6 @@
 
 namespace Sholokhov\Exchange\Source\Entities\IBlock;
 
-use Bitrix\Main\Diag\Debug;
 use Iterator;
 use ArrayIterator;
 use CIBlockElement;
