@@ -350,7 +350,7 @@ class Xml extends AbstractExchange
      */
     private function shouldConvertEncoding(): bool
     {
-        return !$this->options->get('disabled_encode', false);
+        return $this->getTargetEncoding() <> self::DEFAULT_ENCODING;
     }
 
     /**
@@ -368,7 +368,7 @@ class Xml extends AbstractExchange
      */
     private function getTargetEncoding(): string
     {
-        return $this->options->get('encoding', self::DEFAULT_ENCODING);
+        return self::DEFAULT_ENCODING;
     }
 
     /**
@@ -380,7 +380,7 @@ class Xml extends AbstractExchange
         $culture = Application::getInstance()->getContext()->getCulture();
         $defaultCharset = $culture->getCharset() ?: self::DEFAULT_ENCODING;
 
-        return $this->options->get('charset_from', $defaultCharset);
+        return $this->options->get('encoding', $defaultCharset);
     }
 
     /**
