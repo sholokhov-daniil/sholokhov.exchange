@@ -8,12 +8,12 @@ use Sholokhov\Exchange\AbstractExchange;
 use Sholokhov\Exchange\ExchangeMapTrait;
 use Sholokhov\Exchange\Messages\Type\Error;
 use Sholokhov\Exchange\Fields\FieldInterface;
+use Sholokhov\Exchange\Target\Options\Export\XmlOption;
 use Sholokhov\Exchange\Fields\Export\XmlFieldInterface;
 use Sholokhov\Exchange\Messages\ExchangeResultInterface;
 use Sholokhov\Exchange\Preparation\FieldPreparationPipelineInterface;
 use Sholokhov\Exchange\Factory\Exchange\FieldPreparationPipelineFactory;
 
-use Bitrix\Main\Application;
 use Bitrix\Main\Text\Encoding;
 
 /**
@@ -23,14 +23,21 @@ class Xml extends AbstractExchange
 {
     use ExchangeMapTrait;
 
-    private const DEFAULT_VERSION = '1.0';
-    private const DEFAULT_ENCODING = 'utf-8';
-    private const DEFAULT_ROOT_TAG = 'root';
-    private const DEFAULT_ELEMENT_TAG = 'item';
-    private const INDENT_STRING = '  ';
-    private const FLUSH_THRESHOLD = 100;
+    /**
+     * Кодировка xml файла
+     */
+    private const string TARGET_ENCODING = 'utf-8';
+    private const string INDENT_STRING = '  ';
     private readonly FieldPreparationPipelineInterface $pipeline;
     private ?XMLWriter $writer = null;
+
+    protected XmlOption $options;
+
+    public function __construct(XmlOption $options = null)
+    {
+        $this->options = $options ?? new XmlOption;
+        $this->pipeline = FieldPreparationPipelineFactory::create($this);
+    }
 
     /**
      * Определение множественности значения поля
@@ -40,15 +47,6 @@ class Xml extends AbstractExchange
     public function isMultipleField(FieldInterface $field): bool
     {
         return $field instanceof XmlFieldInterface && $field->getChildrenTag();
-    }
-
-    /**
-     * Конфигурация экспорта
-     * @return void
-     */
-    protected function configuration(): void
-    {
-        $this->pipeline = FieldPreparationPipelineFactory::create($this);
     }
 
     /**
@@ -72,7 +70,7 @@ class Xml extends AbstractExchange
     private function initializeWriter(): void
     {
         $this->writer = new XMLWriter();
-        $this->writer->openUri($this->getSavePath());
+        $this->writer->openUri($this->options->savePath);
         $this->writer->setIndent(true);
         $this->writer->setIndentString(self::INDENT_STRING);
     }
@@ -83,8 +81,8 @@ class Xml extends AbstractExchange
      */
     private function writeDocumentHeader(): void
     {
-        $this->writer->startDocument($this->getXmlVersion(), $this->getTargetEncoding());
-        $this->writer->startElement($this->getRootTag());
+        $this->writer->startDocument($this->options->version, self::TARGET_ENCODING);
+        $this->writer->startElement($this->options->rootTag);
     }
 
     /**
@@ -107,7 +105,6 @@ class Xml extends AbstractExchange
             }
 
             $this->writeItem($processedItem);
-            $this->flushWriterPeriodically();
         }
     }
 
@@ -142,8 +139,8 @@ class Xml extends AbstractExchange
 
         $converted = Encoding::convertEncoding(
             $item,
-            $this->getSourceCharset(),
-            $this->getTargetEncoding()
+            $this->options->sourceCharset,
+            self::TARGET_ENCODING
         );
 
         if (!$this->validateItem($converted, $result)) {
@@ -161,7 +158,7 @@ class Xml extends AbstractExchange
      */
     private function writeItem(array $item): void
     {
-        $this->writer->startElement($this->getElementTag());
+        $this->writer->startElement($this->options->elementTag);
         $this->writeItemAttributes($item);
         $this->writeItemFields($item);
         $this->writer->endElement();
@@ -175,13 +172,11 @@ class Xml extends AbstractExchange
      */
     private function writeItemAttributes(array $item): void
     {
-        $attributeMapping = $this->getItemAttributeMapping();
-
-        if (empty($attributeMapping)) {
+        if (empty($this->options->elementAttributes)) {
             return;
         }
 
-        $preparedAttributes = $this->pipeline->prepare($item, $attributeMapping);
+        $preparedAttributes = $this->pipeline->prepare($item, $this->options->elementAttributes);
 
         foreach ($preparedAttributes as $name => $data) {
             $value = is_array($data) ? ($data['value'] ?? '') : $data;
@@ -312,19 +307,6 @@ class Xml extends AbstractExchange
     }
 
     /**
-     * Периодический сброс буфера для экономии памяти
-     * @return void
-     */
-    private function flushWriterPeriodically(): void
-    {
-        static $counter = 0;
-
-        if (++$counter % self::FLUSH_THRESHOLD === 0) {
-            $this->writer->flush();
-        }
-    }
-
-    /**
      * Финализация документа
      * @return void
      */
@@ -350,73 +332,6 @@ class Xml extends AbstractExchange
      */
     private function shouldConvertEncoding(): bool
     {
-        return $this->getTargetEncoding() <> self::DEFAULT_ENCODING;
-    }
-
-    /**
-     * Получение версии XML
-     * @return string
-     */
-    private function getXmlVersion(): string
-    {
-        return $this->options->get('version', self::DEFAULT_VERSION);
-    }
-
-    /**
-     * Получение целевой кодировки
-     * @return string
-     */
-    private function getTargetEncoding(): string
-    {
-        return self::DEFAULT_ENCODING;
-    }
-
-    /**
-     * Получение исходной кодировки
-     * @return string
-     */
-    private function getSourceCharset(): string
-    {
-        $culture = Application::getInstance()->getContext()->getCulture();
-        $defaultCharset = $culture->getCharset() ?: self::DEFAULT_ENCODING;
-
-        return $this->options->get('encoding', $defaultCharset);
-    }
-
-    /**
-     * Получение имени корневого тега
-     * @return string
-     */
-    private function getRootTag(): string
-    {
-        return $this->options->get('root', self::DEFAULT_ROOT_TAG);
-    }
-
-    /**
-     * Получение имени тега элемента
-     * @return string
-     */
-    private function getElementTag(): string
-    {
-        return $this->options->get('element_tag', self::DEFAULT_ELEMENT_TAG);
-    }
-
-    /**
-     * Получение пути сохранения файла
-     * @return string
-     */
-    private function getSavePath(): string
-    {
-        $defaultPath = $_SERVER['DOCUMENT_ROOT'] . '/upload/tmp/export.xml';
-        return $this->options->get('save_path', $defaultPath);
-    }
-
-    /**
-     * Получение карты атрибутов элемента
-     * @return FieldInterface[]
-     */
-    private function getItemAttributeMapping(): array
-    {
-        return $this->options->get('item_attributes', []);
+        return $this->options->sourceCharset <> self::TARGET_ENCODING;
     }
 }

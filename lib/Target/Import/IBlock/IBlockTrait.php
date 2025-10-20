@@ -1,6 +1,6 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\IBlock;
+namespace Sholokhov\Exchange\Target\Import\IBlock;
 
 use CIBlock;
 
@@ -24,18 +24,6 @@ trait IBlockTrait
      * @var IBlockRepository|null
      */
     private ?IBlockRepository $iBlockRepository = null;
-
-    /**
-     * Информационный блок в который идет импорт
-     *
-     * @return int
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public function getIBlockID(): int
-    {
-        return (int)$this->getOptions()->get('iblock_id');
-    }
 
     /**
      * Получение информации об информационном блоке

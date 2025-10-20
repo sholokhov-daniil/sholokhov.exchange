@@ -2,7 +2,7 @@
 
 namespace Sholokhov\Exchange\Events\Exchange\Import;
 
-use Sholokhov\Exchange\Target\Highloadblock\Element;
+use Sholokhov\Exchange\Target\Import\Highloadblock\Element;
 
 use Sholokhov\Exchange\Validators\CheckAvailableModules;
 use Sholokhov\Exchange\Validators\Handbook\EntityIdValidator;

@@ -2,7 +2,7 @@
 
 namespace Sholokhov\Exchange\Events\Exchange\Import\Sale;
 
-use Sholokhov\Exchange\Target\Sale\Warehouse;
+use Sholokhov\Exchange\Target\Import\Sale\Warehouse;
 use Sholokhov\Exchange\Validators\CheckAvailableModules;
 
 use Bitrix\Main\Event;

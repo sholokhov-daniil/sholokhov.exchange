@@ -10,9 +10,10 @@ use Sholokhov\Exchange\Fields\FieldInterface;
 use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 use Sholokhov\Exchange\Preparation\IBlock\PropertyTrait;
 use Sholokhov\Exchange\Preparation\Base\AbstractEnumeration;
-use Sholokhov\Exchange\Target\IBlock\Property\PropertyEnumeration;
+use Sholokhov\Exchange\Target\Import\IBlock\Property\PropertyEnumeration;
 
 use Bitrix\Iblock\PropertyTable;
+use Sholokhov\Exchange\Target\Options\Import\IBlock\PropertyEnumerationOption;
 
 /**
  * Производит импорт значения списка и преобразовывает значение в идентификатор значения списка
@@ -41,11 +42,10 @@ class Enumeration extends AbstractEnumeration
      */
     protected function getTarget(FieldInterface $field): ExchangeInterface
     {
-        return new PropertyEnumeration([
-            'result_repository' => new SimpleFactory,
-            'iblock_id' => $this->iblockId,
-            'property_code' => $field->getTo(),
-        ]);
+        $options = new PropertyEnumerationOption($this->iblockId, $field->getTo());
+        $exchange = new PropertyEnumeration($options);
+
+        return $exchange->setResultRepositoryFactory(new SimpleFactory);
     }
 
     /**

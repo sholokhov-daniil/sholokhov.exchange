@@ -89,6 +89,14 @@ abstract class AbstractImport extends AbstractExchange implements ImportInterfac
     abstract protected function resolveId(array $item): int;
 
     /**
+     * @throws Exception
+     */
+    public function __construct()
+    {
+        $this->configuration();
+    }
+
+    /**
      * Получение доступных внешних событий обмена.
      *
      * Если обмен не поддерживает возможность вмешательства в его работы из вне,

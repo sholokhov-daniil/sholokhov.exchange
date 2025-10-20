@@ -5,7 +5,7 @@ namespace Sholokhov\Exchange\Validators\UserFields;
 use Sholokhov\Exchange\Messages\ResultInterface;
 use Sholokhov\Exchange\Messages\Type\Error;
 use Sholokhov\Exchange\Messages\Type\Result;
-use Sholokhov\Exchange\Target\UserFields\ExchangeUserFieldInterface;
+use Sholokhov\Exchange\Target\Import\UserFields\ExchangeUserFieldInterface;
 use Sholokhov\Exchange\Validators\ValidatorInterface;
 
 use Psr\Container\ContainerExceptionInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\IBlock\Property;
+namespace Sholokhov\Exchange\Target\Import\IBlock\Property;
 
 use CIBlockPropertyEnum;
 
@@ -8,8 +8,8 @@ use Sholokhov\Exchange\AbstractImport;
 use Sholokhov\Exchange\Dispatcher\ExternalEventTypes;
 use Sholokhov\Exchange\ExchangeMapTrait;
 use Sholokhov\Exchange\MappingExchangeInterface;
-use Sholokhov\Exchange\Target\IBlock\IBlockExchangeInterface;
-use Sholokhov\Exchange\Target\IBlock\IBlockTrait;
+use Sholokhov\Exchange\Target\Import\IBlock\IBlockExchangeInterface;
+use Sholokhov\Exchange\Target\Import\IBlock\IBlockTrait;
 
 use Sholokhov\Exchange\Fields\FieldInterface;
 use Sholokhov\Exchange\Messages\DataResultInterface;
@@ -18,6 +18,7 @@ use Sholokhov\Exchange\Messages\Type\Error;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Sholokhov\Exchange\Target\Options\Import\IBlock\PropertyEnumerationOption;
 
 /**
  * Импорт значений списка информационного блока
@@ -28,6 +29,18 @@ class PropertyEnumeration extends AbstractImport implements MappingExchangeInter
 {
     use ExchangeMapTrait,
         IBlockTrait;
+
+    protected readonly PropertyEnumerationOption $option;
+
+    /**
+     * ID инфоблока, в который производится импорт
+     *
+     * @return int
+     */
+    public function getIBlockID(): int
+    {
+        return $this->option->iBlockId;
+    }
 
     /**
      * Получение информации о свойстве
@@ -45,12 +58,10 @@ class PropertyEnumeration extends AbstractImport implements MappingExchangeInter
      * Получение кода свойства в которое производится импорт данных
      *
      * @return string
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function getPropertyCode(): string
     {
-        return $this->getOptions()->get('property_code', '');
+        return $this->option->propertyCode;
     }
 
     /**
@@ -94,7 +105,7 @@ class PropertyEnumeration extends AbstractImport implements MappingExchangeInter
     protected function resolveId(array $item): int
     {
         $key = $this->getPrimaryField()->getTo();
-        return (int)$this->cache->get($item[$key]);
+        return (int)$this->getCache()->get($item[$key]);
     }
 
     /**
@@ -118,7 +129,7 @@ class PropertyEnumeration extends AbstractImport implements MappingExchangeInter
         ];
 
         if ($enum = CIBlockPropertyEnum::GetList([], $filter)->Fetch()) {
-            $this->cache->set($externalId, (int)$enum['ID']);
+            $this->getCache()->set($externalId, (int)$enum['ID']);
             return true;
         }
 
@@ -140,7 +151,7 @@ class PropertyEnumeration extends AbstractImport implements MappingExchangeInter
         if ($enumId = CIBlockPropertyEnum::Add($fields)) {
             $result->setData((int)$enumId);
             $this->logger?->debug(sprintf('Added the value of the list with the ID "%s"', $enumId));
-            $this->cache->set($originalFields[$this->getPrimaryField()->getTo()], (int)$enumId);
+            $this->getCache()->set($originalFields[$this->getPrimaryField()->getTo()], (int)$enumId);
         } else {
             $result->addError(new Error('An error occurred when creating the list value', 500));
         }

@@ -5,7 +5,7 @@ namespace Sholokhov\Exchange\Validators\IBlock\Property;
 use Sholokhov\Exchange\Messages\ResultInterface;
 use Sholokhov\Exchange\Messages\Type\Error;
 use Sholokhov\Exchange\Messages\Type\Result;
-use Sholokhov\Exchange\Target\IBlock\Property\PropertyEnumeration;
+use Sholokhov\Exchange\Target\Import\IBlock\Property\PropertyEnumeration;
 use Sholokhov\Exchange\Validators\ValidatorInterface;
 
 use Bitrix\Iblock\PropertyTable;

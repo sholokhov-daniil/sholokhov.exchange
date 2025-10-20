@@ -2,9 +2,9 @@
 
 namespace Sholokhov\Exchange\Events\Exchange\Import;
 
-use Sholokhov\Exchange\Target\UserFields\ExchangeUserFieldInterface;
 use Sholokhov\Exchange\Validators\Handbook\EntityIdValidator;
 use Sholokhov\Exchange\Validators\UserFields\PropertyCodeValidate;
+use Sholokhov\Exchange\Target\Import\UserFields\ExchangeUserFieldInterface;
 
 use Bitrix\Main\Event;
 use Bitrix\Main\EventResult;

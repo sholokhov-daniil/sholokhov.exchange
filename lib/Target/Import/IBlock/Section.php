@@ -1,6 +1,6 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\IBlock;
+namespace Sholokhov\Exchange\Target\Import\IBlock;
 
 use CUtil;
 use Exception;
@@ -18,8 +18,7 @@ use Sholokhov\Exchange\Repository\Fields\UFRepository;
 use Sholokhov\Exchange\Preparation\UserField as Prepare;
 use Sholokhov\Exchange\Messages\DataResultInterface;
 use Sholokhov\Exchange\Messages\Type\DataResult;
-use Sholokhov\Exchange\Target\IBlock\IBlockTrait;
-use Sholokhov\Exchange\Target\IBlock\IBlockExchangeInterface;
+use Sholokhov\Exchange\Target\Options\Import\IBlock\IBlockOption;
 
 use Bitrix\Main\ArgumentException;
 use Bitrix\Iblock\SectionTable;
@@ -48,16 +47,40 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
     private string $ufEntityId;
 
     /**
+     * Конфигурация импорта
+     *
+     * @var IBlockOption
+     */
+    protected readonly IBlockOption $option;
+
+    /**
+     * @param IBlockOption $option Конфигурация импорта
+     */
+    public function __construct(IBlockOption $option)
+    {
+        $this->option = $option;
+        parent::__construct();
+    }
+
+    /**
+     * ID инфоблока в который производится импорт
+     *
+     * @return int
+     */
+    public function getIBlockID(): int
+    {
+        return $this->option->iBlockId;
+    }
+
+    /**
      * Деактивация разделов, которые не пришли в импорте
      *
      * @inheritDoc
      * @return void
      * @throws ArgumentException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws ObjectPropertyException
-     * @throws Exception
      * @throws SystemException
+     * @throws Exception
      */
     public function deactivate(): void
     {
@@ -75,7 +98,7 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
                     new Reference('UF', $uts, ['=this.ID' => 'ref.VALUE_ID'], ['join_type' => 'inner'])
                 );
             } else {
-                $query->where($hashField->getTo(), $this->getHash());
+                $query->where($hashField->getTo(), $this->option->hash);
             }
         }
 
@@ -93,8 +116,6 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
      * @inheritDoc
      * @param FieldInterface $field
      * @return bool
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function isMultipleField(FieldInterface $field): bool
     {
@@ -105,8 +126,6 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
     /**
      * @return string
      *
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function getUfEntityID(): string
     {
@@ -117,8 +136,6 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
      * Получить хранилище данных свойств
      *
      * @return UFRepository
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function getUfFieldRepository(): UFRepository
     {
@@ -148,8 +165,7 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
      *
      * @inheritDoc
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws Exception
      */
     protected function configuration(): void
     {
@@ -166,7 +182,7 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
     protected function resolveId(array $item): int
     {
         $key = $this->getPrimaryField()->getTo();
-        return (int)$this->cache->get($item[$key]);
+        return (int)$this->getCache()->get($item[$key]);
     }
 
     /**
@@ -174,8 +190,6 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
      *
      * @param array $item
      * @return bool
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function doExist(array $item): bool
     {
@@ -187,12 +201,12 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
         ];
 
         if ($hashField = $this->getHashField()) {
-            $filter[$hashField->getTo()] = $this->getHash();
+            $filter[$hashField->getTo()] = $this->option->hash;
         }
 
         if ($section = CIBlockSection::GetList([], $filter)->Fetch()) {
             // TODO: Проверить хэш импорта
-            $this->cache->set($item[$keyField->getTo()], (int)$section['ID']);
+            $this->getCache()->set($item[$keyField->getTo()], (int)$section['ID']);
             return true;
         }
 
@@ -206,8 +220,6 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
      * @param array $fields
      * @param array $originalFields
      * @return DataResultInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function doAdd(array $fields, array $originalFields): DataResultInterface
     {
@@ -219,7 +231,7 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
             $this->logger?->debug(sprintf('An element with the identifier "%s" has been added to the %s information block', $this->getIBlockID(), $id));
 
             if ($keyField = $this->getPrimaryField()) {
-                $this->cache->set($fields[$keyField->getTo()], (int)$id);
+                $this->getCache()->set($fields[$keyField->getTo()], (int)$id);
             }
         } else {
             $result->addError(new Error('Error while adding IBLOCK section: ' . strip_tags($section->getLastError()), 500));
@@ -324,7 +336,7 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
         $result['IBLOCK_ID'] = $this->getIBlockID();
 
         if ($hashField = $this->getHashField()) {
-            $result[$hashField->getTo()] = $this->getHash();
+            $result[$hashField->getTo()] = $this->option->hash;
         }
 
         return $result;
@@ -334,8 +346,6 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
      * Конфигурация обмена данными по умолчанию
      *
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     private function initPrepared(): void
     {

@@ -35,7 +35,7 @@ class Currency extends AbstractExchange
     {
         $keyField = $this->getPrimaryField();
 
-        if ($this->cache->has($item[$keyField->getTo()])) {
+        if ($this->getCache()->has($item[$keyField->getTo()])) {
             return true;
         }
 
@@ -48,7 +48,7 @@ class Currency extends AbstractExchange
         ]);
 
         if ($currency) {
-            $this->cache->set($item[$keyField->getTo()], (int)$currency['ID']);
+            $this->getCache()->set($item[$keyField->getTo()], (int)$currency['ID']);
             return true;
         }
 
@@ -72,7 +72,7 @@ class Currency extends AbstractExchange
         if ($id = CCurrency::Add($preparedItem)) {
             $result->setData((int)$id);
             $this->logger?->debug("A currency with an identifier was created: $id");
-            $this->cache->set($item[$this->getPrimaryField()->getTo()], (int)$id);
+            $this->getCache()->set($item[$this->getPrimaryField()->getTo()], (int)$id);
         } else {
             $result->addError(new Error('Failed to create currency', 500, $preparedItem));
         }

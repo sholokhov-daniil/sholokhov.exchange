@@ -1,6 +1,6 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\Sale;
+namespace Sholokhov\Exchange\Target\Import\Sale;
 
 use Exception;
 
@@ -78,7 +78,7 @@ class Warehouse extends AbstractImport implements MappingExchangeInterface
     protected function resolveId(array $item): int
     {
         $key = $this->getPrimaryField()->getTo();
-        return (int)$this->cache->get($item[$key]);
+        return (int)$this->getCache()->get($item[$key]);
     }
 
     /**
@@ -100,7 +100,7 @@ class Warehouse extends AbstractImport implements MappingExchangeInterface
         $store = StoreTable::getRow(compact('filter', 'select'));
 
         if ($store) {
-            $this->cache->set($externalId, (int)$store['ID']);
+            $this->getCache()->set($externalId, (int)$store['ID']);
             return true;
         }
 
@@ -131,10 +131,10 @@ class Warehouse extends AbstractImport implements MappingExchangeInterface
 
         if (!$this->setUserFields($addResult->getId(), $fields['UF'])) {
             $result->addError(new Error('Error update user fields'));
-        };
+        }
 
         $primary = $this->getPrimaryField();
-        $this->cache->set($originalFields[$primary->getTo()], $addResult->getId());
+        $this->getCache()->set($originalFields[$primary->getTo()], $addResult->getId());
         $result->setData($addResult->getId());
 
         return $result;
@@ -165,7 +165,7 @@ class Warehouse extends AbstractImport implements MappingExchangeInterface
 
         if (!$this->setUserFields($id, $fields['UF'])) {
             $result->addError(new Error('Error update user fields'));
-        };
+        }
 
         $result->setData($id);
 

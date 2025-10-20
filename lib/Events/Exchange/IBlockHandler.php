@@ -2,9 +2,9 @@
 
 namespace Sholokhov\Exchange\Events\Exchange;
 
-use Sholokhov\Exchange\Target\IBlock\IBlockExchangeInterface;
 use Sholokhov\Exchange\Validators\CheckAvailableModules;
 use Sholokhov\Exchange\Validators\IBlock\IBlockIdValidator;
+use Sholokhov\Exchange\Target\Import\IBlock\IBlockExchangeInterface;
 
 use Bitrix\Main\Event;
 use Bitrix\Main\EventResult;
