@@ -4,7 +4,7 @@ namespace Sholokhov\Exchange\Events\Exchange\Import\IBlock;
 
 use Bitrix\Main\Event;
 use Bitrix\Main\EventResult;
-use Sholokhov\Exchange\Target\IBlock\Property\PropertyEnumeration;
+use Sholokhov\Exchange\Target\Import\IBlock\Property\PropertyEnumeration;
 use Sholokhov\Exchange\Validators\IBlock\Property\EnumerationPropertyCodeValidator;
 use Sholokhov\Exchange\Validators\IBlock\Property\EnumerationPropertyValidator;
 

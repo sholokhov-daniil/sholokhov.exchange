@@ -1,6 +1,6 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\IBlock;
+namespace Sholokhov\Exchange\Target\Import\IBlock;
 
 use Sholokhov\Exchange\Repository\IBlock\IBlockRepository;
 

@@ -89,6 +89,48 @@ abstract class AbstractImport extends AbstractExchange implements ImportInterfac
     abstract protected function resolveId(array $item): int;
 
     /**
+     * @throws Exception
+     */
+    public function __construct()
+    {
+        $this->configuration();
+    }
+
+    /**
+     * Деактивация элемента сущности по итогам обмена.
+     *
+     * @final
+     * @return void
+     */
+    final public function deactivate(): void
+    {
+        if ($this->canDeactivate()) {
+            $this->doDeactivate();
+        }
+    }
+
+    /**
+     * Производит деактивацию элементов по итогам импорта
+     * Предназначен, для переопределения наследниками
+     *
+     * @return void
+     */
+    protected function doDeactivate(): void
+    {
+    }
+
+    /**
+     * Логика определения необходимости запуска деактивации. По умолчанию деактивация отключена
+     * Предназначен, для переопределения наследниками
+     *
+     * @return bool
+     */
+    protected function canDeactivate(): bool
+    {
+        return false;
+    }
+
+    /**
      * Получение доступных внешних событий обмена.
      *
      * Если обмен не поддерживает возможность вмешательства в его работы из вне,

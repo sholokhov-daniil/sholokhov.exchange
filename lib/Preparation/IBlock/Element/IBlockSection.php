@@ -7,13 +7,14 @@ use Exception;
 use Sholokhov\Exchange\Factory\Result\SimpleFactory;
 use Sholokhov\Exchange\Preparation\Base\AbstractIBlockSection;
 use Sholokhov\Exchange\Preparation\IBlock\PropertyTrait;
-use Sholokhov\Exchange\Target\IBlock\Section;
+use Sholokhov\Exchange\Target\Import\IBlock\Section;
 use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 
 use Sholokhov\Exchange\ExchangeInterface;
 use Sholokhov\Exchange\Fields\FieldInterface;
 
 use Bitrix\Iblock\PropertyTable;
+use Sholokhov\Exchange\Target\Options\Import\IBlock\IBlockOption;
 
 /**
  * Преобразует значение имеющего связь к элементу информационного блока
@@ -47,10 +48,10 @@ class IBlockSection extends AbstractIBlockSection
     protected function getTarget(FieldInterface $field): ExchangeInterface
     {
         $property = $this->getPropertyRepository()->get($field->getTo());
-        return new Section([
-            'result_repository' => new SimpleFactory,
-            'iblock_id' => $property['LINK_IBLOCK_ID']
-        ]);
+        $options = new IBlockOption($property['LINK_IBLOCK_ID']);
+        $exchange = new Section($options);
+
+        return $exchange->setResultRepositoryFactory(new SimpleFactory);
     }
 
     /**

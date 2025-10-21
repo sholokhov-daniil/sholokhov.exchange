@@ -2,6 +2,7 @@
 
 namespace Sholokhov\Exchange\Preparation\Base;
 
+use Exception;
 use ReflectionException;
 
 use Sholokhov\Exchange\Factory\Result\SimpleFactory;
@@ -13,7 +14,7 @@ use Sholokhov\Exchange\Messages\Type\DataResult;
 use Sholokhov\Exchange\Preparation\AbstractPrepare;
 use Sholokhov\Exchange\Repository\IBlock\SectionRepository;
 use Sholokhov\Exchange\Repository\Map\MappingRegistry;
-use Sholokhov\Exchange\Target\IBlock\Section;
+use Sholokhov\Exchange\Target\Import\IBlock\Section;
 
 use Bitrix\Main\NotImplementedException;
 
@@ -21,6 +22,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Sholokhov\Exchange\Target\Options\Import\IBlock\IBlockOption;
 
 /**
  * @package Preparation
@@ -81,16 +83,13 @@ abstract class AbstractIBlockSection extends AbstractPrepare implements LoggerAw
      * @return ExchangeResultInterface
      * @throws NotImplementedException
      * @throws ReflectionException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws Exception
      */
     private function runExchange(mixed $value, FieldInterface $field): ExchangeResultInterface
     {
-        $exchange = new Section([
-            'result_repository' => new SimpleFactory,
-            'iblock_id' => $this->getFieldIBlockID($field),
-            'primary' => $this->primary,
-        ]);
+        $options = new IBlockOption($this->getFieldIBlockID($field));
+        $exchange = new Section($options);
+        $exchange->setResultRepositoryFactory(new SimpleFactory);
 
         $mapping = new MappingRegistry;
         $mapping->setFields([

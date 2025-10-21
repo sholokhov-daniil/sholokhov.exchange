@@ -15,7 +15,7 @@ use Bitrix\Main\Loader;
  */
 readonly class CheckAvailableModules implements ValidatorInterface
 {
-    public function __construct(private readonly array $modules)
+    public function __construct(private array $modules)
     {
     }
 

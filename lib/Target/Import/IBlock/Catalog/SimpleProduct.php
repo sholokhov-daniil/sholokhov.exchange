@@ -1,6 +1,6 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\IBlock\Catalog;
+namespace Sholokhov\Exchange\Target\Import\IBlock\Catalog;
 
 use CPrice;
 
@@ -10,7 +10,7 @@ use Sholokhov\Exchange\Fields\Catalog\CatalogFieldInterface;
 use Sholokhov\Exchange\Fields\Catalog\PriceFieldInterface;
 use Sholokhov\Exchange\Messages\DataResultInterface;
 use Sholokhov\Exchange\Target\Attributes\Event as AttributesEvent;
-use Sholokhov\Exchange\Target\IBlock\Element;
+use Sholokhov\Exchange\Target\Import\IBlock\Element;
 
 use Bitrix\Catalog\ProductTable;
 use Bitrix\Main\SystemException;

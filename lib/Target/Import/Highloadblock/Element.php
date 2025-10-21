@@ -1,6 +1,6 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\Highloadblock;
+namespace Sholokhov\Exchange\Target\Import\Highloadblock;
 
 use Exception;
 
@@ -23,10 +23,11 @@ use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Highloadblock\HighloadBlockTable as HLT;
 
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Sholokhov\Exchange\Target\Options\Import\HlElementOption;
 
 /**
+ * Импорт элементов справочника
+ *
  * @package Import
  */
 class Element extends AbstractImport implements MappingExchangeInterface
@@ -36,6 +37,13 @@ class Element extends AbstractImport implements MappingExchangeInterface
     protected readonly DataManager|string $provider;
 
     /**
+     * Конфигурация импорта
+     *
+     * @var HlElementOption
+     */
+    protected HlElementOption $options;
+
+    /**
      * Хранилище пользовательских свойств
      *
      * @var UFRepository
@@ -43,13 +51,22 @@ class Element extends AbstractImport implements MappingExchangeInterface
     private UFRepository $propertyRepository;
 
     /**
+     * @param HlElementOption $options Конфигурация импорта
+     * @throws Exception
+     */
+    public function __construct(HlElementOption $options)
+    {
+        $this->options = $options;
+        parent::__construct();
+    }
+
+    /**
      * Свойство является множественным
      *
      * @inheritDoc
      * @param FieldInterface $field
      * @return bool
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws LoaderException
      */
     public function isMultipleField(FieldInterface $field): bool
     {
@@ -61,12 +78,10 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * Получение ID справочника
      *
      * @return int
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function getHlID(): int
     {
-        return $this->getOptions()->get('entity_id') ?: 0;
+        return $this->options->entityId;
     }
 
     /**
@@ -74,8 +89,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
      *
      * @inheritDoc
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws LoaderException
      */
     protected function configuration(): void
     {
@@ -110,7 +124,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
     protected function resolveId(array $item): int
     {
         $key = $this->getPrimaryField()->getTo();
-        return (int)$this->cache->get($item[$key]);
+        return (int)$this->getCache()->get($item[$key]);
     }
 
     /**
@@ -120,6 +134,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * @param array $item
      * @return bool
      * @throws ArgumentException
+     * @throws LoaderException
      * @throws ObjectPropertyException
      * @throws SystemException
      */
@@ -136,7 +151,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
         $element = $this->getDataProvider()::getRow(compact('filter', 'select'));
 
         if ($element) {
-            $this->cache->set($item[$keyField->getTo()], (int)$element['ID']);
+            $this->getCache()->set($item[$keyField->getTo()], (int)$element['ID']);
             return true;
         }
 
@@ -150,8 +165,8 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * @param array $fields
      * @param array $originalFields
      * @return DataResultInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws LoaderException
+     * @throws SystemException
      * @throws Exception
      */
     protected function doAdd(array $fields, array $originalFields): DataResultInterface
@@ -173,7 +188,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
 
         $result->setData($addResult->getId());
         $this->logger?->debug(sprintf('An element with the identifier "%s" has been added to the "%s" highloadblock', $addResult->getId(), $this->getHlID()));
-        $this->cache->set($fields[$this->getPrimaryField()->getTo()], $addResult->getId());
+        $this->getCache()->set($fields[$this->getPrimaryField()->getTo()], $addResult->getId());
 
         return $result;
     }
@@ -186,8 +201,8 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * @param array $fields
      * @param array $originalFields
      * @return DataResultInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws LoaderException
+     * @throws SystemException
      * @throws Exception
      */
     protected function doUpdate(int $id, array $fields, array $originalFields): DataResultInterface
@@ -223,18 +238,21 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * Получение хранилища пользовательских свойств (UF)
      *
      * @return UFRepository
-     * @throws ContainerExceptionInterface
      * @throws LoaderException
-     * @throws NotFoundExceptionInterface
      */
     protected function getPropertyRepository(): UFRepository
     {
-        if (!Loader::includeModule('highloadblock')) {
-            throw new LoaderException('Module "highloadblock" not loaded.');
+        if (!isset($this->propertyRepository)) {
+            if (!Loader::includeModule('highloadblock')) {
+                throw new LoaderException('Module "highloadblock" not loaded.');
+            }
+
+            $entityId = HLT::compileEntityId($this->getHlID());
+
+            $this->propertyRepository = new UFRepository(['entity_id' => $entityId]);
         }
 
-        $entityId = HLT::compileEntityId($this->getHlID());
-        return $this->propertyRepository ??= new UFRepository(['entity_id' => $entityId]);
+        return $this->propertyRepository;
     }
 
     /**
@@ -263,9 +281,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * Инициализация провайдера данных
      *
      * @return string|DataManager
-     * @throws ContainerExceptionInterface
      * @throws LoaderException
-     * @throws NotFoundExceptionInterface
      * @throws SystemException
      */
     protected function getDataProvider(): string|DataManager
@@ -287,8 +303,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * Инициализация преобразователей импортированных значений
      *
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws LoaderException
      */
     private function initPrepares(): void
     {

@@ -5,7 +5,7 @@ namespace Sholokhov\Exchange\Validators\Handbook;
 use Sholokhov\Exchange\Messages\ResultInterface;
 use Sholokhov\Exchange\Messages\Type\Error;
 use Sholokhov\Exchange\Messages\Type\Result;
-use Sholokhov\Exchange\Target\Highloadblock\Element;
+use Sholokhov\Exchange\Target\Import\Highloadblock\Element;
 use Sholokhov\Exchange\Validators\ValidatorInterface;
 
 use Psr\Container\ContainerExceptionInterface;

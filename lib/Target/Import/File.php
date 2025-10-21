@@ -1,12 +1,11 @@
 <?php
 
-namespace Sholokhov\Exchange\Target;
+namespace Sholokhov\Exchange\Target\Import;
 
 use CFile;
-use Exception;
 
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Exception;
+use Sholokhov\Exchange\Target\Options\Import\FileOption;
 use Sholokhov\Exchange\AbstractImport;
 use Sholokhov\Exchange\ExchangeMapTrait;
 use Sholokhov\Exchange\Fields\FieldInterface;
@@ -31,6 +30,23 @@ class File extends AbstractImport implements MappingExchangeInterface
     use ExchangeMapTrait;
 
     /**
+     * Конфигурация импорта
+     *
+     * @var FileOption
+     */
+    protected FileOption $option;
+
+    /**
+     * @param FileOption|null $option Конфигурация импорта
+     * @throws Exception
+     */
+    public function __construct(FileOption $option = null)
+    {
+        $this->option = $option ?: new FileOption;
+        parent::__construct();
+    }
+
+    /**
      * Проверка, что свойство является множественным
      *
      * @param FieldInterface $field
@@ -39,18 +55,6 @@ class File extends AbstractImport implements MappingExchangeInterface
     public function isMultipleField(FieldInterface $field): bool
     {
         return false;
-    }
-
-    /**
-     * Конфигурация импорта
-     *
-     * @return void
-     * @throws Exception
-     */
-    protected function configuration(): void
-    {
-        parent::configuration();
-        $this->normalizeOptions();
     }
 
     /**
@@ -63,7 +67,7 @@ class File extends AbstractImport implements MappingExchangeInterface
     {
         $key = $this->getPrimaryField()->getTo();
         $externalID = $this->getExternalId((string)$item[$key]);
-        return (int)$this->cache->get($externalID);
+        return (int)$this->getCache()->get($externalID);
     }
 
     /**
@@ -82,7 +86,7 @@ class File extends AbstractImport implements MappingExchangeInterface
 
         if ($file = FileTable::getRow(['filter' => ['EXTERNAL_ID' => $externalID], 'select' => ['ID']])) {
             $fileId = (int)$file['ID'];
-            $this->cache->set($externalID, $fileId);
+            $this->getCache()->set($externalID, $fileId);
             return true;
         }
 
@@ -95,8 +99,6 @@ class File extends AbstractImport implements MappingExchangeInterface
      * @param array $fields
      * @param array $originalFields
      * @return DataResultInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function doAdd(array $fields, array $originalFields): DataResultInterface
     {
@@ -110,10 +112,10 @@ class File extends AbstractImport implements MappingExchangeInterface
         }
 
         $file['external_id'] = $this->getExternalId($path);
-        $file['MODULE_ID'] = $this->getOptions()->get('module_id');
+        $file['MODULE_ID'] = $this->option->moduleId;
 
         if ($fileId = (int)CFile::SaveFile($file, $file['MODULE_ID'])) {
-            $this->cache->set($path, $fileId);
+            $this->getCache()->set($path, $fileId);
             $result->setData($fileId);
         } else {
             $this->logger?->error('File receipt error: ' . $path . '. Data: ' . json_encode($file));
@@ -169,17 +171,5 @@ class File extends AbstractImport implements MappingExchangeInterface
     protected function prepareForUpdate(array $item): array
     {
         return $item;
-    }
-
-    /**
-     * Обработка конфигураций обмена
-     *
-     * @return void
-     */
-    private function normalizeOptions(): void
-    {
-        if (!$this->options->get('module_id')) {
-            $this->options->set('module_id', 'main');
-        }
     }
 }

@@ -2,10 +2,11 @@
 
 namespace Sholokhov\Exchange\Events\Exchange\Import\IBlock;
 
+use Sholokhov\Exchange\Target\Import\IBlock\Catalog\SimpleProduct;
+use Sholokhov\Exchange\Validators\CheckAvailableModules;
+
 use Bitrix\Main\Event;
 use Bitrix\Main\EventResult;
-use Sholokhov\Exchange\Target\IBlock\Catalog\SimpleProduct;
-use Sholokhov\Exchange\Validators\CheckAvailableModules;
 
 /**
  * Обработчики импорта простых товаров

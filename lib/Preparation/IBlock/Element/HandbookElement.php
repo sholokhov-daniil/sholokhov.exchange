@@ -4,7 +4,7 @@ namespace Sholokhov\Exchange\Preparation\IBlock\Element;
 
 use Sholokhov\Exchange\Factory\Highloadblock\ProviderFactory;
 use Sholokhov\Exchange\Factory\Result\SimpleFactory;
-use Sholokhov\Exchange\Target\Highloadblock\Element;
+use Sholokhov\Exchange\Target\Import\Highloadblock\Element;
 use Sholokhov\Exchange\Preparation\Base\AbstractIBlockImport;
 use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 
@@ -17,6 +17,7 @@ use Bitrix\Main\SystemException;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Highloadblock\HighloadBlockTable as HLT;
+use Sholokhov\Exchange\Target\Options\Import\HlElementOption;
 
 /**
  * Преобразует значение имеющего связь к элементу справочника
@@ -57,10 +58,10 @@ class HandbookElement extends AbstractIBlockImport
             ->exec()
             ->fetch();
 
-        return new Element([
-            'result_repository' => new SimpleFactory,
-            'entity_id' => $result['ID'],
-        ]);
+        $options = new HlElementOption($result['ID']);
+        $exchange = new Element($options);
+
+        return $exchange->setResultRepositoryFactory(new SimpleFactory);
     }
 
     /**

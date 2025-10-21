@@ -8,7 +8,8 @@ use Sholokhov\Exchange\ExchangeInterface;
 use Sholokhov\Exchange\Factory\Result\SimpleFactory;
 use Sholokhov\Exchange\Fields\FieldInterface;
 use Sholokhov\Exchange\Preparation\Base\AbstractEnumeration;
-use Sholokhov\Exchange\Target\UserFields\Enumeration as Target;
+use Sholokhov\Exchange\Target\Import\UserFields\Enumeration as Target;
+use Sholokhov\Exchange\Target\Options\Import\UserField\EnumerationOption;
 
 /**
  * Производит импорт значения списка и преобразовывает значение в идентификатор значения списка
@@ -38,11 +39,10 @@ class Enumeration extends AbstractEnumeration
      */
     protected function getTarget(FieldInterface $field): ExchangeInterface
     {
-        return new Target([
-            'result_repository' => new SimpleFactory,
-            'entity_id' => $this->entityId,
-            'property_code' => $field->getTo(),
-        ]);
+        $option = new EnumerationOption($this->entityId, $field->getTo());
+        $exchange = new Target($option);
+
+        return $exchange->setResultRepositoryFactory(new SimpleFactory);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\UserFields;
+namespace Sholokhov\Exchange\Target\Import\UserFields;
 
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;

@@ -1,8 +1,9 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\IBlock;
+namespace Sholokhov\Exchange\Target\Import\IBlock;
 
 use CUtil;
+use Exception;
 use CIBlockElement;
 
 use Sholokhov\Exchange\AbstractImport;
@@ -13,11 +14,11 @@ use Sholokhov\Exchange\MappingExchangeInterface;
 use Sholokhov\Exchange\Messages\DataResultInterface;
 use Sholokhov\Exchange\Messages\Type\Error;
 use Sholokhov\Exchange\Messages\Type\DataResult;
-
 use Sholokhov\Exchange\Helper\Site;
 use Sholokhov\Exchange\Preparation\IBlock\Element as Prepare;
 use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 use Sholokhov\Exchange\Repository\IBlock\PropertyRepository;
+use Sholokhov\Exchange\Target\Options\Import\IBlock\IBlockOption;
 
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Type\DateTime;
@@ -43,37 +44,30 @@ class Element extends AbstractImport implements MappingExchangeInterface
     private ?PropertyRepository $propertyRepository = null;
 
     /**
-     * Деактивация элементов, которые не пришли в импорте
+     * Конфигурация импорта
      *
-     * @inheritDoc
-     * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @var IBlockOption
      */
-    public function deactivate(): void
+    protected readonly IBlockOption $option;
+
+    /**
+     * @param IBlockOption $option
+     * @throws Exception
+     */
+    public function __construct(IBlockOption $option)
     {
-        $filter = [
-            'IBLOCK_ID' => $this->getIBlockID(),
-            '<TIMESTAMP_X' => DateTime::createFromTimestamp($this->getDateStarted()),
-            'ACTIVE' => 'Y',
-        ];
+        $this->option = $option;
+        parent::__construct();
+    }
 
-        if ($hashField = $this->getHashFieldCode()) {
-            $filter[$hashField] = $this->getHash();
-        }
-
-        $select = ['ID'];
-
-        $parameters = compact('filter', 'select');
-
-        $this->events->beforeDeactivate(['parameters' => &$parameters]);
-
-        $iBlock = new CIBlockElement;
-        $iterator = CIBlockElement::GetList([], $parameters['filter'], false, false, $parameters['select']);
-
-        while ($element = $iterator->fetch()) {
-            $iBlock->Update($element['ID'], ['ACTIVE' => 'N']);
-        }
+    /**
+     * Информационный блок в который идет импорт
+     *
+     * @return int
+     */
+    public function getIBlockID(): int
+    {
+        return $this->option->iBlockId;
     }
 
     /**
@@ -96,8 +90,6 @@ class Element extends AbstractImport implements MappingExchangeInterface
      *
      * @inheritDoc
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function configuration(): void
     {
@@ -133,7 +125,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
     protected function resolveId(array $item): int
     {
         $key = $this->getPrimaryField()->getTo();
-        return (int)$this->cache->get($item[$key]);
+        return (int)$this->getCache()->get($item[$key]);
     }
 
     /**
@@ -142,8 +134,6 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * @inheritDoc
      * @param array $item
      * @return bool
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function doExist(array $item): bool
     {
@@ -155,7 +145,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
         ];
 
         if ($hashField = $this->getHashFieldCode()) {
-            $filter[$hashField] = $this->getHash();
+            $filter[$hashField] = $this->option->hash;
         }
 
         if ($keyField instanceof ElementFieldInterface) {
@@ -165,7 +155,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
         }
 
         if ($element = CIBlockElement::GetList([], $filter)->Fetch()) {
-            $this->cache->set($item[$keyField->getTo()], (int)$element['ID']);
+            $this->getCache()->set($item[$keyField->getTo()], (int)$element['ID']);
 
             return true;
         }
@@ -180,8 +170,6 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * @param array $fields
      * @param array $originalFields
      * @return DataResultInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function doAdd(array $fields, array $originalFields): DataResultInterface
     {
@@ -191,7 +179,7 @@ class Element extends AbstractImport implements MappingExchangeInterface
         if ($itemId = $iBlock->Add($fields)) {
             $result->setData((int)$itemId);
             $this->logger?->debug(sprintf('An element with the identifier "%s" has been added to the %s information block', $this->getIBlockID(), $itemId));
-            $this->cache->set($originalFields[$this->getPrimaryField()->getTo()], (int)$itemId);
+            $this->getCache()->set($originalFields[$this->getPrimaryField()->getTo()], (int)$itemId);
         } else {
             $result->addError(new Error('Error while adding IBLOCK element: ' . strip_tags($iBlock->getLastError()), 500));
         }
@@ -227,6 +215,48 @@ class Element extends AbstractImport implements MappingExchangeInterface
         $this->cleanCache();
 
         return $result;
+    }
+
+    /**
+     * Деактивация элементов, которые не пришли в импорте
+     *
+     * @inheritDoc
+     * @return void
+     */
+    protected function doDeactivate(): void
+    {
+        $filter = [
+            'IBLOCK_ID' => $this->getIBlockID(),
+            '<TIMESTAMP_X' => DateTime::createFromTimestamp($this->getDateStarted()),
+            'ACTIVE' => 'Y',
+        ];
+
+        if ($hashField = $this->getHashFieldCode()) {
+            $filter[$hashField] = $this->option->hash;
+        }
+
+        $select = ['ID'];
+
+        $parameters = compact('filter', 'select');
+
+        $this->events->beforeDeactivate(['parameters' => &$parameters]);
+
+        $iBlock = new CIBlockElement;
+        $iterator = CIBlockElement::GetList([], $parameters['filter'], false, false, $parameters['select']);
+
+        while ($element = $iterator->fetch()) {
+            $iBlock->Update($element['ID'], ['ACTIVE' => 'N']);
+        }
+    }
+
+    /**
+     * Проверка необходимости деактивации элементов после импорта
+     *
+     * @return bool
+     */
+    protected function deactivateEnabled(): bool
+    {
+        return $this->option->deactivate;
     }
 
     /**
@@ -306,9 +336,9 @@ class Element extends AbstractImport implements MappingExchangeInterface
 
         if ($hashField = $this->getHashField()) {
             if ($hashField instanceof ElementFieldInterface) {
-                $result['PROPERTIES'][$hashField->getTo()] = $this->getHash();
+                $result['PROPERTIES'][$hashField->getTo()] = $this->option->hash;
             } else {
-                $result['FIELDS'][$hashField->getTo()] = $this->getHash();
+                $result['FIELDS'][$hashField->getTo()] = $this->option->hash;
             }
         }
 
@@ -337,8 +367,6 @@ class Element extends AbstractImport implements MappingExchangeInterface
      * Инициализация преобразователей импортируемых данных
      *
      * @return void
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function initPrepared(): void
     {

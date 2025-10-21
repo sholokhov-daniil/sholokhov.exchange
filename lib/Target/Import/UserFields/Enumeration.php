@@ -1,6 +1,6 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\UserFields;
+namespace Sholokhov\Exchange\Target\Import\UserFields;
 
 use CUserFieldEnum;
 
@@ -13,9 +13,7 @@ use Sholokhov\Exchange\Messages\DataResultInterface;
 use Sholokhov\Exchange\Messages\Type\DataResult;
 use Sholokhov\Exchange\Repository\Fields\UFRepository;
 use Sholokhov\Exchange\Messages\Type\Error;
-
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Sholokhov\Exchange\Target\Options\Import\UserField\EnumerationOption;
 
 /**
  * Импорт значений списка
@@ -26,15 +24,31 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
 {
     use ExchangeMapTrait;
 
-    private UfRepository $propertyRepository;
+    /**
+     * Хранилище UF свойств
+     *
+     * @var UFRepository
+     */
+    protected readonly UfRepository $propertyRepository;
+
+    /**
+     * Конфигурация импорта
+     *
+     * @var EnumerationOption
+     */
+    protected readonly EnumerationOption $option;
+
+    public function __construct(EnumerationOption $options)
+    {
+        $this->option = $options;
+        parent::__construct();
+    }
 
     /**
      * Поле в которое производится импорт является множественным
      *
      * @param FieldInterface $field
      * @return bool
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function isMultipleField(FieldInterface $field): bool
     {
@@ -45,24 +59,20 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
      * Получение идентификатора сущности которой относится пользовательское свойство(UF)
      *
      * @return string
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function getEntityId(): string
     {
-        return $this->getOptions()->get('entity_id', '');
+        return $this->option->entityId;
     }
 
     /**
      * Получение кода свойства в которое производится импорт данных
      *
      * @return string
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     public function getPropertyCode(): string
     {
-        return $this->getOptions()->get('property_code', '');
+        return $this->option->propertyCode;
     }
 
     /**
@@ -91,7 +101,7 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
     protected function resolveId(array $item): int
     {
         $key = $this->getPrimaryField()->getTo();
-        return (int)$this->cache->get($item[$key]);
+        return (int)$this->getCache()->get($item[$key]);
     }
 
     /**
@@ -99,15 +109,13 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
      *
      * @param array $item
      * @return bool
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function doExist(array $item): bool
     {
         $primary = $this->getPrimaryField();
 
         if ($enum = $this->searchEnum($item[$primary->getTo()])) {
-            $this->cache->set($item[$primary->getTo()], $enum['ID']);
+            $this->getCache()->set($item[$primary->getTo()], $enum['ID']);
             return true;
         }
 
@@ -120,8 +128,6 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
      * @param array $fields
      * @param array $originalFields
      * @return DataResultInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function doAdd(array $fields, array $originalFields): DataResultInterface
     {
@@ -149,7 +155,7 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
 
         $primary = $this->getPrimaryField();
         $enum = $this->searchEnum($fields[$primary->getTo()]);
-        $this->cache->set($originalFields[$primary->getTo()], (int)$enum['ID']);
+        $this->getCache()->set($originalFields[$primary->getTo()], (int)$enum['ID']);
         $result->setData((int)$enum['ID']);
 
         return $result;
@@ -162,8 +168,6 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
      * @param array $fields
      * @param array $originalFields
      * @return DataResultInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function doUpdate(int $id, array $fields, array $originalFields): DataResultInterface
     {
@@ -209,8 +213,6 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
      *
      * @param mixed $value
      * @return array
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     private function searchEnum(mixed $value): array
     {
@@ -248,8 +250,6 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
      * Получение хранилища импортированного поля
      *
      * @return array
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     private function getProperty(): array
     {
@@ -260,8 +260,6 @@ class Enumeration extends AbstractImport implements MappingExchangeInterface, Ex
      * Получение хранилища информации о пользовательских свойствах (UF)
      *
      * @return UFRepository
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     private function getPropertyRepository(): UFRepository
     {

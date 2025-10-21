@@ -19,9 +19,6 @@ use Sholokhov\Exchange\Messages\Type\Error;
 use Bitrix\Main\NotImplementedException;
 
 use Psr\Log\LoggerAwareTrait;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -34,10 +31,31 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
     use LoggerAwareTrait,
         EventDispatchableTrait;
 
-    protected readonly Memory $options;
-    protected array $validators;
-    protected readonly RepositoryInterface $cache;
+    /**
+     * @var callable|null
+     */
+    private $resultFactory = null;
+
+    /**
+     * timestamp старта обмена
+     *
+     * @var int
+     */
     private int $dateUp = 0;
+
+    /**
+     * Валидаторы обмена
+     *
+     * @var array
+     */
+    private readonly array $validators;
+
+    /**
+     * Временное хранилище обмена
+     *
+     * @var RepositoryInterface
+     */
+    private readonly RepositoryInterface $cache;
 
     /**
      * Логика обмена данных
@@ -49,49 +67,12 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
     abstract protected function logic(iterable $source, ExchangeResultInterface $result): void;
 
     /**
-     * Деактивация элемента сущности по итогам обмена.
-     * Предназначен, для переопределения наследниками
-     *
-     * @return void
-     */
-    public function deactivate(): void
-    {
-    }
-
-    /**
-     * Конфигурация обмена
-     * Предназначен, для переопределения наследниками
-     *
-     * @return void
-     */
-    protected function configuration(): void
-    {
-    }
-
-    /**
-     * @todo: Сделать возможность передачи объекта с настройками  - так будет проще настраивать обмен
-     * @param array $options Конфигурация обмена
-     * @throws Exception
-     */
-    public function __construct(array $options = [])
-    {
-        $this->validators = ValidatorFactory::create($this);
-
-        // TODO: Необходимо создать нормализовать параметры
-        $this->options = new Memory($options);
-        $this->cache = new Memory;
-
-        $this->configuration();
-    }
-
-    /**
      * @final
      * @param iterable $source
      * @return ExchangeResultInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws NotImplementedException
      * @throws ReflectionException
+     * @throws Exception
      */
     final public function execute(iterable $source): ExchangeResultInterface
     {
@@ -116,28 +97,6 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
     }
 
     /**
-     * Получение хэша обмена
-     *
-     * @return string
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
-    public function getHash(): string
-    {
-        return (string)$this->getOptions()->get('hash', '');
-    }
-
-    /**
-     * Получение конфигурации обмена
-     *
-     * @return ContainerInterface
-     */
-    public function getOptions(): ContainerInterface
-    {
-        return $this->options;
-    }
-
-    /**
      * Указание генератора хранилища
      *
      * @param callable $factory
@@ -145,7 +104,7 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
      */
     final public function setResultRepositoryFactory(callable $factory): static
     {
-        $this->options->set('result_repository', $factory);
+        $this->resultFactory = $factory;
         return $this;
     }
 
@@ -153,12 +112,10 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
      * Получение генератора хранилища
      *
      * @return callable|null
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      */
     protected function getResultRepositoryFactory(): ?callable
     {
-        return $this->getOptions()->get('result_repository');
+        return $this->resultFactory;
     }
 
     /**
@@ -175,8 +132,6 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
      * Создание объекта хранения результатов обмена
      *
      * @return ExchangeResultInterface
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
      * @throws Exception
      */
     protected function createResult(): ExchangeResultInterface
@@ -206,13 +161,34 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
      */
     protected function validate(ExchangeResultInterface $result): void
     {
-        foreach ($this->validators as $validator) {
+        foreach ($this->getValidators() as $validator) {
             $validateResult = $validator->validate($this);
 
             if (!$validateResult->isSuccess()) {
                 $result->addErrors($validateResult->getErrors());
             }
         }
+    }
+
+    /**
+     * Кэш обмена
+     *
+     * @return RepositoryInterface
+     */
+    protected function getCache(): RepositoryInterface
+    {
+        return $this->cache ??= new Memory;
+    }
+
+    /**
+     * Доступные валидаторы обмена
+     *
+     * @final
+     * @return iterable
+     */
+    final protected function getValidators(): iterable
+    {
+        return $this->validators ??= ValidatorFactory::create($this);
     }
 
     /**
