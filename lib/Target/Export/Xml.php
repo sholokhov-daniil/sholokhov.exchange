@@ -2,12 +2,9 @@
 
 namespace Sholokhov\Exchange\Target\Export;
 
-use Bitrix\Main\IO\File;
-use Bitrix\Main\IO\FileNotFoundException;
-use CTempFile;
+use Exception;
 use XMLWriter;
 
-use Sholokhov\Exchange\AbstractExchange;
 use Sholokhov\Exchange\ExchangeMapTrait;
 use Sholokhov\Exchange\Messages\Type\Error;
 use Sholokhov\Exchange\Fields\FieldInterface;
@@ -19,10 +16,12 @@ use Sholokhov\Exchange\Factory\Exchange\FieldPreparationPipelineFactory;
 
 use Bitrix\Main\Text\Encoding;
 
+use Bitrix\Main\IO\FileNotFoundException;
+
 /**
  * @todo Сделать процессор, который позволит использовать разные механизмы экспорта
  */
-class Xml extends AbstractExchange
+class Xml extends AbstractExport
 {
     use ExchangeMapTrait;
 
@@ -33,19 +32,13 @@ class Xml extends AbstractExchange
     private const string INDENT_STRING = '  ';
     private readonly FieldPreparationPipelineInterface $pipeline;
     private XMLWriter|null $writer = null;
-    private File|null $tmpFile = null;
 
-    protected XmlOption $options;
+    protected XmlOption $option;
 
-    public function __construct(XmlOption $options = null)
+    public function __construct(XmlOption $option = null)
     {
-        $this->options = $options ?? new XmlOption;
+        $this->option = $option ?: new XmlOption;
         $this->pipeline = FieldPreparationPipelineFactory::create($this);
-    }
-
-    public function __destruct()
-    {
-        $this->tmpFile?->delete();
     }
 
     /**
@@ -60,9 +53,11 @@ class Xml extends AbstractExchange
 
     /**
      * Логика экспорта данных
+     *
      * @param iterable $source
      * @param ExchangeResultInterface $result
      * @return void
+     * @throws Exception
      * @throws FileNotFoundException
      */
     protected function logic(iterable $source, ExchangeResultInterface $result): void
@@ -72,7 +67,7 @@ class Xml extends AbstractExchange
         $this->processItems($source, $result);
         $this->finalizeDocument();
 
-        $this->saveFile();
+        $this->save();
     }
 
     /**
@@ -80,52 +75,38 @@ class Xml extends AbstractExchange
      *
      * @return void
      * @throws FileNotFoundException
+     * @throws Exception
      */
-    private function saveFile(): void
+    private function save(): void
     {
-        if (!$this->tmpFile) {
+        $tmp = $this->getTmp();
+
+        if (!$tmp || !$tmp->isExists()) {
             throw new FileNotFoundException('Tmp file not exists');
         }
 
         file_put_contents(
-            $this->options->savePath,
-           $this->tmpFile->getContents()
+            $this->option->savePath,
+            $tmp->getContents()
         );
 
-        $this->tmpFile->delete();
-        $this->tmpFile = null;
+        $this->deleteTmp();
     }
 
     /**
      * Инициализация XMLWriter для потоковой записи
      * @return void
+     * @throws Exception
      */
     private function initializeWriter(): void
     {
-        if ($this->tmpFile) {
-            $this->tmpFile->delete();
-        }
+        $this->initializeTmp();
 
         $this->writer = new XMLWriter;
-        $this->tmpFile = $this->createTmpFile();
 
-        $this->writer->openUri($this->tmpFile->getPath());
+        $this->writer->openUri($this->getTmp()?->getPath());
         $this->writer->setIndent(true);
         $this->writer->setIndentString(self::INDENT_STRING);
-    }
-
-    /**
-     * Создание временного файла экспорта
-     *
-     * @return File
-     */
-    private function createTmpFile(): File
-    {
-        $fileName = rtrim(CTempFile::GetFileName(), '/');
-        $file = new File($fileName);
-        $file->putContents('');
-
-        return $file;
     }
 
     /**
@@ -134,8 +115,8 @@ class Xml extends AbstractExchange
      */
     private function writeDocumentHeader(): void
     {
-        $this->writer->startDocument($this->options->version, self::TARGET_ENCODING);
-        $this->writer->startElement($this->options->rootTag);
+        $this->writer->startDocument($this->option->version, self::TARGET_ENCODING);
+        $this->writer->startElement($this->option->rootTag);
     }
 
     /**
@@ -192,7 +173,7 @@ class Xml extends AbstractExchange
 
         $converted = Encoding::convertEncoding(
             $item,
-            $this->options->sourceCharset,
+            $this->option->sourceCharset,
             self::TARGET_ENCODING
         );
 
@@ -211,7 +192,7 @@ class Xml extends AbstractExchange
      */
     private function writeItem(array $item): void
     {
-        $this->writer->startElement($this->options->elementTag);
+        $this->writer->startElement($this->option->elementTag);
         $this->writeItemAttributes($item);
         $this->writeItemFields($item);
         $this->writer->endElement();
@@ -225,11 +206,11 @@ class Xml extends AbstractExchange
      */
     private function writeItemAttributes(array $item): void
     {
-        if (empty($this->options->elementAttributes)) {
+        if (empty($this->option->elementAttributes)) {
             return;
         }
 
-        $preparedAttributes = $this->pipeline->prepare($item, $this->options->elementAttributes);
+        $preparedAttributes = $this->pipeline->prepare($item, $this->option->elementAttributes);
 
         foreach ($preparedAttributes as $name => $data) {
             $value = is_array($data) ? ($data['value'] ?? '') : $data;
@@ -385,6 +366,6 @@ class Xml extends AbstractExchange
      */
     private function shouldConvertEncoding(): bool
     {
-        return $this->options->sourceCharset <> self::TARGET_ENCODING;
+        return $this->option->sourceCharset <> self::TARGET_ENCODING;
     }
 }
