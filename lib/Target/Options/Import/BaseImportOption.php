@@ -10,4 +10,11 @@ class BaseImportOption
      * @var string
      */
     public string $hash = '';
+
+    /**
+     * Деактивировать все элементы, которые не пришли в импорте
+     *
+     * @var bool
+     */
+    public bool $deactivate = false;
 }

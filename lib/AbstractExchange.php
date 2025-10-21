@@ -67,16 +67,6 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
     abstract protected function logic(iterable $source, ExchangeResultInterface $result): void;
 
     /**
-     * Деактивация элемента сущности по итогам обмена.
-     * Предназначен, для переопределения наследниками
-     *
-     * @return void
-     */
-    public function deactivate(): void
-    {
-    }
-
-    /**
      * @final
      * @param iterable $source
      * @return ExchangeResultInterface
@@ -95,11 +85,11 @@ abstract class AbstractExchange implements ExchangeInterface, EventDispatcherInt
 
         $this->beforeRunEvent();
 
-//        try {
+        try {
             $this->logic($source, $result);
-//        } catch (Throwable $e) {
-//            $this->handleException($e, $result);
-//        }
+        } catch (Throwable $e) {
+            $this->handleException($e, $result);
+        }
 
         $this->afterRunEvent();
 

@@ -73,44 +73,6 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
     }
 
     /**
-     * Деактивация разделов, которые не пришли в импорте
-     *
-     * @inheritDoc
-     * @return void
-     * @throws ArgumentException
-     * @throws ObjectPropertyException
-     * @throws SystemException
-     * @throws Exception
-     */
-    public function deactivate(): void
-    {
-        $query = SectionTable::query()
-            ->where('IBLOCK_ID', $this->getIBlockID())
-            ->where('TIMESTAMP_X', '<', DateTime::createFromTimestamp($this->getDateStarted()))
-            ->where('ACTIVE', 'Y')
-            ->addSelect('ID');
-
-        if ($hashField = $this->getHashField()) {
-            if ($this->getUfFieldRepository()->has($hashField->getTo())) {
-                $factory = new SectionUtsBuilder($this->getIBlockID());
-                $uts = $factory->make([new StringField($hashField->getTo())]);
-                $query->registerRuntimeField(
-                    new Reference('UF', $uts, ['=this.ID' => 'ref.VALUE_ID'], ['join_type' => 'inner'])
-                );
-            } else {
-                $query->where($hashField->getTo(), $this->option->hash);
-            }
-        }
-
-        $this->events->beforeDeactivate(['query' => &$query]);
-
-        $iterator = $query->exec();
-        while ($section = $iterator->fetch()) {
-            SectionTable::update($section['ID'], ['ACTIVE' => 'N']);
-        }
-    }
-
-    /**
      * Свойство является множественным
      *
      * @inheritDoc
@@ -263,6 +225,54 @@ class Section extends AbstractImport implements MappingExchangeInterface, IBlock
         $this->cleanCache();
 
         return $result;
+    }
+
+    /**
+     * Деактивация разделов, которые не пришли в импорте
+     *
+     * @inheritDoc
+     * @return void
+     * @throws ArgumentException
+     * @throws ObjectPropertyException
+     * @throws SystemException
+     * @throws Exception
+     */
+    protected function doDeactivate(): void
+    {
+        $query = SectionTable::query()
+            ->where('IBLOCK_ID', $this->getIBlockID())
+            ->where('TIMESTAMP_X', '<', DateTime::createFromTimestamp($this->getDateStarted()))
+            ->where('ACTIVE', 'Y')
+            ->addSelect('ID');
+
+        if ($hashField = $this->getHashField()) {
+            if ($this->getUfFieldRepository()->has($hashField->getTo())) {
+                $factory = new SectionUtsBuilder($this->getIBlockID());
+                $uts = $factory->make([new StringField($hashField->getTo())]);
+                $query->registerRuntimeField(
+                    new Reference('UF', $uts, ['=this.ID' => 'ref.VALUE_ID'], ['join_type' => 'inner'])
+                );
+            } else {
+                $query->where($hashField->getTo(), $this->option->hash);
+            }
+        }
+
+        $this->events->beforeDeactivate(['query' => &$query]);
+
+        $iterator = $query->exec();
+        while ($section = $iterator->fetch()) {
+            SectionTable::update($section['ID'], ['ACTIVE' => 'N']);
+        }
+    }
+
+    /**
+     * Проверка необходимости деактивации разделов после импорта
+     *
+     * @return bool
+     */
+    protected function deactivateEnabled(): bool
+    {
+        return $this->option->deactivate;
     }
 
     /**

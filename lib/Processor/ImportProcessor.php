@@ -10,10 +10,10 @@ use Sholokhov\Exchange\Factory\Exchange\FieldPreparationPipelineFactory;
 use Sholokhov\Exchange\Messages\DataResultInterface;
 use Sholokhov\Exchange\Messages\ExchangeResultInterface;
 use Sholokhov\Exchange\Messages\Type\Error;
-use Sholokhov\Exchange\Preparation\FieldPreparationPipeline;
 use Sholokhov\Exchange\ImportInterface;
 use Sholokhov\Exchange\MappingExchangeInterface;
 use Sholokhov\Exchange\Preparation\PreparationInterface;
+use Sholokhov\Exchange\Preparation\FieldPreparationPipelineInterface;
 
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
@@ -31,9 +31,9 @@ class ImportProcessor implements ProcessorInterface, LoggerAwareInterface
     /**
      * Задача обработки значения
      *
-     * @var FieldPreparationPipeline
+     * @var FieldPreparationPipelineInterface
      */
-    private readonly FieldPreparationPipeline $pipeline;
+    private readonly FieldPreparationPipelineInterface $pipeline;
 
     /**
      * Объект обмена данных
@@ -80,6 +80,8 @@ class ImportProcessor implements ProcessorInterface, LoggerAwareInterface
                 if ($data = $processResult->getData()) {
                     $result->getData()?->add($data);
                 }
+
+                $this->engine->deactivate();
             } catch (Throwable $throwable) {
                 $this->logger?->critical($throwable->getMessage());
                 $result->addError(new Error($throwable->getMessage()));

@@ -2,8 +2,6 @@
 
 namespace Sholokhov\Exchange\Target\Options\Import;
 
-use Sholokhov\Exchange\Target\Options\Import\BaseImportOption;
-
 /**
  * Конфигурация импорта элементов справочника
  */

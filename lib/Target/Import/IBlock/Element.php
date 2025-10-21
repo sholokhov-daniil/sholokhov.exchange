@@ -71,38 +71,6 @@ class Element extends AbstractImport implements MappingExchangeInterface
     }
 
     /**
-     * Деактивация элементов, которые не пришли в импорте
-     *
-     * @inheritDoc
-     * @return void
-     */
-    public function deactivate(): void
-    {
-        $filter = [
-            'IBLOCK_ID' => $this->getIBlockID(),
-            '<TIMESTAMP_X' => DateTime::createFromTimestamp($this->getDateStarted()),
-            'ACTIVE' => 'Y',
-        ];
-
-        if ($hashField = $this->getHashFieldCode()) {
-            $filter[$hashField] = $this->option->hash;
-        }
-
-        $select = ['ID'];
-
-        $parameters = compact('filter', 'select');
-
-        $this->events->beforeDeactivate(['parameters' => &$parameters]);
-
-        $iBlock = new CIBlockElement;
-        $iterator = CIBlockElement::GetList([], $parameters['filter'], false, false, $parameters['select']);
-
-        while ($element = $iterator->fetch()) {
-            $iBlock->Update($element['ID'], ['ACTIVE' => 'N']);
-        }
-    }
-
-    /**
      * Проверка, что поле является множественным
      *
      * @inheritDoc
@@ -247,6 +215,48 @@ class Element extends AbstractImport implements MappingExchangeInterface
         $this->cleanCache();
 
         return $result;
+    }
+
+    /**
+     * Деактивация элементов, которые не пришли в импорте
+     *
+     * @inheritDoc
+     * @return void
+     */
+    protected function doDeactivate(): void
+    {
+        $filter = [
+            'IBLOCK_ID' => $this->getIBlockID(),
+            '<TIMESTAMP_X' => DateTime::createFromTimestamp($this->getDateStarted()),
+            'ACTIVE' => 'Y',
+        ];
+
+        if ($hashField = $this->getHashFieldCode()) {
+            $filter[$hashField] = $this->option->hash;
+        }
+
+        $select = ['ID'];
+
+        $parameters = compact('filter', 'select');
+
+        $this->events->beforeDeactivate(['parameters' => &$parameters]);
+
+        $iBlock = new CIBlockElement;
+        $iterator = CIBlockElement::GetList([], $parameters['filter'], false, false, $parameters['select']);
+
+        while ($element = $iterator->fetch()) {
+            $iBlock->Update($element['ID'], ['ACTIVE' => 'N']);
+        }
+    }
+
+    /**
+     * Проверка необходимости деактивации элементов после импорта
+     *
+     * @return bool
+     */
+    protected function deactivateEnabled(): bool
+    {
+        return $this->option->deactivate;
     }
 
     /**
