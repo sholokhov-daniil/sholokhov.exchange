@@ -2,6 +2,9 @@
 
 namespace Sholokhov\Exchange\Target\Export;
 
+use Bitrix\Main\IO\File;
+use Bitrix\Main\IO\FileNotFoundException;
+use CTempFile;
 use XMLWriter;
 
 use Sholokhov\Exchange\AbstractExchange;
@@ -29,7 +32,8 @@ class Xml extends AbstractExchange
     private const string TARGET_ENCODING = 'utf-8';
     private const string INDENT_STRING = '  ';
     private readonly FieldPreparationPipelineInterface $pipeline;
-    private ?XMLWriter $writer = null;
+    private XMLWriter|null $writer = null;
+    private File|null $tmpFile = null;
 
     protected XmlOption $options;
 
@@ -37,6 +41,11 @@ class Xml extends AbstractExchange
     {
         $this->options = $options ?? new XmlOption;
         $this->pipeline = FieldPreparationPipelineFactory::create($this);
+    }
+
+    public function __destruct()
+    {
+        $this->tmpFile?->delete();
     }
 
     /**
@@ -54,6 +63,7 @@ class Xml extends AbstractExchange
      * @param iterable $source
      * @param ExchangeResultInterface $result
      * @return void
+     * @throws FileNotFoundException
      */
     protected function logic(iterable $source, ExchangeResultInterface $result): void
     {
@@ -61,6 +71,29 @@ class Xml extends AbstractExchange
         $this->writeDocumentHeader();
         $this->processItems($source, $result);
         $this->finalizeDocument();
+
+        $this->saveFile();
+    }
+
+    /**
+     * Сохранение файла экспорта
+     *
+     * @return void
+     * @throws FileNotFoundException
+     */
+    private function saveFile(): void
+    {
+        if (!$this->tmpFile) {
+            throw new FileNotFoundException('Tmp file not exists');
+        }
+
+        file_put_contents(
+            $this->options->savePath,
+           $this->tmpFile->getContents()
+        );
+
+        $this->tmpFile->delete();
+        $this->tmpFile = null;
     }
 
     /**
@@ -69,10 +102,30 @@ class Xml extends AbstractExchange
      */
     private function initializeWriter(): void
     {
-        $this->writer = new XMLWriter();
-        $this->writer->openUri($this->options->savePath);
+        if ($this->tmpFile) {
+            $this->tmpFile->delete();
+        }
+
+        $this->writer = new XMLWriter;
+        $this->tmpFile = $this->createTmpFile();
+
+        $this->writer->openUri($this->tmpFile->getPath());
         $this->writer->setIndent(true);
         $this->writer->setIndentString(self::INDENT_STRING);
+    }
+
+    /**
+     * Создание временного файла экспорта
+     *
+     * @return File
+     */
+    private function createTmpFile(): File
+    {
+        $fileName = rtrim(CTempFile::GetFileName(), '/');
+        $file = new File($fileName);
+        $file->putContents('');
+
+        return $file;
     }
 
     /**

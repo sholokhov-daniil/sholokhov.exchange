@@ -1,8 +1,8 @@
 <?php
 
-namespace Sholokhov\Exchange\Target\Options;
+namespace Sholokhov\Exchange\Target\Options\Import;
 
-class BaseOption
+class BaseImportOption
 {
     /**
      * Идентификатор обмена

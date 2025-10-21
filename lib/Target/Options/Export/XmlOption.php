@@ -8,7 +8,7 @@ use Bitrix\Main\Application;
 /**
  * Конфигурация экспорта данных в xml формате
  */
-class XmlOption
+class XmlOption extends BaseExportOption
 {
     /**
      * Версия xml файла
@@ -39,13 +39,6 @@ class XmlOption
     public string $elementTag = 'item';
 
     /**
-     * Путь сохранения файла экспорта
-     *
-     * @var string
-     */
-    public string $savePath;
-
-    /**
      * Карта атрибутов элемента
      *
      * Указывается какие атрибуты должны быть у элемента
@@ -56,7 +49,7 @@ class XmlOption
 
     public function __construct()
     {
-        $this->savePath = $_SERVER['DOCUMENT_ROOT'] . '/upload/tmp/export.xml';
+        parent::__construct();
 
         $culture = Application::getInstance()->getContext()->getCulture();
         $defaultCharset = $culture->getCharset() ?: 'utf-8';

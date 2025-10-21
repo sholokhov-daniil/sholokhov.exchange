@@ -2,12 +2,12 @@
 
 namespace Sholokhov\Exchange\Target\Options\Import;
 
-use Sholokhov\Exchange\Target\Options\BaseOption;
+use Sholokhov\Exchange\Target\Options\Import\BaseImportOption;
 
 /**
  * Конфигурация импорта элементов справочника
  */
-class HlElementOption extends BaseOption
+class HlElementOption extends BaseImportOption
 {
     /**
      * Идентификатор сущности в которую производится импорт

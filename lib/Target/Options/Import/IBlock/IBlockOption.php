@@ -2,12 +2,12 @@
 
 namespace Sholokhov\Exchange\Target\Options\Import\IBlock;
 
-use Sholokhov\Exchange\Target\Options\BaseOption;
+use Sholokhov\Exchange\Target\Options\Import\BaseImportOption;
 
 /**
  * Конфигурация импорта в информационный блок
  */
-class IBlockOption extends BaseOption
+class IBlockOption extends BaseImportOption
 {
     /**
      * ID инфоблока в который производится импорт
