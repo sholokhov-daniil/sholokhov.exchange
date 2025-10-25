@@ -55,20 +55,13 @@ class sholokhov_exchange extends CModule
 
     public function DoInstall(): bool
     {
-
-//        $this->InstallDB();
-//        $this->InstallFiles();
-//
-//        $this->registrationEvents();
-//        $this->Add();
-//        self::IncludeModule($this->MODULE_ID);
-
         global $APPLICATION;
 
         try {
             $this->checkPhpVersion();
             $this->checkComposer();
             $this->InstallDB();
+            $this->InstallFiles();
         } catch (Throwable $exception) {
             $APPLICATION->ThrowException($exception->getMessage());
             return false;
@@ -119,12 +112,12 @@ class sholokhov_exchange extends CModule
 
     public function InstallDB(): void
     {
-        $this->dropTables();
-
         $this->registrationEvents();
         $this->Add();
 
         self::IncludeModule($this->MODULE_ID);
+
+        $this->dropTables();
 
         $connection = Application::getConnection();
         foreach ($this->orm as $orm) {
