@@ -3,8 +3,7 @@
 namespace Sholokhov\Exchange\Messages;
 
 /**
- * @since 1.0.0
- * @version 1.0.0
+ * @package Message
  */
 interface ResultInterface
 {
@@ -12,9 +11,6 @@ interface ResultInterface
      * Успешный результат (отсутствие ошибок)
      *
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function isSuccess(): bool;
 
@@ -23,9 +19,6 @@ interface ResultInterface
      *
      * @param ErrorInterface $error
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function addError(ErrorInterface $error): self;
 
@@ -34,9 +27,6 @@ interface ResultInterface
      *
      * @param ErrorInterface[] $errors
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function addErrors(array $errors): self;
 
@@ -45,9 +35,6 @@ interface ResultInterface
      *
      * @param ErrorInterface[] $errors
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setErrors(array $errors): self;
 
@@ -55,9 +42,6 @@ interface ResultInterface
      * Получение всех ошибок
      *
      * @return ErrorInterface[]
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getErrors(): array;
 
@@ -65,9 +49,6 @@ interface ResultInterface
      * Получение ошибочных сообщений
      *
      * @return string[]
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getErrorMessages(): array;
 
@@ -76,9 +57,6 @@ interface ResultInterface
      *
      * @param string $code
      * @return ErrorInterface|null
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getErrorByCode(string $code): ?ErrorInterface;
 }

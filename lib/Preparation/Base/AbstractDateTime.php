@@ -3,8 +3,8 @@
 namespace Sholokhov\Exchange\Preparation\Base;
 
 use DateTime as PhpDateTime;
-use DateMalformedStringException;
 
+use Exception;
 use Sholokhov\Exchange\Fields\FieldInterface;
 use Sholokhov\Exchange\Preparation\AbstractPrepare;
 
@@ -14,8 +14,6 @@ use Bitrix\Main\Type\DateTime as BxDateTime;
  * Приведение значения к объекту @see BxDateTime
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 abstract class AbstractDateTime extends AbstractPrepare
 {
@@ -25,9 +23,7 @@ abstract class AbstractDateTime extends AbstractPrepare
      * @param mixed $value Преобразуемое значение
      * @param FieldInterface $field Свойство, которому принадлежит преобразуемое значение
      * @return BxDateTime|string
-     * @throws DateMalformedStringException
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws Exception
      */
     protected function logic(mixed $value, FieldInterface $field): BxDateTime|string
     {

@@ -8,14 +8,10 @@ use Sholokhov\Exchange\Preparation\IBlock\PropertyTrait;
 use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 
 use Bitrix\Iblock\PropertyTable;
-use Bitrix\Main\LoaderException;
-
 /**
  * Приведение значения свойства к целочисленному значению
  *
  * @package Preparation
- * @version 1.0.0
- * @since 1.0.0
  */
 class Number extends AbstractNumber
 {
@@ -23,9 +19,6 @@ class Number extends AbstractNumber
 
     /**
      * @param int $iBlockID ИБ в рамках которого производится преобразование
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(int $iBlockID)
     {
@@ -38,8 +31,6 @@ class Number extends AbstractNumber
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return bool
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {

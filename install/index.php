@@ -2,33 +2,37 @@
 
 use Bitrix\Main\IO\Directory;
 use Bitrix\Main\Loader;
-use Bitrix\Main\ORM\Fields;
 use Bitrix\Main\Application;
-use Bitrix\Main\ArgumentException;
 use Bitrix\Main\DB\Connection;
-use Bitrix\Main\DB\SqlQueryException;
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Localization\Loc;
 
-use Bitrix\Main\SystemException;
+use Sholokhov\Exchange\ORM\ResultTable;
+use Sholokhov\Exchange\ORM\Settings\EntityTable;
+use Sholokhov\Exchange\ORM\Settings\EntityTypeTable;
+use Sholokhov\Exchange\ORM\Settings\ExchangeTable;
+use Sholokhov\Exchange\ORM\UI\TargetMapTable;
 
 class sholokhov_exchange extends CModule
 {
     var $MODULE_ID = "sholokhov.exchange";
-    var $MODULE_NAME;
-    var $MODULE_VERSION;
-    var $MODULE_VERSION_DATE;
-    var $MODULE_DESCRIPTION;
+    var $PARTNER_NAME = 'Шолохов Даниил';
+    var $PARTNER_URI = 'https://github.com/sholokhov-daniil';
+
+    private const PHP_VERSION = '8.2.0';
+
+    /**
+     * @var class-string<\Bitrix\Main\ORM\Data\DataManager>[]
+     */
+    private array $orm = [
+        ResultTable::class,
+        EntityTypeTable::class,
+        EntityTable::class,
+        ExchangeTable::class,
+        TargetMapTable::class,
+    ];
 
     private Connection $connection;
-
-    private array $tables = [
-        'sholokhov_exchange_result',
-        'sholokhov_exchange_entity_type',
-        'sholokhov_exchange_entities',
-        'sholokhov_exchange_settings',
-        'sholokhov_exchange_target_map',
-    ];
 
     public function __construct()
     {
@@ -47,18 +51,31 @@ class sholokhov_exchange extends CModule
 
         $this->MODULE_NAME = Loc::getMessage("SHOLOKHOV_EXCHANGE_MODULE_NAME");
         $this->MODULE_DESCRIPTION = Loc::getMessage("SHOLOKHOV_EXCHANGE_MODULE_DESCRIPTION");
-        $this->PARTNER_NAME = "Шолохов Даниил";
-        $this->PARTNER_URI = "https://github.com/sholokhov-daniil";
     }
 
-    public function DoInstall(): void
+    public function DoInstall(): bool
     {
-        $this->InstallDB();
-        $this->InstallFiles();
 
-        $this->registrationEvents();
-        $this->Add();
-        self::IncludeModule($this->MODULE_ID);
+//        $this->InstallDB();
+//        $this->InstallFiles();
+//
+//        $this->registrationEvents();
+//        $this->Add();
+//        self::IncludeModule($this->MODULE_ID);
+
+        global $APPLICATION;
+
+        try {
+            $this->checkPhpVersion();
+            $this->checkComposer();
+            $this->InstallDB();
+        } catch (Throwable $exception) {
+            $APPLICATION->ThrowException($exception->getMessage());
+            return false;
+        }
+
+        return true;
+
     }
 
     public function DoUninstall(): void
@@ -103,10 +120,21 @@ class sholokhov_exchange extends CModule
     public function InstallDB(): void
     {
         $this->dropTables();
-        foreach ($this->tables as $table) {
-            $data = @include $this->getConfigPath("tables/{$table}.php");
 
-            $this->connection->createTable($table, ...$data);
+        $this->registrationEvents();
+        $this->Add();
+
+        self::IncludeModule($this->MODULE_ID);
+
+        $connection = Application::getConnection();
+        foreach ($this->orm as $orm) {
+            $tableName = $orm::getTableName();
+
+            if ($connection->isTableExists($tableName)) {
+                $connection->dropTable($tableName);
+            }
+
+            $orm::getEntity()->createDbTable();
         }
 
         $this->migration();
@@ -114,8 +142,9 @@ class sholokhov_exchange extends CModule
 
     public function UnInstallDB(): void
     {
-        $this->dropTables();
         $this->unRegistrationEvents();
+        $this->dropTables();
+        $this->Remove();
     }
 
     private function migration(): void
@@ -149,11 +178,11 @@ class sholokhov_exchange extends CModule
 
     private function dropTables(): void
     {
-        for($i = count($this->tables) - 1; $i > 0; $i--) {
-            $table = $this->tables[$i];
-
-            if ($this->connection->isTableExists($table)) {
-                $this->connection->dropTable($table);
+        $connection = Application::getConnection();
+        foreach ($this->orm as $orm) {
+            $tableName = $orm::getTableName();
+            if ($connection->isTableExists($tableName)) {
+                $connection->dropTable($tableName);
             }
         }
     }
@@ -161,6 +190,26 @@ class sholokhov_exchange extends CModule
     private function getConfigPath(string $name): string
     {
         return __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . $name;
+    }
+
+    private function checkPhpVersion(): void
+    {
+        if (version_compare(phpversion(), self::PHP_VERSION) == -1) {
+            throw new Exception(
+                Loc::getMessage("SHOLOKHOV_EXCHANGE_MODULE_INVALID_PHP", ['#VERSION#' => self::PHP_VERSION])
+            );
+        }
+    }
+
+    private function checkComposer(): void
+    {
+        $autoload = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+
+        if (!file_exists($autoload)) {
+            throw new Exception(
+                Loc::getMessage('SHOLOKHOV_EXCHANGE_MODULE_INVALID_COMPOSER')
+            );
+        }
     }
 
     private function registrationEvents(): void

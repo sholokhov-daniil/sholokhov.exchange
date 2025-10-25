@@ -6,8 +6,6 @@ use Bitrix\Main\Config\Configuration;
 
 /**
  * @internal
- * @since 1.2.0
- * @version 1.2.0
  */
 class Config
 {
@@ -38,9 +36,6 @@ class Config
      * Получение хранилища конфигураций
      *
      * @return Configuration
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public static function registry(): Configuration
     {

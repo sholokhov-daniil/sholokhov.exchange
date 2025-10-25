@@ -14,8 +14,6 @@ use Ramsey\Uuid\Uuid;
  *
  * @internal
  * @notice Еще не тестировался и находится в разработке
- * @since 1.0.0
- * @version 1.0.0
  * @package Repository
  */
 class UidRepository implements ResultRepositoryInterface
@@ -24,17 +22,11 @@ class UidRepository implements ResultRepositoryInterface
      * Идентификатор хранилища
      *
      * @var string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     private readonly string $uid;
 
     /**
      * @param string|null $uid Идентификатор хранилища, если не задано, то по умолчанию используется {@see Uuid::uuid4()}
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function __construct(?string $uid = null)
     {
@@ -43,9 +35,6 @@ class UidRepository implements ResultRepositoryInterface
 
     /**
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function __toString(): string
     {
@@ -56,9 +45,6 @@ class UidRepository implements ResultRepositoryInterface
      * Получение идентификатора хранилища
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function get(): string
     {
@@ -70,8 +56,6 @@ class UidRepository implements ResultRepositoryInterface
      * @return void
      *
      * @throws Exception
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function add(Stringable|string $value): void
     {

@@ -9,10 +9,6 @@ use Sholokhov\Exchange\Repository\RepositoryInterface;
  *
  * @internal
  * @implements RepositoryInterface
- *
- * @since 1.0.0
- * @version 1.0.0
- *
  * @package Repository
  */
 class Memory implements RepositoryInterface
@@ -21,28 +17,22 @@ class Memory implements RepositoryInterface
      * Хранимые значения.
      *
      * @var array
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected array $fields = [];
 
     /**
      * @param array $fields
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function __construct(array $fields = [])
     {
-        array_walk($fields, fn($value, $key) => $this->set($key, $value));
+        array_walk(
+            $fields,
+            fn($value, $key) => $this->set($key, $value)
+        );
     }
 
     /**
      * @return array
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function toArray(): array
     {
@@ -53,9 +43,6 @@ class Memory implements RepositoryInterface
      * Количество записей в контейнере.
      *
      * @return int
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function count(): int
     {
@@ -68,9 +55,6 @@ class Memory implements RepositoryInterface
      * @param string $id
      * @param mixed $value
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function set(string $id, mixed $value): void
     {
@@ -83,9 +67,6 @@ class Memory implements RepositoryInterface
      * @param string $id
      * @param mixed|null $default
      * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function get(string $id, mixed $default = null): mixed
     {
@@ -96,9 +77,6 @@ class Memory implements RepositoryInterface
      * Получение текущего значения.
      *
      * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function current(): mixed
     {
@@ -109,9 +87,6 @@ class Memory implements RepositoryInterface
      * Передвинуть указатель вперед.
      *
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function next(): void
     {
@@ -122,9 +97,6 @@ class Memory implements RepositoryInterface
      * Получение текущего ключа.
      *
      * @return string|int|null
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function key(): string|int|null
     {
@@ -135,9 +107,6 @@ class Memory implements RepositoryInterface
      * Проверка корректного положения каретки.
      *
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function valid(): bool
     {
@@ -145,12 +114,9 @@ class Memory implements RepositoryInterface
     }
 
     /**
-     * передвинуть каретку в начало списка.
+     * Передвинуть каретку в начало списка.
      *
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function rewind(): void
     {
@@ -162,9 +128,6 @@ class Memory implements RepositoryInterface
      *
      * @param string $id
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function has(string $id): bool
     {
@@ -176,9 +139,6 @@ class Memory implements RepositoryInterface
      *
      * @param string $id
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function delete(string $id): void
     {
@@ -189,9 +149,6 @@ class Memory implements RepositoryInterface
      * Очистить хранилище
      *
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function clear(): void
     {

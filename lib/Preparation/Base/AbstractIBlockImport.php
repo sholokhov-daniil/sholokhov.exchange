@@ -2,17 +2,19 @@
 
 namespace Sholokhov\Exchange\Preparation\Base;
 
+use Exception;
+
+use Sholokhov\Exchange\MappingExchangeInterface;
 use Sholokhov\Exchange\Preparation\IBlock\PropertyTrait;
 
 use Sholokhov\Exchange\Fields\Field;
 use Sholokhov\Exchange\ExchangeInterface;
+use Sholokhov\Exchange\Repository\Map\MappingRegistry;
 
 /**
  * Преобразует значение имеющего связь к иной сущности
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 abstract class AbstractIBlockImport extends AbstractImport
 {
@@ -22,17 +24,11 @@ abstract class AbstractIBlockImport extends AbstractImport
      * Связующий ключ по умолчанию
      *
      * @var string
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected string $defaultPrimary = 'XML_ID';
 
     /**
      * @param string|null $primary Ключ по которому будет производиться проверка уникальности
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(int $iblockId, string $primary = null)
     {
@@ -45,21 +41,24 @@ abstract class AbstractIBlockImport extends AbstractImport
      *
      * @param ExchangeInterface $target
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws Exception
      */
     protected function configurationTarget(ExchangeInterface $target): void
     {
-        $target->setMap([
-            (new Field)
-                ->setFrom(0)
-                ->setTo($this->primary)
-                ->setPrimary(),
-        ]);
-
         if ($this->logger) {
             $target->setLogger($this->logger);
+        }
+
+        if ($target instanceof MappingExchangeInterface) {
+            $mapping = new MappingRegistry;
+            $mapping->setFields([
+                (new Field)
+                    ->setFrom(0)
+                    ->setTo($this->primary)
+                    ->setPrimary(),
+            ]);
+
+            $target->setMappingRegistry($mapping);
         }
     }
 }

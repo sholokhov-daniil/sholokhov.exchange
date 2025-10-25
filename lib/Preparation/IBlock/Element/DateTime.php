@@ -8,14 +8,11 @@ use Sholokhov\Exchange\Preparation\Base\AbstractDateTime;
 use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 
 use Bitrix\Iblock\PropertyTable;
-use Bitrix\Main\LoaderException;
 
 /**
  * Приведение значения к типу @see \Bitrix\Main\Type\DateTime
  *
  * @package Preparation
- * @version 1.0.0
- * @since 1.0.0
  */
 class DateTime extends AbstractDateTime
 {
@@ -23,9 +20,6 @@ class DateTime extends AbstractDateTime
 
     /**
      * @param int $iBlockID ИБ в рамках которого производится преобразование
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(int $iBlockID)
     {
@@ -38,10 +32,6 @@ class DateTime extends AbstractDateTime
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return bool
-     * @throws LoaderException
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {

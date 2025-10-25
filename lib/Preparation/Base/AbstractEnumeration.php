@@ -2,16 +2,18 @@
 
 namespace Sholokhov\Exchange\Preparation\Base;
 
+use Exception;
+
 use Sholokhov\Exchange\Fields\Field;
 use Sholokhov\Exchange\ExchangeInterface;
 use Sholokhov\Exchange\Fields\FieldInterface;
+use Sholokhov\Exchange\MappingExchangeInterface;
+use Sholokhov\Exchange\Repository\Map\MappingRegistry;
 
 /**
  * Импорт значения в список
  *
  * @package Preparation
- * @version 1.0.0
- * @since 1.0.0
  */
 abstract class AbstractEnumeration extends AbstractImport
 {
@@ -19,9 +21,6 @@ abstract class AbstractEnumeration extends AbstractImport
      * Поддерживаемые ключи связи
      *
      * @var array|string[]
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected array $supportedPrimaries = ['VALUE', 'ID', 'XML_ID'];
 
@@ -29,9 +28,6 @@ abstract class AbstractEnumeration extends AbstractImport
      * Связующий ключ по умолчанию
      *
      * @var string
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected string $defaultPrimary = 'VALUE';
 
@@ -41,9 +37,6 @@ abstract class AbstractEnumeration extends AbstractImport
      * @param mixed $value
      * @param FieldInterface $field
      * @return int
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected function normalize(mixed $value, FieldInterface $field): int
     {
@@ -55,21 +48,24 @@ abstract class AbstractEnumeration extends AbstractImport
      *
      * @param ExchangeInterface $target
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws Exception
      */
     protected function configurationTarget(ExchangeInterface $target): void
     {
-        $target->setMap([
-            (new Field)
-                ->setFrom(0)
-                ->setTo($this->primary)
-                ->setPrimary(),
-        ]);
-
         if ($this->logger) {
             $target->setLogger($this->logger);
+        }
+
+        if ($target instanceof MappingExchangeInterface) {
+            $repository = new MappingRegistry;
+            $repository->setFields([
+                (new Field)
+                    ->setFrom(0)
+                    ->setTo($this->primary)
+                    ->setPrimary(),
+            ]);
+
+            $target->setMappingRegistry($repository);
         }
     }
 }

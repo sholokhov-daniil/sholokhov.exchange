@@ -5,8 +5,6 @@ namespace Sholokhov\Exchange\Repository\Fields;
 use Sholokhov\Exchange\Repository\AbstractRepository;
 
 /**
- * @version 1.0.0
- *
  * @package Repository
  */
 abstract class AbstractFieldRepository extends AbstractRepository implements FieldRepositoryInterface
@@ -16,9 +14,6 @@ abstract class AbstractFieldRepository extends AbstractRepository implements Fie
      *
      * @param string $id
      * @return void
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function refreshById(string $id): void
     {
@@ -30,9 +25,6 @@ abstract class AbstractFieldRepository extends AbstractRepository implements Fie
      * Обновление информации о свойствах
      *
      * @return void
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function refresh(): void
     {

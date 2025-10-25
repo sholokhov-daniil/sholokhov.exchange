@@ -8,9 +8,6 @@ use Sholokhov\Exchange\Helper\Config;
 
 /**
  * Производит инициализацию конфигураций модуля
- *
- * @since 1.2.0
- * @version 1.2.0
  */
 class Configuration implements BootstrapInterface
 {
@@ -18,8 +15,6 @@ class Configuration implements BootstrapInterface
      * Выполнить автозагрузку
      *
      * @return void
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function bootstrap(): void
     {

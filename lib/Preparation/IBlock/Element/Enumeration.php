@@ -2,7 +2,7 @@
 
 namespace Sholokhov\Exchange\Preparation\IBlock\Element;
 
-use ReflectionException;
+use Exception;
 
 use Sholokhov\Exchange\ExchangeInterface;
 use Sholokhov\Exchange\Factory\Result\SimpleFactory;
@@ -10,17 +10,15 @@ use Sholokhov\Exchange\Fields\FieldInterface;
 use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 use Sholokhov\Exchange\Preparation\IBlock\PropertyTrait;
 use Sholokhov\Exchange\Preparation\Base\AbstractEnumeration;
-use Sholokhov\Exchange\Target\IBlock\Property\PropertyEnumeration;
+use Sholokhov\Exchange\Target\Import\IBlock\Property\PropertyEnumeration;
 
 use Bitrix\Iblock\PropertyTable;
-use Bitrix\Main\LoaderException;
+use Sholokhov\Exchange\Target\Options\Import\IBlock\PropertyEnumerationOption;
 
 /**
  * Производит импорт значения списка и преобразовывает значение в идентификатор значения списка
  *
  * @package Preparation
- * @version 1.0.0
- * @since 1.0.0
  */
 class Enumeration extends AbstractEnumeration
 {
@@ -28,9 +26,6 @@ class Enumeration extends AbstractEnumeration
 
     /**
      * @param int $iBlockID ИБ в рамках которого производится преобразование
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(int $iBlockID, string $primary = 'VALUE')
     {
@@ -43,18 +38,14 @@ class Enumeration extends AbstractEnumeration
      *
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return ExchangeInterface
-     * @throws ReflectionException
-     *
-     * @version 1.0.0
-     * @since 1.0.0
+     * @throws Exception
      */
     protected function getTarget(FieldInterface $field): ExchangeInterface
     {
-        return new PropertyEnumeration([
-            'result_repository' => new SimpleFactory,
-            'iblock_id' => $this->iblockId,
-            'property_code' => $field->getTo(),
-        ]);
+        $options = new PropertyEnumerationOption($this->iblockId, $field->getTo());
+        $exchange = new PropertyEnumeration($options);
+
+        return $exchange->setResultRepositoryFactory(new SimpleFactory);
     }
 
     /**
@@ -63,8 +54,6 @@ class Enumeration extends AbstractEnumeration
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return bool
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {

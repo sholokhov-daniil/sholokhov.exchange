@@ -3,8 +3,7 @@
 namespace Sholokhov\Exchange\Messages;
 
 /**
- * @since 1.0.0
- * @version 1.0.0
+ * @package Message
  */
 interface DataResultInterface extends ResultInterface
 {
@@ -13,9 +12,6 @@ interface DataResultInterface extends ResultInterface
      *
      * @param mixed $data
      * @return self
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setData(mixed $data): self;
 
@@ -23,9 +19,6 @@ interface DataResultInterface extends ResultInterface
      * Получение данных результата действия
      *
      * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getData(): mixed;
 }

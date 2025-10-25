@@ -8,8 +8,6 @@ use Sholokhov\Exchange\Fields\FieldInterface;
  * Базовый класс преобразователей данных
  *
  * @package Preparation
- * @version 1.0.0
- * @since 1.0.0
  */
 abstract class AbstractPrepare implements PreparationInterface
 {
@@ -19,9 +17,6 @@ abstract class AbstractPrepare implements PreparationInterface
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return mixed
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     abstract protected function logic(mixed $value, FieldInterface $field): mixed;
 
@@ -31,9 +26,6 @@ abstract class AbstractPrepare implements PreparationInterface
      * @param mixed $value Значение, которое необходимо преобразовать. Может принимать массив
      * @param FieldInterface $field Свойство, которое необходимо преобразовать
      * @return mixed
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function prepare(mixed $value, FieldInterface $field): mixed
     {
@@ -56,9 +48,6 @@ abstract class AbstractPrepare implements PreparationInterface
      * @param mixed $value
      * @param FieldInterface $field
      * @return mixed
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected function after(mixed $value, FieldInterface $field): mixed
     {

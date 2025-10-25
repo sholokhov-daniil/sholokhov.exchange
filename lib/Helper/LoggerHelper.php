@@ -6,8 +6,6 @@ use Throwable;
 
 /**
  * @package Helper
- * @since 1.0.0
- * @version 1.0.0
  */
 class LoggerHelper
 {
@@ -16,9 +14,6 @@ class LoggerHelper
      *
      * @param Throwable $throwable
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public static function exceptionToString(Throwable $throwable): string
     {

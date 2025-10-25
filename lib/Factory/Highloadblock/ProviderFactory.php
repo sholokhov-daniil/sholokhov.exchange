@@ -21,8 +21,6 @@ class ProviderFactory
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public static function createByTable(string $table): DataManager|string|null
     {
@@ -38,9 +36,6 @@ class ProviderFactory
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public static function createFromFilter(array $filter): DataManager|string|null
     {

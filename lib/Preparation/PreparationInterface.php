@@ -6,8 +6,6 @@ use Sholokhov\Exchange\Fields\FieldInterface;
 
 /**
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 interface PreparationInterface
 {
@@ -17,9 +15,6 @@ interface PreparationInterface
      * @param mixed $value
      * @param FieldInterface $field
      * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function prepare(mixed $value, FieldInterface $field): mixed;
 
@@ -29,9 +24,6 @@ interface PreparationInterface
      * @param mixed $value
      * @param FieldInterface $field
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool;
 }

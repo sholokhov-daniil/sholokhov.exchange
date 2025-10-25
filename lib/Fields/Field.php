@@ -2,16 +2,12 @@
 
 namespace Sholokhov\Exchange\Fields;
 
-use Sholokhov\Exchange\ExchangeInterface;
-use Sholokhov\Exchange\Preparation\PreparationInterface;
 use Sholokhov\Exchange\Repository\Types\Memory;
 use Sholokhov\Exchange\Repository\RepositoryInterface;
 
 /**
  * Описание структуры и логики работы со свойством
  *
- * @since 1.0.0
- * @version 1.1.0
  * @package Field
  */
 class Field implements FieldInterface
@@ -20,9 +16,6 @@ class Field implements FieldInterface
      * Конфигурация свойства
      *
      * @var RepositoryInterface
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     private readonly RepositoryInterface $container;
 
@@ -30,9 +23,6 @@ class Field implements FieldInterface
      * Является идентификационным полем
      *
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function isPrimary(): bool
     {
@@ -43,9 +33,6 @@ class Field implements FieldInterface
      * Поле хранит хэш импорта
      *
      * @return bool
-     *
-     * @since 1.1.0
-     * @version 1.1.0
      */
     public function isHash(): bool
     {
@@ -56,9 +43,6 @@ class Field implements FieldInterface
      * При отсутствии сущности попытается создать
      *
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function isCreatedLink(): bool
     {
@@ -70,9 +54,6 @@ class Field implements FieldInterface
      *
      * @param bool $value
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setPrimary(bool $value = true): self
     {
@@ -85,9 +66,6 @@ class Field implements FieldInterface
      *
      * @param bool $value
      * @return $this
-     *
-     * @since 1.1.0
-     * @version 1.1.0
      */
     public function setHash(bool $value = true): self
     {
@@ -100,9 +78,6 @@ class Field implements FieldInterface
      *
      * @param bool $value
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setCreatedLink(bool $value = false): self
     {
@@ -114,9 +89,6 @@ class Field implements FieldInterface
      * Получение пути размещения значения свойства
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getFrom(): string
     {
@@ -128,9 +100,6 @@ class Field implements FieldInterface
      *
      * @param string $path
      * @return static
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setFrom(string $path): self
     {
@@ -142,9 +111,6 @@ class Field implements FieldInterface
      * Код свойства в которое будет записано значение
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getTo(): string
     {
@@ -156,9 +122,6 @@ class Field implements FieldInterface
      *
      * @param string $code
      * @return static
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setTo(string $code): self
     {
@@ -170,9 +133,6 @@ class Field implements FieldInterface
      * Получение цели значения свойства
      *
      * @return callable|null
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getPreparation(): ?callable
     {
@@ -184,9 +144,6 @@ class Field implements FieldInterface
      *
      * @param callable $target
      * @return static
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setPreparation(callable $target): self
     {
@@ -198,9 +155,6 @@ class Field implements FieldInterface
      * Получение дочернего элемента
      *
      * @return FieldInterface|null
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getChildren(): ?FieldInterface
     {
@@ -211,9 +165,6 @@ class Field implements FieldInterface
      * Получение нормализаторов значения свйоства
      *
      * @return callable|null
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getNormalizer(): ?callable
     {
@@ -225,9 +176,6 @@ class Field implements FieldInterface
      *
      * @param callable $normalizer
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setNormalizer(callable $normalizer): self
     {
@@ -251,9 +199,6 @@ class Field implements FieldInterface
      *
      * @param FieldInterface $children
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setChildren(FieldInterface $children): self
     {
@@ -266,9 +211,6 @@ class Field implements FieldInterface
      *
      * @final
      * @return RepositoryInterface
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     final protected function getContainer(): RepositoryInterface
     {

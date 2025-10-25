@@ -2,18 +2,19 @@
 
 namespace Sholokhov\Exchange\Preparation\IBlock\Element;
 
-use ReflectionException;
+use Exception;
 
 use Sholokhov\Exchange\Factory\Result\SimpleFactory;
 use Sholokhov\Exchange\Preparation\Base\AbstractIBlockSection;
 use Sholokhov\Exchange\Preparation\IBlock\PropertyTrait;
-use Sholokhov\Exchange\Target\IBlock\Section;
+use Sholokhov\Exchange\Target\Import\IBlock\Section;
 use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 
 use Sholokhov\Exchange\ExchangeInterface;
 use Sholokhov\Exchange\Fields\FieldInterface;
 
 use Bitrix\Iblock\PropertyTable;
+use Sholokhov\Exchange\Target\Options\Import\IBlock\IBlockOption;
 
 /**
  * Преобразует значение имеющего связь к элементу информационного блока
@@ -21,8 +22,6 @@ use Bitrix\Iblock\PropertyTable;
  * Если элемент будет отсутствовать, то будет произведено автоматическое создание
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 class IBlockSection extends AbstractIBlockSection
 {
@@ -31,9 +30,6 @@ class IBlockSection extends AbstractIBlockSection
     /**
      * @param int $iblockId Информационный блок, которому относится свойство хранения значения
      * @param string $primary Ключ по которому будет производиться проверка уникальности
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(int $iblockId, string $primary = 'XML_ID')
     {
@@ -47,17 +43,15 @@ class IBlockSection extends AbstractIBlockSection
      * @param FieldInterface $field Свойство в которое производится преобразование
      * @return ExchangeInterface
      *
-     * @throws ReflectionException
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws Exception
      */
     protected function getTarget(FieldInterface $field): ExchangeInterface
     {
         $property = $this->getPropertyRepository()->get($field->getTo());
-        return new Section([
-            'result_repository' => new SimpleFactory,
-            'iblock_id' => $property['LINK_IBLOCK_ID']
-        ]);
+        $options = new IBlockOption($property['LINK_IBLOCK_ID']);
+        $exchange = new Section($options);
+
+        return $exchange->setResultRepositoryFactory(new SimpleFactory);
     }
 
     /**
@@ -65,9 +59,6 @@ class IBlockSection extends AbstractIBlockSection
      *
      * @param FieldInterface $field Свойство из которого необходимо получить идентификатор информационного блока
      * @return int
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function getFieldIBlockID(FieldInterface $field): int
     {
@@ -81,9 +72,6 @@ class IBlockSection extends AbstractIBlockSection
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {

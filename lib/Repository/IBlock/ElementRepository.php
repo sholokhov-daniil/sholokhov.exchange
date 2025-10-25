@@ -11,9 +11,6 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 
 /**
- * @since 1.0.0
- * @version 1.0.0
- *
  * @package Repository
  *
  * @method _CIBElement|null|mixed get(string $id)
@@ -24,9 +21,6 @@ class ElementRepository extends AbstractRepository
      * Идентификатор информационного блока по которому производится поиск
      *
      * @return int
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getIBlockID(): int
     {
@@ -37,9 +31,6 @@ class ElementRepository extends AbstractRepository
      * Ключ по которому будет производиться проверка уникальности
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getPrimary(): string
     {
@@ -51,9 +42,6 @@ class ElementRepository extends AbstractRepository
      *
      * @param array $options
      * @return array
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function normalizeOptions(array $options): array
     {
@@ -69,9 +57,6 @@ class ElementRepository extends AbstractRepository
      * @param array $options Конфигурация
      * @return void
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function checkOptions(array $options): void
     {
@@ -86,9 +71,6 @@ class ElementRepository extends AbstractRepository
      * @param array $parameters
      * @return _CIBElement[]
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function query(array $parameters = []): array
     {
@@ -123,9 +105,6 @@ class ElementRepository extends AbstractRepository
      * @param string $id
      * @return _CIBElement|null
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function search(string $id): ?_CIBElement
     {
@@ -140,9 +119,6 @@ class ElementRepository extends AbstractRepository
      * Идентификатор хранилища
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function generateId(): string
     {

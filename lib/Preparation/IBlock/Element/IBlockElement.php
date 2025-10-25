@@ -15,8 +15,6 @@ use Bitrix\Iblock\PropertyTable;
  * Если элемент будет отсутствовать, то будет произведено автоматическое создание
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 class IBlockElement extends AbstractIBlockElement
 {
@@ -25,9 +23,6 @@ class IBlockElement extends AbstractIBlockElement
     /**
      * @param int $iblockId Информационный блок, которому относится свойство хранения значения
      * @param string $primary Ключ по которому будет производиться проверка уникальности
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(int $iblockId, string $primary = 'XML_ID')
     {
@@ -40,9 +35,6 @@ class IBlockElement extends AbstractIBlockElement
      *
      * @param FieldInterface $field Свойство из которого необходимо получить идентификатор информационного блока
      * @return int
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function getFieldIBlockID(FieldInterface $field): int
     {
@@ -56,8 +48,6 @@ class IBlockElement extends AbstractIBlockElement
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return bool
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {

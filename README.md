@@ -11,15 +11,19 @@
 ## Установка
 Установить последнюю версию библиотеки
 
-````bash
-composer require sholokhov/bitrix-exchange
-````
+Переходим в одну из указанных директорий:
+
+- /local/modules
+- /bitrix/modules
+
+Производим клонирование репозитория или скачиваем архив. После скачивания заходим в маркетплейс битрикса и устанавливаем
 
 ## Базовое использование обмена
 
 ````php
 use Sholokhov\Exchange\Fields;
 use Sholokhov\Exchange\Target\IBlock\Element;
+use Sholokhov\Exchange\Factory\Exchange\MapperFactory;
 
 $data = [
     [
@@ -42,8 +46,11 @@ $map = [
         ->setFo('NAME'),
 ];
 
+$mapRepository = MapperFactory::create();
+$mapRepository->setFields($map);
+
 $exchange = new Element;
-$exchange->setMap($map);
+$exchange->setMappingRegistry($mapRepository);
 $result = $exchange->execute($data);
 ````
 

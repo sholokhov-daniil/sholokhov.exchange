@@ -7,8 +7,7 @@ use Sholokhov\Exchange\Fields\Field;
 /**
  * Описание свойства каталога
  *
- * @since 1.0.0
- * @version 1.0.0
+ * @package Field
  */
 class CatalogField extends Field implements CatalogFieldInterface
 {
@@ -16,9 +15,6 @@ class CatalogField extends Field implements CatalogFieldInterface
      * Свойство хранит цену
      *
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function isQuantity(): bool
     {
@@ -30,9 +26,6 @@ class CatalogField extends Field implements CatalogFieldInterface
      *
      * @param bool $quantity
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setQuantity(bool $quantity = true): self
     {

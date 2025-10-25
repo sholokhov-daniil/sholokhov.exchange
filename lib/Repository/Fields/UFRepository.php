@@ -8,21 +8,31 @@ use InvalidArgumentException;
 /**
  * Хранилище информации о пользовательских свойствах определенной сущности
  *
- * @since 1.0.0
- * @version 1.0.0
+ * Параметры управления конфигурацией:
+ * | Параметр | Тип | Обязательный | Описание |
+ * |------------------------------------------|
+ * | entity_id | string | Да | ID сущности на основе которой производится поиск полей |
  *
  * @package Repository
  */
 class UFRepository extends AbstractFieldRepository
 {
     /**
+     * Получение ID сущности, которому принадлежат поля
+     *
+     * @final
+     * @return string
+     */
+    final public function getEntityId(): string
+    {
+        return $this->getOptions()->get('entity_id');
+    }
+
+    /**
      * Проверка конфигурации
      *
      * @param array $options
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function checkOptions(array $options): void
     {
@@ -37,9 +47,6 @@ class UFRepository extends AbstractFieldRepository
      * @final
      * @param array $parameters
      * @return array
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     final protected function query(array $parameters = []): array
     {
@@ -65,9 +72,6 @@ class UFRepository extends AbstractFieldRepository
      * @final
      * @param string $id
      * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     final protected function search(string $id): mixed
     {
@@ -79,26 +83,9 @@ class UFRepository extends AbstractFieldRepository
     }
 
     /**
-     * Получение ID сущности, которому принадлежат поля
-     *
-     * @final
-     * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    final protected function getEntityId(): string
-    {
-        return $this->getOptions()->get('entity_id');
-    }
-
-    /**
      * Получение идентификатора хранилища
      *
      * @return string
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected function generateId(): string
     {

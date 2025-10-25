@@ -2,11 +2,9 @@
 
 namespace Sholokhov\Exchange\Preparation\IBlock\Element;
 
-use ReflectionException;
-
 use Sholokhov\Exchange\Factory\Highloadblock\ProviderFactory;
 use Sholokhov\Exchange\Factory\Result\SimpleFactory;
-use Sholokhov\Exchange\Target\Highloadblock\Element;
+use Sholokhov\Exchange\Target\Import\Highloadblock\Element;
 use Sholokhov\Exchange\Preparation\Base\AbstractIBlockImport;
 use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 
@@ -19,6 +17,7 @@ use Bitrix\Main\SystemException;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Highloadblock\HighloadBlockTable as HLT;
+use Sholokhov\Exchange\Target\Options\Import\HlElementOption;
 
 /**
  * Преобразует значение имеющего связь к элементу справочника
@@ -26,8 +25,6 @@ use Bitrix\Highloadblock\HighloadBlockTable as HLT;
  * Если элемент будет отсутствовать, то будет произведено автоматическое создание
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 class HandbookElement extends AbstractIBlockImport
 {
@@ -37,9 +34,6 @@ class HandbookElement extends AbstractIBlockImport
      * Связующий ключ по умолчанию
      *
      * @var string
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected string $defaultPrimary = 'UF_XML_ID';
 
@@ -49,12 +43,9 @@ class HandbookElement extends AbstractIBlockImport
      * @param FieldInterface $field Свойство в которое производится преобразование
      * @return ExchangeInterface
      *
-     * @throws ReflectionException
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function getTarget(FieldInterface $field): ExchangeInterface
     {
@@ -67,10 +58,10 @@ class HandbookElement extends AbstractIBlockImport
             ->exec()
             ->fetch();
 
-        return new Element([
-            'result_repository' => new SimpleFactory,
-            'entity_id' => $result['ID'],
-        ]);
+        $options = new HlElementOption($result['ID']);
+        $exchange = new Element($options);
+
+        return $exchange->setResultRepositoryFactory(new SimpleFactory);
     }
 
     /**
@@ -84,8 +75,6 @@ class HandbookElement extends AbstractIBlockImport
      * @throws ObjectPropertyException
      * @throws SystemException
      * @throws LoaderException
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function normalize(mixed $value, FieldInterface $field): mixed
     {
@@ -112,9 +101,6 @@ class HandbookElement extends AbstractIBlockImport
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {

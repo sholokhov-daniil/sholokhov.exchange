@@ -10,8 +10,6 @@ use Sholokhov\Exchange\Fields\FieldInterface;
  * Из цепочки выбирается первый подходящий и производится модификация
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 class Chain implements PreparationInterface, Countable
 {
@@ -19,9 +17,6 @@ class Chain implements PreparationInterface, Countable
      * Преобразователи данных
      *
      * @var PreparationInterface[]
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     private array $prepares = [];
 
@@ -31,9 +26,6 @@ class Chain implements PreparationInterface, Countable
      * @param mixed $value
      * @param FieldInterface $field
      * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function prepare(mixed $value, FieldInterface $field): mixed
     {
@@ -46,9 +38,6 @@ class Chain implements PreparationInterface, Countable
      * @param mixed $value
      * @param FieldInterface $field
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {
@@ -59,9 +48,6 @@ class Chain implements PreparationInterface, Countable
      * Количество преобразователей
      *
      * @return int
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function count(): int
     {
@@ -73,9 +59,6 @@ class Chain implements PreparationInterface, Countable
      *
      * @param PreparationInterface $prepare
      * @return PreparationInterface
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function add(PreparationInterface $prepare): PreparationInterface
     {
@@ -88,9 +71,6 @@ class Chain implements PreparationInterface, Countable
      *
      * @param iterable $iterator
      * @return PreparationInterface
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function addList(iterable $iterator): PreparationInterface
     {
@@ -107,9 +87,6 @@ class Chain implements PreparationInterface, Countable
      * @param mixed $value
      * @param FieldInterface $field
      * @return PreparationInterface|null
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     private function getSupported(mixed $value, FieldInterface $field): ?PreparationInterface
     {

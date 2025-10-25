@@ -15,8 +15,6 @@ use Psr\Log\LoggerAwareInterface;
  * Преобразование пути до файла в массив формата $_FILES {@see CFile::MakeFileArray()}
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 class File extends AbstractPrepare implements LoggerAwareInterface
 {
@@ -28,9 +26,6 @@ class File extends AbstractPrepare implements LoggerAwareInterface
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return bool
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {
@@ -43,9 +38,6 @@ class File extends AbstractPrepare implements LoggerAwareInterface
      * @param mixed $value
      * @param FieldInterface $field
      * @return mixed
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected function logic(mixed $value, FieldInterface $field): array
     {

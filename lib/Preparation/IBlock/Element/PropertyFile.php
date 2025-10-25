@@ -11,7 +11,6 @@ use Sholokhov\Exchange\Fields\IBlock\ElementFieldInterface;
 use Sholokhov\Exchange\Fields\FieldInterface;
 
 use Bitrix\Iblock\PropertyTable;
-use Bitrix\Main\LoaderException;
 
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerAwareInterface;
@@ -20,8 +19,6 @@ use Psr\Log\LoggerAwareInterface;
  * Производит преобразование пути до файла в формат, который поддерживается свойствами информационного блока
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 class PropertyFile extends AbstractPrepare implements LoggerAwareInterface
 {
@@ -29,9 +26,6 @@ class PropertyFile extends AbstractPrepare implements LoggerAwareInterface
 
     /**
      * @param int $iBlockID ИБ в рамках которого производится преобразование
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(int $iBlockID)
     {
@@ -44,9 +38,6 @@ class PropertyFile extends AbstractPrepare implements LoggerAwareInterface
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return bool
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {
@@ -62,9 +53,6 @@ class PropertyFile extends AbstractPrepare implements LoggerAwareInterface
      * @param mixed $value
      * @param FieldInterface $field
      * @return mixed
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected function logic(mixed $value, FieldInterface $field): array
     {

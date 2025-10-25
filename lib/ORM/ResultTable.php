@@ -11,49 +11,31 @@ use Bitrix\Main\SystemException;
 
 /**
  * Таблица с результатами обменов
- *
- * @since 1.0.0
- * @version 1.0.0
  */
 class ResultTable extends DataManager
 {
     /**
      * Идентификатор записи
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public const PC_ID = "ID";
 
     /**
      * Идентификатор обмена
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public const PC_UID = 'UID';
 
     /**
      * ID процесса в котором был запущен обмен
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public const PC_PID = 'PID';
 
     /**
      * Результат обмена
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public const PC_VALUE = 'VALUE';
 
     /**
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public static function getTableName(): string
     {
@@ -62,9 +44,6 @@ class ResultTable extends DataManager
 
     /**
      * @return array
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public static function getMap(): array
     {
@@ -92,9 +71,6 @@ class ResultTable extends DataManager
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public static function getByUid(string $uid): Result
     {

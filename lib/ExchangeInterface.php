@@ -2,14 +2,11 @@
 
 namespace Sholokhov\Exchange;
 
+use Sholokhov\Exchange\Fields\FieldInterface;
 use Sholokhov\Exchange\Messages\ExchangeResultInterface;
 
 use Psr\Log\LoggerAwareInterface;
 
-/**
- * @since 1.0.0
- * @version 1.1.0
- */
 interface ExchangeInterface extends LoggerAwareInterface
 {
     /**
@@ -17,19 +14,14 @@ interface ExchangeInterface extends LoggerAwareInterface
      *
      * @param iterable $source
      * @return ExchangeResultInterface
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function execute(iterable $source): ExchangeResultInterface;
 
     /**
-     * Получение хэша обмена
+     * Свойство является множественным
      *
-     * @return string
-     *
-     * @since 1.1.0
-     * @version 1.1.0
+     * @param FieldInterface $field
+     * @return bool
      */
-    public function getHash(): string;
+    public function isMultipleField(FieldInterface $field): bool;
 }

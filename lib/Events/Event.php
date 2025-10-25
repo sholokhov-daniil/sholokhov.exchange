@@ -2,72 +2,48 @@
 
 namespace Sholokhov\Exchange\Events;
 
-/**
- * Описание внутреннего события обмена
- *
- * @package Event
- * @since 1.0.0
- * @version 1.0.0
- */
 class Event implements EventInterface
 {
-    /**
-     * Тип события
-     *
-     * @var string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    private string $type;
-
-    /**
-     * Обработчик события
-     *
-     * @var callable
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    private $handler;
+    private readonly string $type;
+    private readonly array $parameters;
 
     /**
      * @param string $type Тип события
-     * @param callable $handler Обработчик события
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
-    public function __construct(string $type, callable $handler)
+    public function __construct(string $type, array $parameters = [])
     {
         $this->type = $type;
-        $this->handler = $handler;
+        $this->parameters = $parameters;
     }
 
     /**
-     * Вызвать обработчик события
-     *
-     * @param ...$args
-     * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function call(...$args): mixed
-    {
-        return call_user_func_array($this->handler, $args);
-    }
-
-    /**
-     * Возвращает тип события
+     * Тип события
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getType(): string
     {
         return $this->type;
+    }
+
+    /**
+     * Параметры события
+     *
+     * @return array
+     */
+    public function getParameters(): array
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * Получение параметра по ключу
+     *
+     * @param string|int $key
+     * @return mixed
+     */
+    public function getParameter(string|int $key): mixed
+    {
+        return $this->parameters[$key] ?? null;
     }
 }

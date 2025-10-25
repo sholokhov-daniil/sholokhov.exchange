@@ -9,9 +9,6 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 
 /**
- * @since 1.0.0
- * @version 1.0.0
- *
  * @package Repository
  *
  * @method array|null|mixed get(string $id)
@@ -22,9 +19,6 @@ class SectionRepository extends AbstractRepository
      * Идентификатор информационного блока по которому производится поиск
      *
      * @return int
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getIBlockID(): int
     {
@@ -35,9 +29,6 @@ class SectionRepository extends AbstractRepository
      * Ключ по которому будет производиться проверка уникальности
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getPrimary(): string
     {
@@ -49,9 +40,6 @@ class SectionRepository extends AbstractRepository
      *
      * @param array $options
      * @return array
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function normalizeOptions(array $options): array
     {
@@ -67,9 +55,6 @@ class SectionRepository extends AbstractRepository
      * @param array $options Конфигурация
      * @return void
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function checkOptions(array $options): void
     {
@@ -84,9 +69,6 @@ class SectionRepository extends AbstractRepository
      * @param array $parameters
      * @return array[]
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function query(array $parameters = []): array
     {
@@ -121,9 +103,6 @@ class SectionRepository extends AbstractRepository
      * @param string $id
      * @return array|null
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function search(string $id): ?array
     {
@@ -138,9 +117,6 @@ class SectionRepository extends AbstractRepository
      * Идентификатор хранилища
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function generateId(): string
     {

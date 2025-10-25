@@ -17,8 +17,6 @@ use Psr\Log\LoggerAwareInterface;
  * Преобразует значение имеющего связь к сущности
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 abstract class AbstractImport extends AbstractPrepare implements LoggerAwareInterface
 {
@@ -30,9 +28,6 @@ abstract class AbstractImport extends AbstractPrepare implements LoggerAwareInte
      * Если массив пустой, то будут поддерживаться все виды значений
      *
      * @var array|string[]
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected array $supportedPrimaries = [];
 
@@ -40,9 +35,6 @@ abstract class AbstractImport extends AbstractPrepare implements LoggerAwareInte
      * Ключ по которому будет производиться проверка уникальности
      *
      * @var string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected readonly string $primary;
 
@@ -50,9 +42,6 @@ abstract class AbstractImport extends AbstractPrepare implements LoggerAwareInte
      * Связующий ключ по умолчанию
      *
      * @var string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected string $defaultPrimary = "XML_ID";
 
@@ -61,9 +50,6 @@ abstract class AbstractImport extends AbstractPrepare implements LoggerAwareInte
      *
      * @param FieldInterface $field
      * @return ExchangeInterface
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     abstract protected function getTarget(FieldInterface $field): ExchangeInterface;
 
@@ -72,17 +58,11 @@ abstract class AbstractImport extends AbstractPrepare implements LoggerAwareInte
      *
      * @param ExchangeInterface $target
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     abstract protected function configurationTarget(ExchangeInterface $target): void;
 
     /**
      * @param string|null $primary Ключ по которому будет производиться проверка уникальности
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(?string $primary = null)
     {
@@ -98,9 +78,6 @@ abstract class AbstractImport extends AbstractPrepare implements LoggerAwareInte
      * @param FieldInterface $field Свойство, которое преобразуется
      * @return mixed
      * @throws Exception
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     final protected function logic(mixed $value, FieldInterface $field): mixed
     {
@@ -131,9 +108,6 @@ abstract class AbstractImport extends AbstractPrepare implements LoggerAwareInte
      * @return mixed
      *
      * @todo Потом перейти на цепочку атрибутов и выполнять только первый от последнего ребенка
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function normalize(mixed $value, FieldInterface $field): mixed
     {
@@ -145,9 +119,6 @@ abstract class AbstractImport extends AbstractPrepare implements LoggerAwareInte
      *
      * @final
      * @return void
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     final protected function checkPrimary(): void
     {

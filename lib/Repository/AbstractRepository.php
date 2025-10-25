@@ -6,9 +6,6 @@ use Exception;
 use Sholokhov\Exchange\Repository\Types\Memory;
 
 /**
- * @since 1.0.0
- * @version 1.0.0
- *
  * @package Repository
  */
 abstract class AbstractRepository implements RepositoryInterface
@@ -17,9 +14,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * Хранилище данных
      *
      * @var RepositoryInterface[]
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     private static array $storage;
 
@@ -27,9 +21,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * Уникальный идентификатор хранилища
      *
      * @var string
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     private readonly string $id;
 
@@ -37,9 +28,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * Конфигурация хранилища
      *
      * @var Memory
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     private Memory $options;
 
@@ -47,9 +35,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * Генерация уникального идентификатора хранилища
      *
      * @return string
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     abstract protected function generateId(): string;
 
@@ -58,9 +43,6 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param array $parameters Параметры запроса
      * @return array
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     abstract protected function query(array $parameters = []): array;
 
@@ -69,9 +51,6 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param string $id
      * @return mixed
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     abstract protected function search(string $id): mixed;
 
@@ -83,17 +62,11 @@ abstract class AbstractRepository implements RepositoryInterface
      * @extends Exception
      * @param array $options Валидируемая конфигурация хранилища
      * @return void
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     abstract protected function checkOptions(array $options): void;
 
     /**
      * @param array $options Конфигурация хранилища
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(array $options)
     {
@@ -107,9 +80,6 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @final
      * @return string
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     final public function getId(): string
     {
@@ -120,9 +90,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * Получение информации в формате ответа
      *
      * @return array
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function toArray(): array
     {
@@ -135,9 +102,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param string $id Ключ хранения значения
      * @param mixed|null $default Значение по умолчанию
      * @return mixed
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function get(string $id, mixed $default = null): mixed
     {
@@ -157,9 +121,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param string $id
      * @param mixed $value
      * @return void
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function set(string $id, mixed $value): void
     {
@@ -169,9 +130,6 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * @param string $id Ключ хранения
      * @return bool
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function has(string $id): bool
     {
@@ -183,9 +141,6 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param string $id
      * @return void
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function delete(string $id): void
     {
@@ -196,9 +151,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * Очистка хранилища
      *
      * @return void
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function clear(): void
     {
@@ -209,9 +161,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * Полная очистка хранилища
      *
      * @return void
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function clearAll(): void
     {
@@ -225,9 +174,6 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param array $options
      * @return array
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected function normalizeOptions(array $options): array
     {
@@ -238,9 +184,6 @@ abstract class AbstractRepository implements RepositoryInterface
      * Получение конфигурации
      *
      * @return RepositoryInterface
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected function getOptions(): RepositoryInterface
     {
@@ -252,9 +195,6 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @final
      * @return Memory
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     final protected function getStorage(): Memory
     {

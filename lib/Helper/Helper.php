@@ -6,15 +6,13 @@ use Illuminate\Support\Arr;
 
 /**
  * @package Helper
- * @version 1.2.0
  */
 class Helper
 {
     /**
-     * Псевдо-идентификатор модуля
+     * ID текущего модуля
      *
      * @return string
-     * @version 1.2.0
      */
     public static function getModuleID(): string
     {
@@ -25,9 +23,6 @@ class Helper
      * Путь до корня модуля
      *
      * @return string
-     *
-     * @version 1.2.0
-     * @since 1.2.0
      */
     public static function getRootDir(): string
     {
@@ -40,9 +35,6 @@ class Helper
      * @param array $item
      * @param string $path
      * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public static function getArrValueByPath(array $item, $path): mixed
     {

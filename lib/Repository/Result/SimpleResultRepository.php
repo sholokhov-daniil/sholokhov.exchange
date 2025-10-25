@@ -11,8 +11,7 @@ use Stringable;
  * Если данный способ хранения будет использоваться в импорте с большим массивом данных,
  * то для этого лучше выбрать {@see UidRepository}
  *
- * @since 1.0.0
- * @version 1.0.0
+ * @package Repository
  */
 class SimpleResultRepository implements ResultRepositoryInterface
 {
@@ -20,9 +19,6 @@ class SimpleResultRepository implements ResultRepositoryInterface
      * Элементы с которыми производилось взаимодействие обменом
      *
      * @var array
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     private array $items = [];
 
@@ -31,9 +27,6 @@ class SimpleResultRepository implements ResultRepositoryInterface
      *
      * @param string|Stringable $value
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function add(string|Stringable $value): void
     {
@@ -44,9 +37,6 @@ class SimpleResultRepository implements ResultRepositoryInterface
      * Получение всех значений
      *
      * @return array
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function get(): array
     {

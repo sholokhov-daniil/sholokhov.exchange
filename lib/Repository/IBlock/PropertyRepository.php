@@ -15,7 +15,6 @@ use Bitrix\Main\LoaderException;
  *
  * @final
  * @package Repository
- * @version 1.0.0
  */
 final class PropertyRepository extends AbstractFieldRepository
 {
@@ -23,9 +22,6 @@ final class PropertyRepository extends AbstractFieldRepository
      * Получение идентификатора информационного блока с которым идет работа
      *
      * @return int
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getIBlockID(): int
     {
@@ -37,9 +33,6 @@ final class PropertyRepository extends AbstractFieldRepository
      *
      * @param array $options
      * @return array
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function normalizeOptions(array $options): array
     {
@@ -52,9 +45,6 @@ final class PropertyRepository extends AbstractFieldRepository
      *
      * @param array $options
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function checkOptions(array $options): void
     {
@@ -69,9 +59,6 @@ final class PropertyRepository extends AbstractFieldRepository
      * @param array{filter: array, order: array} $parameters Параметры на основе которых формируется запрос
      * @return array
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function query(array $parameters = []): array
     {
@@ -101,9 +88,6 @@ final class PropertyRepository extends AbstractFieldRepository
      * @param string $id
      * @return array|null
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function search(string $id): ?array
     {
@@ -118,9 +102,6 @@ final class PropertyRepository extends AbstractFieldRepository
      * Получение идентификатора хранилища
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected function generateId(): string
     {

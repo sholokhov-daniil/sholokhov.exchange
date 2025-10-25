@@ -18,9 +18,6 @@ use Psr\Container\ContainerInterface;
  * Если необходимо освободить память, то необходимо вызвать метод {@see self::free}.
  * @final
  *
- * @since 1.0.0
- * @version 1.0.0
- *
  * @package Repository
  */
 final class IBlockRepository implements ContainerInterface
@@ -29,17 +26,11 @@ final class IBlockRepository implements ContainerInterface
      * Хранилище данных
      *
      * @var Memory
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     private static Memory $storage;
 
     /**
      * @param int $iBlockID Информационный блок с которого необходимо получать данные
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function __construct(private readonly int $iBlockID)
     {
@@ -52,9 +43,6 @@ final class IBlockRepository implements ContainerInterface
      * @param mixed|null $default
      * @return mixed
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function get(string $id,  mixed $default = null): mixed
     {
@@ -67,9 +55,6 @@ final class IBlockRepository implements ContainerInterface
      * @param string $id
      * @return bool
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function has(string $id): bool
     {
@@ -81,9 +66,6 @@ final class IBlockRepository implements ContainerInterface
      *
      * @return PropertyRepository|null
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getProperties(): ?PropertyRepository
     {
@@ -105,9 +87,6 @@ final class IBlockRepository implements ContainerInterface
      * При повторной попытке получить данные свойства произойдет загрузка данных
      *
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function free(): void
     {
@@ -121,9 +100,6 @@ final class IBlockRepository implements ContainerInterface
      *
      * @return array
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getDescription(): array
     {
@@ -141,9 +117,6 @@ final class IBlockRepository implements ContainerInterface
      *
      * @return array
      * @throws LoaderException
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     private function getInfo(): array
     {
@@ -162,9 +135,6 @@ final class IBlockRepository implements ContainerInterface
      * Получение хранилища данных свойств инфоблока
      *
      * @return Memory
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     private function getStorage(): Memory
     {

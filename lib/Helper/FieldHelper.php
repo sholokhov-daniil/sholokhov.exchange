@@ -6,8 +6,6 @@ use Sholokhov\Exchange\Fields\FieldInterface;
 
 /**
  * @package Helper
- * @since 1.0.0
- * @version 1.0.0
  */
 class FieldHelper
 {
@@ -17,9 +15,6 @@ class FieldHelper
      * @param array $item
      * @param FieldInterface $field
      * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public static function getValue(array $item, FieldInterface $field): mixed
     {
@@ -32,9 +27,6 @@ class FieldHelper
      * @param array $item
      * @param FieldInterface $field
      * @return array|null
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public static function getTreeValue(array $item, FieldInterface $field): ?array
     {

@@ -13,8 +13,6 @@ use Sholokhov\Exchange\Messages\ResultInterface;
  * Проверка стандартной карты обмена
  *
  * @package Validator
- * @since 1.0.0
- * @version 1.1.0
  */
 class MapValidator implements ValidatorInterface
 {
@@ -23,9 +21,6 @@ class MapValidator implements ValidatorInterface
      *
      * @param mixed $value
      * @return ResultInterface
-     *
-     * @since 1.0.0
-     * @version 1.1.0
      */
     public function validate(mixed $value): ResultInterface
     {

@@ -14,8 +14,6 @@ use Psr\Log\LoggerAwareInterface;
  * Преобразование значение в файл, который воспринимает пользовательское свойство (UF)
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 class File extends AbstractPrepare implements LoggerAwareInterface
 {
@@ -23,9 +21,6 @@ class File extends AbstractPrepare implements LoggerAwareInterface
 
     /**
      * @param string $entityId ID сущности в рамках которого производится преобразование
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     public function __construct(string $entityId)
     {
@@ -38,9 +33,6 @@ class File extends AbstractPrepare implements LoggerAwareInterface
      * @param mixed $value Значение, которое необходимо преобразовать
      * @param FieldInterface $field Свойство, которое преобразовывается
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function supported(mixed $value, FieldInterface $field): bool
     {
@@ -54,9 +46,6 @@ class File extends AbstractPrepare implements LoggerAwareInterface
      * @param mixed $value
      * @param FieldInterface $field
      * @return array|null
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected function logic(mixed $value, FieldInterface $field): ?array
     {

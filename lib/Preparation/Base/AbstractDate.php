@@ -3,8 +3,8 @@
 namespace Sholokhov\Exchange\Preparation\Base;
 
 use DateTime;
-use DateMalformedStringException;
 
+use Exception;
 use Sholokhov\Exchange\Fields\FieldInterface;
 use Sholokhov\Exchange\Preparation\AbstractPrepare;
 
@@ -14,8 +14,6 @@ use Bitrix\Main\Type\Date as BxDate;
  * Приведение значения к объекту @see BxDate
  *
  * @package Preparation
- * @since 1.0.0
- * @version 1.0.0
  */
 abstract class AbstractDate extends AbstractPrepare
 {
@@ -25,9 +23,7 @@ abstract class AbstractDate extends AbstractPrepare
      * @param mixed $value
      * @param FieldInterface $field
      * @return BxDate|string
-     * @throws DateMalformedStringException
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws Exception
      */
     protected function logic(mixed $value, FieldInterface $field): BxDate|string
     {

@@ -8,8 +8,7 @@ use Sholokhov\Exchange\Repository\Result\ResultRepositoryInterface;
 /**
  * Результат выполненных действий
  *
- * @since 1.0.0
- * @version 1.0.0
+ * @package Message
  */
 class ExchangeResult extends Result implements ExchangeResultInterface
 {
@@ -21,9 +20,6 @@ class ExchangeResult extends Result implements ExchangeResultInterface
      * Получение хранилища результата работы действия
      *
      * @return ResultRepositoryInterface|null
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function getData(): ?ResultRepositoryInterface
     {

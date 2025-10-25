@@ -6,16 +6,11 @@ use Sholokhov\Exchange\Repository\Fields\UFRepository;
 
 /**
  * @package Preparation
- * @version 1.0.0
- * @since 1.0.0
  */
 trait UFTrait
 {
     /**
      * @var string
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     protected readonly string $entityId;
 
@@ -23,9 +18,6 @@ trait UFTrait
      * Хранилище информации о свойствах
      *
      * @var UFRepository
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     private UFRepository $repository;
 
@@ -33,9 +25,6 @@ trait UFTrait
      * Получения хранилища информации свойств
      *
      * @return UFRepository
-     *
-     * @version 1.0.0
-     * @since 1.0.0
      */
     final protected function getFieldRepository(): UFRepository
     {
