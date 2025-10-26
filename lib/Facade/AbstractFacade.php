@@ -2,10 +2,11 @@
 
 namespace Sholokhov\Exchange\Facade;
 
+use ReflectionException;
 use RuntimeException;
-use Sholokhov\Exchange\Helper\Helper;
 
-use Bitrix\Main\DI\ServiceLocator;
+use Sholokhov\Exchange\Container\Container;
+
 use Bitrix\Main\ObjectNotFoundException;
 
 use Psr\Container\NotFoundExceptionInterface;
@@ -23,13 +24,13 @@ abstract class AbstractFacade
      * Получение объекта описывающий фасадом
      *
      * @return object|null
-     * @throws ObjectNotFoundException
      * @throws NotFoundExceptionInterface
+     * @throws ObjectNotFoundException
+     * @throws ReflectionException
      */
     public static function getFacadeRoot(): ?object
     {
-        $accessor = Helper::getModuleID() . '.' . static::getFacadeAccessor();
-        return ServiceLocator::getInstance()->get($accessor);
+        return Container::getInstance()->get(static::getFacadeAccessor());
     }
 
     /**
@@ -40,6 +41,7 @@ abstract class AbstractFacade
      * @return mixed
      * @throws NotFoundExceptionInterface
      * @throws ObjectNotFoundException
+     * @throws ReflectionException
      */
     public static function __callStatic(string $method, array $arguments)
     {

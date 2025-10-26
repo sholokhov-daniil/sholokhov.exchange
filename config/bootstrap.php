@@ -4,7 +4,7 @@ use Sholokhov\Exchange\Bootstrap;
 
 return [
     Bootstrap\ServiceBootstrap::class,
-    Bootstrap\FieldBootstrap::class,
-    Bootstrap\SourceBootstrap::class,
+    Bootstrap\FieldServiceProvider::class,
+    Bootstrap\SourceServiceProvider::class,
     Bootstrap\Extension::class,
 ];

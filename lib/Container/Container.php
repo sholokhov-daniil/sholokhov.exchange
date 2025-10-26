@@ -7,6 +7,11 @@ use Exception;
 use ReflectionClass;
 use ReflectionException;
 
+use Bitrix\Main\DI\ServiceLocator;
+use Bitrix\Main\ObjectNotFoundException;
+
+use Psr\Container\NotFoundExceptionInterface;
+
 /**
  * Контейнер объектов модуля
  */
@@ -25,6 +30,18 @@ class Container
      * @var array
      */
     protected array $instances = [];
+
+    /**
+     * Получение экземпляра контейнера сервисов
+     *
+     * @return $this|null
+     * @throws ObjectNotFoundException
+     * @throws NotFoundExceptionInterface
+     */
+    public static function getInstance(): static|null
+    {
+        return ServiceLocator::getInstance()->get('sholokhov.exchange.container') ?: null;
+    }
 
     /**
      * Получение реализации по названию.
@@ -57,6 +74,21 @@ class Container
     public function has(string $name): bool
     {
         return isset($this->bindings[$name]);
+    }
+
+    /**
+     * Указание конкретной реализации
+     *
+     * @param string $name
+     * @param object $concrete
+     * @return $this
+     */
+    public function set(string $name, object $concrete): static
+    {
+       $this->bindings[$name] = fn() => $concrete;
+       $this->instances[$name] = $concrete;
+
+       return $this;
     }
 
     /**
