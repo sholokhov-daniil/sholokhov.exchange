@@ -4,6 +4,7 @@ import GeneralBlock from "@/components/general-block.vue";
 import TargetBlock from "@/components/target-block.vue";
 import SourceBlock from "@/components/source-block.vue";
 import MapBlock from "@/components/map-block.vue";
+import {runAction} from "utils";
 import {registration} from "@/view";
 
 const props = defineProps({
@@ -32,22 +33,17 @@ onMounted(() => {
       'TEST_1',
       () => Component
   )
-
-  initEvents();
 });
 
-const initEvents = () => {
-  const form = document.querySelector(props.formContainer);
-  if (form) {
-    form.addEventListener('submit', (e) => submit(e));
-  }
-}
-
-const submit = (event) => {
-  event.preventDefault();
-  event.stopImmediatePropagation();
-
+const save = () => {
   // BX.adminPanel.closeWait()
+
+  runAction(
+      'sholokhov:exchange.SettingsController.create',
+      {
+        fields: data.form
+      }
+  )
 }
 
 // const updateUserData = () => {
@@ -75,5 +71,13 @@ const submit = (event) => {
 
   <Teleport v-if="teleport.map" :to="teleport.map">
     <MapBlock v-model="data.form.map" :target="data.form?.target" />
+  </Teleport>
+
+  <Teleport to='#sholokhov-button-pannel'>
+    <div class="adm-detail-content-btns-wrap" style="left: 0px;">
+      <div class="adm-detail-content-btns">
+        <button type="button" class="ui-btn ui-btn-success" @click="save">Сохранить</button>
+      </div>
+    </div>
   </Teleport>
 </template>

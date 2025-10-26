@@ -10,9 +10,6 @@ use Sholokhov\Exchange\UI\EntitySelector\UserFieldProvider;
 
 /**
  * Производит формирование данных свойств, для базового поля справочника
- *
- * @since 1.2.0
- * @version 1.2.0
  */
 class Base
 {
@@ -21,10 +18,7 @@ class Base
      *
      * @param int $entityId
      * @return array[]
-     * @throws SystemException
      * @throws LoaderException
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function __invoke(int $entityId): array
     {

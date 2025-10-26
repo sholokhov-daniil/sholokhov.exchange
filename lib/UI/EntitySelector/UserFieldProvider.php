@@ -2,16 +2,7 @@
 
 namespace Sholokhov\Exchange\UI\EntitySelector;
 
-use Bitrix\Iblock\PropertyTable;
-use Bitrix\Main\Application;
-use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Context;
-use Bitrix\Main\Diag\Debug;
-use Bitrix\Main\Loader;
-use Bitrix\Main\LoaderException;
-use Bitrix\Main\Localization\Loc;
-use Bitrix\Main\ObjectPropertyException;
-use Bitrix\Main\SystemException;
 use Bitrix\UI\EntitySelector\BaseProvider;
 use Bitrix\UI\EntitySelector\Dialog;
 use Bitrix\UI\EntitySelector\Item;
@@ -172,7 +163,6 @@ final class UserFieldProvider extends BaseProvider
         $iterator = $USER_FIELD_MANAGER->GetUserFields($this->getEntityId(), 0, $lang);
 
         return array_filter($iterator, function($field)  {
-            Debug::dumpToFile($field);
             if (($type = $this->getOption('propertyType')) && $field['USER_TYPE_ID'] <> $type) {
                 return false;
             }

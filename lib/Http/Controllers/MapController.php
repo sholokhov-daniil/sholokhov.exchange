@@ -13,9 +13,6 @@ use Throwable;
 
 /**
  * Контроллер карты обмена
- *
- * @since 1.2.0
- * @version 1.2.0
  */
 final class MapController extends Controller
 {
@@ -23,8 +20,6 @@ final class MapController extends Controller
      * Конфигурация обработчиков контроллера
      *
      * @return array[]
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function configureActions(): array
     {
@@ -43,8 +38,6 @@ final class MapController extends Controller
      *
      * @param string $target Цель обмена (куда импортируются данные)
      * @return array
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function getTemplatesAction(string $target): array
     {
@@ -82,8 +75,6 @@ final class MapController extends Controller
      * @param string $type
      * @param array $options
      * @return array
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function getToSelectorOptionsAction(string $target, string $entityId, string $type, array $options = []): array
     {

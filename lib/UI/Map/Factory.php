@@ -2,7 +2,6 @@
 
 namespace Sholokhov\Exchange\UI\Map;
 
-use Bitrix\Main\Diag\Debug;
 use Sholokhov\Exchange\Helper\Helper;
 use Sholokhov\Exchange\Helper\Config;
 

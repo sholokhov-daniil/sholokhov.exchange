@@ -26,17 +26,17 @@ onMounted(() => {
 
 watch(
     () => props.target.entityId,
-    (newValue) => query(props.target?.type, newValue, props.type)
+    (newValue) => query(props.target?.type || '', newValue, props.type)
 );
 
 watch(
     () => props.target.type,
-    (newValue) => query(newValue, props.target?.entityId, props.type)
+    (newValue) => query(newValue, props.target?.entityId || '', props.type)
 );
 
 watch(
     () => props.type,
-    (newValue) => query(props.target?.type, protps.target?.entityId, newValue)
+    (newValue) => query(props.target?.type || '', protps.target?.entityId || '', newValue)
 )
 
 const query = (target, entityID, type) => {

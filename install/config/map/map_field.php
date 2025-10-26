@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'ENTITY_CODE' => 'map_field',
+    'TARGET_CODE' => 'map_field',
+    'MAP_CODE' => 'map_field',
     'SETTINGS' => json_encode(
         [
             [

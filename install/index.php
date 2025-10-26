@@ -32,8 +32,6 @@ class sholokhov_exchange extends CModule
         TargetMapTable::class,
     ];
 
-    private Connection $connection;
-
     public function __construct()
     {
         $arModuleVersion = [];
@@ -46,8 +44,6 @@ class sholokhov_exchange extends CModule
             $this->MODULE_VERSION = $arModuleVersion['VERSION'];
             $this->MODULE_VERSION_DATE = $arModuleVersion['VERSION_DATE'];
         }
-
-        $this->connection = Application::getConnection();
 
         $this->MODULE_NAME = Loc::getMessage("SHOLOKHOV_EXCHANGE_MODULE_NAME");
         $this->MODULE_DESCRIPTION = Loc::getMessage("SHOLOKHOV_EXCHANGE_MODULE_DESCRIPTION");
@@ -142,16 +138,21 @@ class sholokhov_exchange extends CModule
 
     private function migration(): void
     {
-        $this->fillTable('sholokhov_exchange_entity_type', $this->getConfigPath('types'));
-        $this->fillTable('sholokhov_exchange_entities', $this->getConfigPath('entities'));
-        $this->fillTable('sholokhov_exchange_target_map', $this->getConfigPath('map'));
+        $this->fillTable(EntityTypeTable::class, $this->getConfigPath('types'));
+        $this->fillTable(EntityTable::class, $this->getConfigPath('entities'));
+        $this->fillTable(TargetMapTable::class, $this->getConfigPath('map'));
     }
 
-    private function fillTable(string $table, string $path): void
+    /**
+     * @param class-string<\Bitrix\Main\ORM\Data\DataManager> $dataManager
+     * @param string $path
+     * @return void
+     */
+    private function fillTable(string $dataManager, string $path): void
     {
         $this->migrationFromConfig(
             $path,
-            fn(array $config) => $this->connection->add($table, $config)
+            fn(array $config) => $dataManager::add($config)
         );
     }
 

@@ -4,7 +4,6 @@ namespace Sholokhov\Exchange\UI\EntitySelector\IBlock;
 
 use Bitrix\Iblock\PropertyTable;
 use Bitrix\Main\ArgumentException;
-use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;

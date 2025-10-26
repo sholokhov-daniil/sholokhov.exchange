@@ -14,24 +14,16 @@ use Bitrix\Main\SystemException;
  * Источники данных используются в административной части сайта
  *
  * @final
- * @since 1.2.0
- * @version 1.2.0
  */
 final class EntityTable extends DataManager
 {
     /**
      * Уникальный символьный код источника данных
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_CODE = "CODE";
 
     /**
      * Сущность позволяющая работать с источником данных
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_ENTITY = "ENTITY";
 
@@ -40,9 +32,6 @@ final class EntityTable extends DataManager
      *
      * Наименование выводится в визуальной части.
      * В данном свойстве хранится код из языкового файла {@see Loc::getMessage()}
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_NAME = "NAME";
 
@@ -51,25 +40,16 @@ final class EntityTable extends DataManager
      *
      * Описание выводится в визуальной части.
      * В данном свойстве хранится код из языкового файла {@see Loc::getMessage()}
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_DESCRIPTION = "DESCRIPTION";
 
     /**
      * Тип сущности(группа)
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_TYPE_CODE = "TYPE_CODE";
 
     /**
      * Привязка к таблице типа сущности {@see EntityTypeTable}
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_TYPE = "TYPE";
 
@@ -77,9 +57,6 @@ final class EntityTable extends DataManager
      * Название таблицы
      *
      * @return string
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public static function getTableName(): string
     {
@@ -92,8 +69,6 @@ final class EntityTable extends DataManager
      * @return array
      *
      * @throws SystemException
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public static function getMap(): array
     {

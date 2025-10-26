@@ -9,16 +9,11 @@ use Bitrix\Main\ORM\Data\DataManager;
  * Хранит доступные типы сущностей
  *
  * @final
- * @since 1.2.0
- * @version 1.2.0
  */
 final class EntityTypeTable extends DataManager
 {
     /**
      * Уникальный символьный код типа сущности
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_CODE = "CODE";
 
@@ -26,9 +21,6 @@ final class EntityTypeTable extends DataManager
      * Название таблицы
      *
      * @return string
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public static function getTableName(): string
     {
@@ -39,9 +31,6 @@ final class EntityTypeTable extends DataManager
      * Описание столбцов с данными
      *
      * @return array
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public static function getMap(): array
     {

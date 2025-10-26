@@ -2,7 +2,6 @@
 
 namespace Sholokhov\Exchange\ORM\UI;
 
-use Sholokhov\Exchange\Helper\Json;
 use Sholokhov\Exchange\ORM\Settings\EntityTable;
 
 use Bitrix\Main\ArgumentException;
@@ -15,56 +14,36 @@ use Bitrix\Main\SystemException;
  * Хранилище связей сущностей и свойств описывающих карту
  *
  * @final
- * @since 1.2.0
- * @version 1.2.0
  */
 final class TargetMapTable extends DataManager
 {
     /**
      * Идентификатор записи
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_ID = "ID";
 
     /**
      * Принадлежность к обмену
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_TARGET_CODE = "TARGET_CODE";
 
     /**
      * Связь с записью сущности обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_TARGET = "TARGET";
 
     /**
      * Принадлежность к свойству карты
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_MAP_CODE = "MAP_CODE";
 
     /**
      * Связь с записью сущности карты
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_MAP = "MAP";
 
     /**
      * @return string
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public static function getTableName(): string
     {
@@ -77,9 +56,6 @@ final class TargetMapTable extends DataManager
      * @return array
      * @throws SystemException
      * @throws ArgumentException
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public static function getMap(): array
     {

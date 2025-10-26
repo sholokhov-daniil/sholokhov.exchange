@@ -22,7 +22,7 @@
         :target="target"
     />
 
-    <GridRow style="border-bottom: 1px solid silver"></GridRow>
+    <GridRow class="row-split" ></GridRow>
   </template>
 </template>
 
@@ -54,6 +54,10 @@ const templates = computed(() => data.templates[props.target?.type] || []);
 watch(
     () => props.target.type,
     (newValue) => {
+      if (model) {
+        model.value = [];
+      }
+
       if (!newValue) {
         showEmptyError();
         return;
@@ -96,3 +100,9 @@ const add = () => {
   });
 }
 </script>
+
+<style scoped>
+.row-split :deep(td) {
+  border-bottom: 1px solid silver;
+}
+</style>
