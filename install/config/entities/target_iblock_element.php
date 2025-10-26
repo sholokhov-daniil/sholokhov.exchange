@@ -1,8 +1,8 @@
 <?php
 
 return [
-    "CODE" => 'target_iblock_element',
+    "CODE" => 'target_import_iblock_element',
     "TYPE_CODE" => 'target',
-    "ENTITY" => 'Sholokhov\\Exchange\\Target\\IBlock\\Element',
+    "ENTITY" => 'target.import.iblock.element',
     "NAME" => 'SHOLOKHOV_EXCHANGE_TARGET_IBLOCK_ELEMENT_NAME',
 ];

@@ -23,6 +23,8 @@ class TargetServiceProvider
         TargetContainer::bind('import.catalog.product.simple', Target\Import\IBlock\Catalog\SimpleProduct::class);
         TargetContainer::bind('import.hl.element', Target\Import\Highloadblock\Element::class);
 
+        TargetContainer::bind('export.xml', Target\Export\Xml::class);
+
         // TODO: Добавить событие, для кастомных
     }
 }

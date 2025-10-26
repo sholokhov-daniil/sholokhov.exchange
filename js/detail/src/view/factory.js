@@ -14,17 +14,17 @@ export const internalView = (template) => {
             return defineAsyncComponent(() => import('@/components/source/simple-json-file.vue'));
         case 'source_simple_xml':
             return defineAsyncComponent(() => import('@/components/source/simple-xml.vue'));
-        case 'target_hl_element':
+        case 'target_import_hl_element':
             return defineAsyncComponent(() => import('@/components/target/hl-element.vue'));
-        case 'target_iblock_element':
+        case 'target_import_iblock_element':
             return defineAsyncComponent(() => import('@/components/target/iblock-element.vue'));
-        case 'target_iblock_element_simple_product':
+        case 'target_import_iblock_element_simple_product':
             return defineAsyncComponent(() => import('@/components/target/iblock-simple-product.vue'))
-        case 'target_iblock_property_enum_value':
+        case 'target_import_iblock_property_enum_value':
             return defineAsyncComponent(() => import('@/components/target/iblock-property-enum.vue'));
-        case 'target_iblock_section':
+        case 'target_import_iblock_section':
             return defineAsyncComponent(() => import('@/components/target/iblock-section.vue'));
-        case 'target_uf_enum_value':
+        case 'target_import_uf_enum_value':
             return defineAsyncComponent(() => import('@/components/target/uf-enum-value.vue'));
         default:
             return null;
