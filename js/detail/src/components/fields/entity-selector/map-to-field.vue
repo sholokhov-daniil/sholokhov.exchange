@@ -21,7 +21,7 @@ const data = reactive({
 });
 
 onMounted(() => {
-  query(props.target?.type, props.target?.entityId, props.type)
+  query(props.target?.type, props.target?.entityId || 0, props.type)
 })
 
 watch(
@@ -31,12 +31,12 @@ watch(
 
 watch(
     () => props.target.type,
-    (newValue) => query(newValue, props.target?.entityId || '', props.type)
+    (newValue) => query(newValue, props.target?.entityId || 0, props.type)
 );
 
 watch(
     () => props.type,
-    (newValue) => query(props.target?.type || '', protps.target?.entityId || '', newValue)
+    (newValue) => query(props.target?.type || '', protps.target?.entityId || 0, newValue)
 )
 
 const query = (target, entityID, type) => {
@@ -44,7 +44,7 @@ const query = (target, entityID, type) => {
       'sholokhov:exchange.MapController.getToSelectorOptions',
       {
         target: target,
-        entityId: entityID,
+        entityId: Number(entityID) || 0,
         type: type
       }
   )

@@ -2,10 +2,11 @@
 
 namespace Sholokhov\Exchange\Http\Controllers;
 
+use Sholokhov\Exchange\Container\Container;
+use Sholokhov\Exchange\UI\Configuration\Repository\EntityRepository;
 use Throwable;
 
 use Sholokhov\Exchange\Http\Middleware\ModuleRightMiddleware;
-use Sholokhov\Exchange\ORM\Settings\EntityTable;
 use Sholokhov\Exchange\ORM\UI\EntityUITable;
 
 use Bitrix\Main\Error;
@@ -14,8 +15,6 @@ use Bitrix\Main\Localization\Loc;
 
 /**
  * @internal
- * @since 1.2.0
- * @version 1.2.0
  */
 final class EntityController extends Controller
 {
@@ -23,9 +22,6 @@ final class EntityController extends Controller
      * Конфигурация обработчиков запроса
      *
      * @return array[]
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function configureActions(): array
     {
@@ -44,21 +40,23 @@ final class EntityController extends Controller
      *
      * @param string $code
      * @return array
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function getByTypeAction(string $code): array
     {
         $result = [];
 
         try {
-            $result = EntityTable::getList([
-                'filter' => [
-                    EntityTable::PC_TYPE_CODE => $code
-                ],
-                'cache' => ['ttl' => 36000]
-            ])->fetchAll();
+            /** @var EntityRepository $repository */
+            $repository = Container::getInstance()->get("ui.$code.repository");
+            $iterator = $repository->getAll();
+
+            foreach ($iterator as $config) {
+                $result[] = [
+                    'entity' => $config->getEntity(),
+                    'name' => $config->getName(),
+                    'description' => $config->getDescription(),
+                ];
+            }
         } catch (Throwable) {
             $this->addError(new Error(Loc::getMessage('SHOLOKHOV_EXCHANGE_CONTROLLER_ENTITY_EXCEPTION'), 500));
         }
@@ -71,9 +69,6 @@ final class EntityController extends Controller
      *
      * @param string $code
      * @return array
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function getFieldsAction(string $code): array
     {

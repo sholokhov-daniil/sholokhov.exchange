@@ -2,8 +2,12 @@
 
 namespace Sholokhov\Exchange\Providers;
 
+use Sholokhov\Exchange\Container\Container;
 use Sholokhov\Exchange\Target;
 use Sholokhov\Exchange\Facade\TargetContainer;
+use Sholokhov\Exchange\UI\Configuration\Entity\EntityConfig;
+use Sholokhov\Exchange\UI\Configuration\Entity\TargetConfig;
+use Sholokhov\Exchange\UI\Configuration\Repository\EntityRepository;
 
 /**
  * Регистрация обменов
@@ -24,6 +28,8 @@ class TargetServiceProvider
         TargetContainer::bind('import.hl.element', Target\Import\Highloadblock\Element::class);
 
         TargetContainer::bind('export.xml', Target\Export\Xml::class);
+
+        Container::getInstance()->set('ui.target.repository', new EntityRepository('target', TargetConfig::class));
 
         // TODO: Добавить событие, для кастомных
     }

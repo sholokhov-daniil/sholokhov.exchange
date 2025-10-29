@@ -2,29 +2,29 @@ import { defineAsyncComponent } from 'vue';
 
 export const internalView = (template) => {
     switch (template) {
-        case 'map_field':
+        case 'field.base':
             return defineAsyncComponent(() => import('@/components/map/base-field.vue'));
-        case 'source_db_xml':
+        case 'source.xml.db':
             return defineAsyncComponent(() => import('@/components/source/bd-xml.vue'));
-        case 'source_iblock_element':
+        case 'source.iblock.element':
             return  defineAsyncComponent(() => import('@/components/source/iblock-element.vue'));
-        case 'source_simple_csv':
+        case 'source.csv':
             return defineAsyncComponent(() => import('@/components/source/simple-csv.vue'));
-        case 'source_simple_json_file':
+        case 'source.json.file':
             return defineAsyncComponent(() => import('@/components/source/simple-json-file.vue'));
-        case 'source_simple_xml':
+        case 'source.xml.simple':
             return defineAsyncComponent(() => import('@/components/source/simple-xml.vue'));
-        case 'target_import_hl_element':
+        case 'target.import.hl.element':
             return defineAsyncComponent(() => import('@/components/target/hl-element.vue'));
-        case 'target_import_iblock_element':
+        case 'target.import.iblock.element':
             return defineAsyncComponent(() => import('@/components/target/iblock-element.vue'));
-        case 'target_import_iblock_element_simple_product':
+        case 'target.import.catalog.product.simple':
             return defineAsyncComponent(() => import('@/components/target/iblock-simple-product.vue'))
-        case 'target_import_iblock_property_enum_value':
+        case 'target.import.iblock.props.enum':
             return defineAsyncComponent(() => import('@/components/target/iblock-property-enum.vue'));
-        case 'target_import_iblock_section':
+        case 'taregt.import.iblock.section':
             return defineAsyncComponent(() => import('@/components/target/iblock-section.vue'));
-        case 'target_import_uf_enum_value':
+        case 'target.import.uf.enum':
             return defineAsyncComponent(() => import('@/components/target/uf-enum-value.vue'));
         default:
             return null;

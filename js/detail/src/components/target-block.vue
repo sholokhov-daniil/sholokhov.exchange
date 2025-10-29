@@ -14,8 +14,8 @@ const fieldApi = computed(() => ({
 const normalizeTypeResponse = (response) => {
   if (Array.isArray(response.data)) {
     response.data = response.data.map(type => ({
-      value: type.CODE,
-      name: type.NAME,
+      value: type.entity,
+      name: type.name,
     }));
   }
 

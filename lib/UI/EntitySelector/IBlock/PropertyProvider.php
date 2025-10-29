@@ -17,50 +17,27 @@ use Bitrix\UI\EntitySelector\Tab;
 
 /**
  * @internal
- * @since 1.2.0
- * @version 1.2.0
  */
 final class PropertyProvider extends BaseProvider
 {
     /**
      * ID провайдера сущности
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const ENTITY_ID = 'sholokhov-exchange-iblock-property';
 
     /**
      * Ограничение количества отображаемых элементов в диалоге
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     protected const ITEM_LIMIT = 100;
 
-    /**
-     * @since 1.2.0
-     * @version 1.2.0
-     */
     public const QUERY_SEARCH = 'S';
 
-    /**
-     * @since 1.2.0
-     * @version 1.2.0
-     */
     public const QUERY_SUBSTRING = 'L';
 
-    /**
-     * @since 1.2.0
-     * @version 1.2.0
-     */
     public const QUERY_BEGIN = 'B';
 
     /**
      * @param array $options
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function __construct(array $options = [])
     {
@@ -74,8 +51,6 @@ final class PropertyProvider extends BaseProvider
      * @return bool
      *
      * @throws LoaderException
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function isAvailable(): bool
     {
@@ -89,8 +64,6 @@ final class PropertyProvider extends BaseProvider
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function getItems(array $ids): array
     {
@@ -112,13 +85,8 @@ final class PropertyProvider extends BaseProvider
      * @param Dialog $dialog
      * @return void
      * @throws ArgumentException
-     * @throws LoaderException
      * @throws ObjectPropertyException
      * @throws SystemException
-     * @throws \DateInvalidOperationException
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function fillDialog(Dialog $dialog): void
     {
@@ -156,12 +124,8 @@ final class PropertyProvider extends BaseProvider
      * @return void
      *
      * @throws ArgumentException
-     * @throws LoaderException
      * @throws ObjectPropertyException
      * @throws SystemException
-     * @throws \DateInvalidOperationException
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function doSearch(SearchQuery $searchQuery, Dialog $dialog): void
     {
@@ -195,8 +159,6 @@ final class PropertyProvider extends BaseProvider
      * @throws ArgumentException
      * @throws ObjectPropertyException
      * @throws SystemException
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function query(array $parameters = []): array
     {
@@ -218,9 +180,6 @@ final class PropertyProvider extends BaseProvider
     /**
      * @param array $item
      * @return Item
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function makeItem(array $item): Item
     {
@@ -240,9 +199,6 @@ final class PropertyProvider extends BaseProvider
     /**
      * @param SearchQuery $searchQuery
      * @return array|string[]|null
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function getQueryFilter(SearchQuery $searchQuery): ?array
     {
@@ -269,9 +225,6 @@ final class PropertyProvider extends BaseProvider
     /**
      * @param Dialog $dialog
      * @return void
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function addTab(Dialog $dialog): void
     {
@@ -295,9 +248,6 @@ final class PropertyProvider extends BaseProvider
 
     /**
      * @return string[]
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function getTabs()
     {
@@ -306,9 +256,6 @@ final class PropertyProvider extends BaseProvider
 
     /**
      * @return string
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function getTabIcon(): string
     {
@@ -319,9 +266,6 @@ HTML;
 
     /**
      * @return int
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function getIBlockID(): int
     {
@@ -330,9 +274,6 @@ HTML;
 
     /**
      * @return string
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function getNameTemplate(): string
     {
@@ -341,9 +282,6 @@ HTML;
 
     /**
      * @return string
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function getQueryMethod(): string
     {
@@ -353,9 +291,6 @@ HTML;
     /**
      * @param array $options
      * @return array
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function normalizeOptions(array $options): array
     {

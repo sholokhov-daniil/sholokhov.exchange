@@ -96,7 +96,7 @@ const add = () => {
   }
 
   model.value.push({
-    type: templates.value[0]?.code || ''
+    type: templates.value[0]?.entity || ''
   });
 }
 </script>

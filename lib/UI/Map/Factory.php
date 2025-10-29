@@ -3,23 +3,18 @@
 namespace Sholokhov\Exchange\UI\Map;
 
 use Sholokhov\Exchange\Helper\Helper;
-use Sholokhov\Exchange\Helper\Config;
+use Sholokhov\Exchange\UI\Configuration\Facade\TargetRepository;
 
 use Bitrix\Main\Event;
 use Bitrix\Main\EventResult;
 
 /**
  * Производит создание провайдера данных, для UI карты обмена
- *
- * @since 1.2.0
- * @version 1.2.0
  */
 readonly class Factory
 {
     /**
      * @param string $target Код типа обмена
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function __construct(private readonly string $target)
     {
@@ -31,16 +26,20 @@ readonly class Factory
      * @param int $entityId
      * @param string $field
      * @return callable|null
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public function create(int $entityId, string $field): ?callable
     {
-        $iterator = Config::get("map", []);
+        $config = TargetRepository::get($this->target);
+
+        if (!$config) {
+            return null;
+        }
+
+        $options = $config->getFieldOptions();
 
         return match(true) {
-            isset($iterator[$this->target][$field]) => new $iterator[$this->target][$field]($this->target),
-            isset($iterator[$this->target]['default']) => new $iterator[$this->target]['default']($this->target),
+            isset($options[$field]) => new $options[$field]($this->target),
+            isset($options['default']) => new $options['default']($this->target),
             default => $this->createExternal($entityId, $field),
         };
     }
@@ -51,8 +50,6 @@ readonly class Factory
      * @param int $entityId
      * @param string $field
      * @return callable|null
-     * @since 1.2.0
-     * @version 1.2.0
      */
     private function createExternal(int $entityId, string $field): ?callable
     {

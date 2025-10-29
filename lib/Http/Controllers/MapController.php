@@ -8,6 +8,7 @@ use Bitrix\Main\Localization\Loc;
 use Sholokhov\Exchange\Http\Middleware\ModuleRightMiddleware;
 use Sholokhov\Exchange\ORM\Settings\EntityTable;
 use Sholokhov\Exchange\ORM\UI\TargetMapTable;
+use Sholokhov\Exchange\UI\Configuration\Facade\TargetRepository;
 use Sholokhov\Exchange\UI\Map\Factory;
 use Throwable;
 
@@ -44,22 +45,19 @@ final class MapController extends Controller
         $result = [];
 
         try {
-            $iterator = TargetMapTable::query()
-                ->where(TargetMapTable::PC_TARGET_CODE, $target)
-                ->addSelect(TargetMapTable::PC_ID)
-                ->addSelect(TargetMapTable::PC_MAP_CODE)
-                ->addSelect(TargetMapTable::PC_MAP . "." . EntityTable::PC_NAME, 'NAME')
-                ->setCacheTtl(360000)
-                ->exec();
-
-            while ($item = $iterator->fetch()) {
-                $result[] = [
-                    'id' => (int)$item[TargetMapTable::PC_ID],
-                    'code' => $item[TargetMapTable::PC_MAP_CODE],
-                    'name' => $item['NAME'],
-                ];
+            if (!TargetRepository::has($target)) {
+                return [];
             }
 
+            $config = TargetRepository::get($target);
+
+            foreach ($config->getFields() as $field) {
+                $result[] = [
+                    'entity' => $field->getEntity(),
+                    'name' => $field->getName(),
+                    'description' => $field->getDescription(),
+                ];
+            }
         } catch (Throwable $throwable) {
             $this->addError(new Error(Loc::getMessage('SHOLOKHOV_EXCHANGE_CONTROLLER_MAP_EXCEPTION'), 500));
         }
@@ -76,7 +74,7 @@ final class MapController extends Controller
      * @param array $options
      * @return array
      */
-    public function getToSelectorOptionsAction(string $target, string $entityId, string $type, array $options = []): array
+    public function getToSelectorOptionsAction(string $target, int $entityId, string $type, array $options = []): array
     {
         $result = [];
 

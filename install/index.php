@@ -26,10 +26,7 @@ class sholokhov_exchange extends CModule
      */
     private array $orm = [
         ResultTable::class,
-        EntityTypeTable::class,
-        EntityTable::class,
         ExchangeTable::class,
-        TargetMapTable::class,
     ];
 
     public function __construct()
@@ -125,8 +122,6 @@ class sholokhov_exchange extends CModule
 
             $orm::getEntity()->createDbTable();
         }
-
-        $this->migration();
     }
 
     public function UnInstallDB(): void
@@ -134,13 +129,6 @@ class sholokhov_exchange extends CModule
         $this->unRegistrationEvents();
         $this->dropTables();
         $this->Remove();
-    }
-
-    private function migration(): void
-    {
-        $this->fillTable(EntityTypeTable::class, $this->getConfigPath('types'));
-        $this->fillTable(EntityTable::class, $this->getConfigPath('entities'));
-        $this->fillTable(TargetMapTable::class, $this->getConfigPath('map'));
     }
 
     /**

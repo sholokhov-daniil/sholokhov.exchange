@@ -3,22 +3,22 @@
 use Sholokhov\Exchange\UI\Map;
 
 return [
-    'target_import_hl_element' => [
+    'target.import.hl.element' => [
         'default' => Map\Handbook\Base::class,
     ],
-    'target_import_iblock_element' => [
+    'target.import.iblock.element' => [
+        'default' => Map\IBlock\Element::class,
+    ],
+    'target.import.catalog.product.simple' => [
+        'default' => Map\IBlock\Element::class,
+    ],
+    'target.import.iblock.props.enum' => [
         'default' => '',
     ],
-    'target_import_iblock_element_simple_product' => [
+    'taregt.import.iblock.section' => [
         'default' => '',
     ],
-    'target_import_iblock_property_enum_value' => [
-        'default' => '',
-    ],
-    'target_import_iblock_section' => [
-        'default' => '',
-    ],
-    'target_import_uf_enum_value' => [
+    'target.import.uf.enum' => [
         'default' => '',
     ]
 ];
