@@ -5,10 +5,7 @@
       Тип: {{ target }}<br><br>
       Шаблоны: {{ data.templates }} <br><br>
 
-      <template v-if="target">
-        Тут выводим список доступных типов карт
-        <button type="button" @click="add">Добавить</button>
-      </template>
+      <button v-if="target?.type" type="button" @click="add">Добавить</button>
       <Alert v-else v-for="message in data.errors" :key="message" type="danger">
         {{ message }}
       </Alert>
@@ -16,10 +13,11 @@
   </GridRow>
 
   <template v-for="(field, index) in model" :key="index">
-    <DynamicFields
+    <MapFieldSelector
         v-model="model[index]"
-        :type="field.type"
         :target="target"
+        :templates="templates"
+        @remove="model.splice(index, 1)"
     />
 
     <GridRow class="row-split" ></GridRow>
@@ -30,7 +28,7 @@
 import {defineModel, defineProps, reactive, watch, onMounted, computed} from 'vue';
 import {Alert, GridRow} from "ui";
 import {runAction} from "utils";
-import DynamicFields from "@/components/dynamic-fields.vue";
+import MapFieldSelector from "@/components/map-field-selector.vue";
 
 const model = defineModel({default: []});
 
@@ -95,9 +93,7 @@ const add = () => {
     model.value = [];
   }
 
-  model.value.push({
-    type: templates.value[0]?.entity || ''
-  });
+  model.value.unshift({});
 }
 </script>
 

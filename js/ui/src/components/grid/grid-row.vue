@@ -1,10 +1,10 @@
 <template>
   <RowTable v-bind="$attrs">
-    <ColumnTitleTable>
+    <ColumnTitleTable v-bind="titleAttrs">
       <slot name="title"></slot>
     </ColumnTitleTable>
 
-    <ColumnValueTable>
+    <ColumnValueTable v-bind="valueAttrs">
       <slot name="content"></slot>
     </ColumnValueTable>
   </RowTable>
@@ -14,4 +14,9 @@
 import ColumnTitleTable from "../table/column-title-table.vue";
 import ColumnValueTable from "../table/column-value-table.vue";
 import RowTable from "../table/row-table.vue";
+
+defineProps({
+  titleAttrs: {type: Object, default: ({})},
+  valueAttrs: {type: Object, default: ({})},
+});
 </script>

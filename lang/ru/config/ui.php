@@ -1,5 +1,7 @@
 <?php
 
+$MESS['SHOLOKHOV_EXCHANGE_MAP_FIELD_NAME'] = "Базовый";
+
 $MESS['SHOLOKHOV_EXCHANGE_SOURCE_SIMPLE_XML_NAME'] = 'Быстрый XML';
 $MESS['SHOLOKHOV_EXCHANGE_SOURCE_SIMPLE_XML_DESC'] = 'Производит чтение XML файла в оперативной памяти, но при этом быстро работает.';
 $MESS['SHOLOKHOV_EXCHANGE_SOURCE_DB_XML_NAME'] = 'Медленный XML';

@@ -1,7 +1,7 @@
 <script setup>
 import {computed, defineModel} from 'vue';
 import {getMessage} from "utils";
-import {Select as SelectField, GridRow} from 'ui';
+import {Select as SelectField, GridRow, Alert} from 'ui';
 import DynamicFields from "@/components/dynamic-fields.vue";
 
 const model = defineModel();
@@ -24,6 +24,14 @@ const normalizeTypeResponse = (response) => {
 </script>
 
 <template>
+  <GridRow>
+    <template #content>
+      <Alert type="warning">
+        При изменении типа происходит сброс карты обмена
+      </Alert>
+    </template>
+  </GridRow>
+
   <GridRow>
     <template #title>{{ getMessage('SHOLOKHOV_EXCHANGE_DETAIL_ENTITY_UI_TARGET_TITLE_FIELD_TYPE') }}</template>
     <template #content>

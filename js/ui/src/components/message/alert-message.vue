@@ -1,3 +1,13 @@
+<template>
+  <div class="ui-alert" :class="[alertSize, alertType, alertIcon, alertCloseButton]">
+    <span class="ui-alert-message">
+      <strong v-if="alert">Внимание!</strong>
+      <slot></slot>
+    </span>
+    <span v-if="alertCloseButton" class="ui-alert-close-btn"></span>
+  </div>
+</template>
+
 <script setup>
 import {defineProps, onMounted, computed, ref} from 'vue';
 
@@ -60,13 +70,3 @@ onMounted(() => {
   BX.loadExt('ui.alerts');
 })
 </script>
-
-<template>
-  <div class="ui-alert" :class="[alertSize, alertType, alertIcon, alertCloseButton]">
-    <span class="ui-alert-message">
-      <strong v-if="alert">Внимание!</strong>
-      <slot></slot>
-    </span>
-    <span v-if="alertCloseButton" class="ui-alert-close-btn"></span>
-  </div>
-</template>
