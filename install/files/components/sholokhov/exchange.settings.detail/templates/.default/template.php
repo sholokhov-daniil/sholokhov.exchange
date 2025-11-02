@@ -31,13 +31,11 @@ $control->Begin();
             echo call_user_func($tab['RENDER'], $tab);
         }
     }
-    
-    $control->Buttons([
-        'btnSave' => true,
-        'btnApply' => false,
-        'btnSaveAndAdd' => false,
-        'ajaxMode' => true,
-    ]);
+
+    $control->EndTab();
+    ?>
+    <div id="sholokhov-button-pannel"></div>
+    <?php
     $control->End();
     ?>
 </form>
@@ -48,18 +46,18 @@ $control->Begin();
 
         // BX.loadExt('sholokhov.exchange.detail')
         //     .then(() => {
-                Sholokhov.Exchange.Detail.mounted('#test', <?= json_encode($arResult['JS_DATA']['OPTIONS']) ?>);
+        Sholokhov.Exchange.Detail.mounted('#test', <?= json_encode($arResult['JS_DATA']['OPTIONS']) ?>);
 
 
 
-                //const detail = new BX.Sholokhov.Exchange.Detail.Detail(
-                //    <?php //= json_encode($arResult['JS_DATA']['DATA']) ?>//,
-                //    <?php //= json_encode($arResult['JS_DATA']['OPTIONS']) ?>
-                //);
-                //detail.view();
-            // })
-            // .catch(() => {
-            //     alert('error')
-            // })
+        //const detail = new BX.Sholokhov.Exchange.Detail.Detail(
+        //    <?php //= json_encode($arResult['JS_DATA']['DATA']) ?>//,
+        //    <?php //= json_encode($arResult['JS_DATA']['OPTIONS']) ?>
+        //);
+        //detail.view();
+        // })
+        // .catch(() => {
+        //     alert('error')
+        // })
     });
 </script>
