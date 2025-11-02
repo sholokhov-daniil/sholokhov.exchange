@@ -1,15 +1,6 @@
 <template>
   <GridRow>
     <template #title>
-      {{ getMessage('SHOLOKHOV_EXCHANGE_DETAIL_ENTITY_UI_TARGET_TITLE_FIELD_DEACTIVATE') }}
-    </template>
-    <template #content>
-      <CheckBox v-model="model.deactivate" name="deactivate" />
-    </template>
-  </GridRow>
-
-  <GridRow>
-    <template #title>
       {{ getMessage('SHOLOKHOV_EXCHANGE_DETAIL_UI_TITLE_RENDER_IBLOCK_SELECT_IBLOCK') }}
     </template>
     <template #content>
@@ -17,6 +8,15 @@
           v-model="model.entityId"
           :options="options"
       />
+    </template>
+  </GridRow>
+
+  <GridRow>
+    <template #title>
+      {{ getMessage('SHOLOKHOV_EXCHANGE_DETAIL_ENTITY_UI_TARGET_TITLE_FIELD_DEACTIVATE') }}
+    </template>
+    <template #content>
+      <CheckBox v-model="model.deactivate" name="deactivate" />
     </template>
   </GridRow>
 </template>

@@ -2,7 +2,7 @@
 import {computed, defineModel} from 'vue';
 import {getMessage} from "utils";
 import {Select as SelectField, GridRow, Alert} from 'ui';
-import DynamicFields from "@/components/dynamic-fields.vue";
+import TargetField from "@/components/fields/target-field.vue";
 
 const model = defineModel();
 const fieldApi = computed(() => ({
@@ -40,5 +40,5 @@ const normalizeTypeResponse = (response) => {
     </template>
   </GridRow>
 
-  <DynamicFields v-model="model" :type="model.type" />
+  <TargetField v-model="model" :type="model.type" />
 </template>

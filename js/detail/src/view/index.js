@@ -1,11 +1,11 @@
-export const view = (template, data) => {
+export const view = (target, data) => {
     const registry = Sholokhov.Exchange.Detail.entityRegistry;
 
-    if (!registry.has(template)) {
+    if (!registry.has(target.type)) {
         return;
     }
 
-    const render = registry.get(template);
+    const render = registry.get(target.type);
 
     render(data);
 }

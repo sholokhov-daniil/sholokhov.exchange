@@ -2,7 +2,7 @@
 import {computed, defineModel} from 'vue';
 import {getMessage} from "utils";
 import {Select as SelectField, GridRow} from 'ui';
-import DynamicFields from "@/components/dynamic-fields.vue";
+import SourceField from "@/components/fields/source-field.vue";
 
 const model = defineModel();
 
@@ -32,5 +32,5 @@ const normalizeTypeResponse = (response) => {
     </template>
   </GridRow>
 
-  <DynamicFields v-model="model" :type="model.type" />
+  <SourceField v-model="model" :type="model.type" />
 </template>

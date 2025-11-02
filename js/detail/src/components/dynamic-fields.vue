@@ -3,6 +3,7 @@
       v-if="view"
       :is="view"
       v-model="model"
+      :target="target"
       v-bind="attr" />
   <div v-else ref="externalContainerRef">
   </div>
@@ -11,27 +12,27 @@
 <script setup>
 import {computed, ref, watch, useAttrs} from 'vue';
 import {defineModel, defineProps} from 'vue';
-import {internalView} from "@/view/factory";
+import {internalFieldView} from "@/view/factory";
 import {view as ExternalView} from "@/view";
 
 const attr = useAttrs();
 const model = defineModel({default: {}});
 const props = defineProps({
-  type: {type: String, default: () => ''}
+  target: {type: Object, required: true}
 });
 
 const externalContainerRef = ref();
 
-const view = computed(() => internalView(props.type));
+const view = computed(() => internalFieldView(props.target.type));
 watch(
-    () => props.type,
+    () => props.target.type,
     (newValue) => {
       if (!newValue || view.value) {
         return;
       }
 
       ExternalView(
-          model.type,
+          props.target,
           {
             container: externalContainerRef,
             data: model,

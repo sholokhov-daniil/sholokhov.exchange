@@ -3,7 +3,6 @@
     <template #content>
       Значение: {{ model }}<br><br>
       Тип: {{ target }}<br><br>
-      Шаблоны: {{ data.templates }} <br><br>
 
       <button v-if="target?.type" type="button" @click="add">Добавить</button>
       <Alert v-else v-for="message in data.errors" :key="message" type="danger">
@@ -13,11 +12,14 @@
   </GridRow>
 
   <template v-for="(field, index) in model" :key="index">
-    <MapFieldSelector
+    <GridRow>
+      <template #content>
+        <div style="text-align: right; cursor: pointer" @click="model.splice(index, 1)">X</div>
+      </template>
+    </GridRow>
+    <DynamicFields
         v-model="model[index]"
         :target="target"
-        :templates="templates"
-        @remove="model.splice(index, 1)"
     />
 
     <GridRow class="row-split" ></GridRow>
@@ -25,10 +27,9 @@
 </template>
 
 <script setup>
-import {defineModel, defineProps, reactive, watch, onMounted, computed} from 'vue';
+import {defineModel, defineProps, reactive, watch, onMounted} from 'vue';
 import {Alert, GridRow} from "ui";
-import {runAction} from "utils";
-import MapFieldSelector from "@/components/map-field-selector.vue";
+import DynamicFields from "@/components/dynamic-fields.vue";
 
 const model = defineModel({default: []});
 
@@ -37,7 +38,6 @@ const props = defineProps({
 });
 
 const data = reactive({
-  templates: {},
   errors: [],
 });
 
@@ -46,8 +46,6 @@ onMounted(() => {
     showEmptyError();
   }
 })
-
-const templates = computed(() => data.templates[props.target?.type] || []);
 
 watch(
     () => props.target.type,
@@ -62,31 +60,10 @@ watch(
       }
 
       data.errors = [];
-
-      if (data.templates[newValue]) {
-        return;
-      }
-
-      data.templates[newValue] = {};
-      loadTemplates(newValue)
-          .catch(response => data.errors = response.errors.map(error => error.message))
     }
 )
 
 const showEmptyError = () => data.errors = ["Необходимо выбрать тип обмена"];
-
-const loadTemplates = async (target) => {
-  const response = await runAction('sholokhov:exchange.MapController.getTemplates', {target: target});
-
-  if (!Array.isArray(response.data)) {
-    data.errors.push('Ошибка загрузки данных');
-    return;
-  }
-
-  data.templates[target] = [];
-
-  response.data.forEach(map => data.templates[target].push(map || {}));
-}
 
 const add = () => {
   if (!Array.isArray(model.value)) {

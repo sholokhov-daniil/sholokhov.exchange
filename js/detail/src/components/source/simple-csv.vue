@@ -10,10 +10,28 @@
 
   <GridRow>
     <template #title>
-      {{ getMessage('SHOLOKHOV_EXCHANGE_DETAIL_ENTITY_UI_ENCODE') }}
+      {{ getMessage('SHOLOKHOV_EXCHANGE_DETAIL_ENTITY_UI_SOURCE_CSV_SEPARATOR') }}
     </template>
     <template #content>
-      <Input v-model="model.encode" />
+      <Input v-model="model.separator" maxlength="1" />
+    </template>
+  </GridRow>
+
+  <GridRow>
+    <template #title>
+      {{ getMessage('SHOLOKHOV_EXCHANGE_DETAIL_ENTITY_UI_SOURCE_CSV_ENCLOSURE') }}
+    </template>
+    <template #content>
+      <Input v-model="model.enclosure" />
+    </template>
+  </GridRow>
+
+  <GridRow>
+    <template #title>
+      {{ getMessage('SHOLOKHOV_EXCHANGE_DETAIL_ENTITY_UI_SOURCE_CSV_ESCAPE') }}
+    </template>
+    <template #content>
+      <Input v-model="model.escape" />
     </template>
   </GridRow>
 </template>
