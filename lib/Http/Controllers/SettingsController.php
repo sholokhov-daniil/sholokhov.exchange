@@ -3,6 +3,8 @@
 namespace Sholokhov\Exchange\Http\Controllers;
 
 use Bitrix\Main\Diag\Debug;
+use Exception;
+use Sholokhov\Exchange\ORM\Settings\ExchangeTable;
 use Throwable;
 
 use Sholokhov\Exchange\Http\Middleware\ModuleRightMiddleware;
@@ -35,9 +37,32 @@ final class SettingsController extends Controller
         ];
     }
 
+    /**
+     * Создание настроек
+     *
+     * @param array $fields
+     * @return void
+     * @throws Exception
+     */
     public function createAction(array $fields): void
     {
-        Debug::dumpToFile($fields);
+        try {
+            $result = ExchangeTable::add(
+                [
+                    ExchangeTable::PC_ACTIVE => (bool)$fields['general']['active'],
+                    ExchangeTable::PC_HASH => (string)$fields['general']['hash'],
+                    ExchangeTable::PC_TARGET => (array)$fields['target'],
+                    ExchangeTable::PC_SOURCE => (array)$fields['source'],
+                    ExchangeTable::PC_MAP => (array)$fields['map'],
+                ]
+            );
+
+            if (!$result->isSuccess()) {
+                $this->addErrors($result->getErrors());
+            }
+        } catch (Throwable) {
+            $this->addError(new Error('Ошибка создания настроек'));
+        }
     }
 
     /**

@@ -15,137 +15,76 @@ use Bitrix\Main\UserTable;
 
 /**
  * Настройки обменов
- *
- * @since 1.2.0
- * @version 1.2.0
  */
 final class ExchangeTable extends DataManager
 {
     /**
      * Уникальный текстовый идентификатор обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_HASH = "HASH";
 
     /**
      * Активность обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_ACTIVE = "ACTIVE";
 
     /**
      * Наименование обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_NAME = "NAME";
 
     /**
      * Описание обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_DESCRIPTION = "DESCRIPTION";
 
     /**
-     * Общие настройки обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
-     */
-    public const PC_SETTINGS = "SETTINGS";
-
-    /**
      * Настройки источника данных
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
-    public const PC_SOURCE_SETTINGS_ID = "SOURCE_SETTINGS_ID";
-
-    /**
-     * Связь с записью в таблице хранения настроек источника данных
-     *
-     * @since 1.2.0
-     * @version 1.2.0
-     */
-    public const PC_SOURCE_SETTINGS = "SOURCE_SETTINGS";
+    public const PC_SOURCE = "SOURCE";
 
     /**
      * Настройки способа обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
-    public const PC_TARGET_SETTINGS_ID = "TARGET_SETTINGS_ID";
+    public const PC_TARGET = "TARGET";
 
     /**
-     * Связь с записью в таблице хранения настроек способа обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
+     * Карта обмена
      */
-    public const PC_TARGET_SETTINGS = "TARGET_SETTINGS";
+    public const PC_MAP = "MAP";
 
     /**
      * Дата создания обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_DATE_CREATE = "DATE_CREATE";
 
     /**
      * Дата обновления настроек обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_DATE_UPDATE = "DATE_UPDATE";
 
     /**
      * Пользователь создавший настройки обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_USER_ID_CREATED = "USER_ID_CREATED";
 
     /**
      * Пользователь обновивший настройки обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_USER_ID_UPDATED = "USER_ID_UPDATED";
 
     /**
      * Связь с таблицей, где хранится пользователь создавший настройки обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_USER_CREATED = "USER_CREATED";
 
     /**
      * Связь с таблицей, где хранится пользователь обновивший настройки обмена
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public const PC_USER_UPDATED = "USER_UPDATED";
 
     /**
      * @return string
-     *
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public static function getTableName(): string
     {
@@ -156,8 +95,6 @@ final class ExchangeTable extends DataManager
      * @return array
      *
      * @throws SystemException
-     * @since 1.2.0
-     * @version 1.2.0
      */
     public static function getMap(): array
     {
@@ -176,15 +113,19 @@ final class ExchangeTable extends DataManager
             (new Fields\StringField(self::PC_DESCRIPTION))
                 ->configureDefaultValue(''),
 
-            (new Fields\TextField(self::PC_SETTINGS))
-                ->configureDefaultValue('')
+            (new Fields\StringField(self::PC_SOURCE))
                 ->addFetchDataModifier(Json::decode(...))
-                ->addSaveDataModifier(Json::encode(...)),
-
-            (new Fields\IntegerField(self::PC_SOURCE_SETTINGS_ID))
+                ->addSaveDataModifier(Json::encode(...))
                 ->configureRequired(),
 
-            (new Fields\IntegerField(self::PC_TARGET_SETTINGS_ID))
+            (new Fields\StringField(self::PC_TARGET))
+                ->addFetchDataModifier(Json::decode(...))
+                ->addSaveDataModifier(Json::encode(...))
+                ->configureRequired(),
+
+            (new Fields\StringField(self::PC_MAP))
+                ->addFetchDataModifier(Json::decode(...))
+                ->addSaveDataModifier(Json::encode(...))
                 ->configureRequired(),
 
             (new Fields\DatetimeField(self::PC_DATE_CREATE))
@@ -202,19 +143,8 @@ final class ExchangeTable extends DataManager
 
             (new Fields\IntegerField(self::PC_USER_ID_UPDATED))
                 ->configureRequired()
+                ->configureDefaultValue((new CUser)->GetID())
                 ->addSaveDataModifier(fn() => (int)(new CUser)->GetID()),
-
-            (new Fields\Relations\Reference(
-                self::PC_SOURCE_SETTINGS,
-                EntitySettingsTable::class,
-                Join::on('this.' . self::PC_SOURCE_SETTINGS_ID, 'ref.ID')
-            )),
-
-            (new Fields\Relations\Reference(
-                self::PC_TARGET_SETTINGS,
-                EntitySettingsTable::class,
-                Join::on('this.' . self::PC_TARGET_SETTINGS, 'ref.ID')
-            )),
 
             (new Fields\Relations\Reference(
                 self::PC_USER_CREATED,
