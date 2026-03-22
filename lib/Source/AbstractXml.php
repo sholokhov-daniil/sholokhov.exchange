@@ -2,6 +2,7 @@
 
 namespace Sholokhov\Exchange\Source;
 
+use Bitrix\Main\Diag\Debug;
 use Iterator;
 use EmptyIterator;
 
@@ -11,8 +12,6 @@ use EmptyIterator;
  * @internal
  *
  * @package Source
- * @since 1.0.0
- * @version 1.0.0
  */
 abstract class AbstractXml implements Iterator
 {
@@ -22,17 +21,11 @@ abstract class AbstractXml implements Iterator
      * Родительский тег элементов
      *
      * @var string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected string $rootTag = 'data';
 
     /**
      * @param string $path Путь до xml файла
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function __construct(protected readonly string $path)
     {
@@ -43,9 +36,6 @@ abstract class AbstractXml implements Iterator
      *
      * @param mixed $resource
      * @return Iterator
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     abstract protected function parsing(mixed $resource): Iterator;
 
@@ -56,9 +46,6 @@ abstract class AbstractXml implements Iterator
      *
      * @param string $rootTag
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setRootTag(string $rootTag): self
     {
@@ -75,9 +62,6 @@ abstract class AbstractXml implements Iterator
      * Загрузка данных источника
      *
      * @return Iterator
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     final protected function load(): Iterator
     {
