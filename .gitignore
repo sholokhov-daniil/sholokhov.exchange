@@ -3,3 +3,5 @@
 /*.log
 /build
 /docs
+/tests/var/logs
+/tests/.phpunit.cache

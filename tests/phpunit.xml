@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
-         bootstrap="bootstrap.php"
-         cacheResult="false"
-         colors="true">
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
+
+        bootstrap="bootstrap.php"
+
+        colors="true"
+        cacheResult="true"
+        cacheDirectory=".phpunit.cache"
+
+        stopOnFailure="false"
+        failOnRisky="true"
+        failOnWarning="true"
+        beStrictAboutTestsThatDoNotTestAnything="true"
+        beStrictAboutOutputDuringTests="true"
+
+        executionOrder="depends,defects"
+        displayDetailsOnTestsThatTriggerWarnings="true"
+>
     <php>
         <ini name="memory_limit" value="-1"/>
         <ini name="display_errors" value="true"/>
@@ -11,7 +25,18 @@
 
     <testsuites>
         <testsuite name="Module test">
-            <directory>./tests</directory>
+            <directory>./</directory>
         </testsuite>
     </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">./lib</directory>
+        </include>
+    </source>
+
+    <logging>
+        <junit outputFile="var/logs/junit.xml"/>
+        <testdoxText outputFile="var/logs/testdox.txt"/>
+    </logging>
 </phpunit>
