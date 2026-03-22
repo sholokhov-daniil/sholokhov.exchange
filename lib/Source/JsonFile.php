@@ -3,25 +3,29 @@
 namespace Sholokhov\Exchange\Source;
 
 use Sholokhov\Exchange\Helper\IO;
+use Sholokhov\Exchange\Exception\Source\InvalidJsonFileException;
 
 /**
  * Источник данных на основе json файла
  *
- *
  * @package Source
- * @since 1.0.0
- * @version 1.0.0
  */
 class JsonFile extends Json
 {
     /**
      * @param string $path Место размещения json файла (локально или удаленно)
      * @param array $options
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws InvalidJsonFileException
      */
-    public function __construct(string $path, array $options = [])
+    public function __construct(string $path, array $options = [], ?callable $loader = null)
     {
-        parent::__construct(IO::getFileContent($path), $options);
+        $loader ??= IO::getFileContent(...);
+        $content = call_user_func($loader, $path);
+
+        if (!is_string($content)) {
+            throw new InvalidJsonFileException('Invalid json file');
+        }
+
+        parent::__construct($content, $options);
     }
 }

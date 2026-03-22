@@ -4,7 +4,6 @@ namespace Sholokhov\Exchange\Source;
 
 use Iterator;
 use ArrayIterator;
-use IteratorAggregate;
 
 use Sholokhov\Exchange\Helper\Helper;
 
@@ -13,7 +12,7 @@ use Sholokhov\Exchange\Helper\Helper;
  *
  * @package Source
  */
-class Json implements Iterator, IteratorAggregate
+class Json implements Iterator
 {
     /**
      * JSON строка
@@ -79,7 +78,7 @@ class Json implements Iterator, IteratorAggregate
         $this->getIterator()->rewind();
     }
 
-    public function getIterator(): Iterator
+    private function getIterator(): Iterator
     {
         return $this->iterator ??= $this->loadIterator();
     }
@@ -123,7 +122,7 @@ class Json implements Iterator, IteratorAggregate
      *
      * @return string
      */
-    protected function getSourceKey(): string
+    private function getSourceKey(): string
     {
         return (string)($this->options['source_key'] ?? '');
     }
