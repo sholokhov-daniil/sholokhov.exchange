@@ -4,12 +4,11 @@ namespace Sholokhov\Exchange\Source\Entities\IBlock;
 
 use Iterator;
 use ArrayIterator;
-use CIBlockElement;
 
+use Sholokhov\Exchange\Exception\Source\SourceException;
 use Sholokhov\Exchange\Source\IterableTrait;
-
-use Bitrix\Main\Loader;
-use Bitrix\Main\LoaderException;
+use Sholokhov\Exchange\Provider\Entity\IBlockElementProvider;
+use Sholokhov\Exchange\Provider\Entity\IBlockElementProviderInterface;
 
 /**
  * Источник данных основан на элементах информационного блока
@@ -17,20 +16,21 @@ use Bitrix\Main\LoaderException;
  * @author Daniil S.
  *
  * @package Source
- * @version 1.0.0
  */
 class Element implements Iterator
 {
     use IterableTrait;
 
-    public function __construct(protected readonly array $options)
-    {
-        if (empty($this->options['FILTER']) || !is_array($this->options['FILTER'])) {
-            throw new \InvalidArgumentException("Option 'FILTER' must be an array");
-        }
+    protected readonly array $options;
+    protected readonly IBlockElementProviderInterface $provider;
 
-        if (!Loader::includeModule('iblock')) {
-            throw new LoaderException('IBLOCK module is not installed.');
+    public function __construct(array $options, ?IBlockElementProviderInterface $provider = null)
+    {
+        $this->options = $options;
+        $this->provider = $provider ?? new IBlockElementProvider;
+
+        if (empty($this->options['FILTER']) || !is_array($this->options['FILTER'])) {
+            throw new SourceException("Option 'FILTER' must be an array");
         }
     }
 
@@ -42,15 +42,21 @@ class Element implements Iterator
      */
     protected function load(): Iterator
     {
-        $iterator = new ArrayIterator();
+        $filter = (array)($this->options['FILTER'] ?? []);
+        $order = (array)($this->options['ORDER'] ?? ['SORT' => 'ASC']);
+        $select = (array)($this->options['SELECT'] ?? []);
 
-        $result = CIBlockElement::GetList(
-            $this->options['ORDER'] ?? ['SORT' => 'ASC'],
-            $this->options['FILTER'],
-            $this->options['GROUP_BY'] ?? false,
-            $this->options['NAV'] ?? false,
-            $this->options['SELECT'] ?? []
-        );
+        $result = $this->provider
+            ->setFilter($filter)
+            ->setOrder($order)
+            ->setSelect($select)
+            ->query();
+
+        if (is_null($result)) {
+            return new ArrayIterator;
+        }
+
+        $iterator = new ArrayIterator;
 
         while ($facade = $result->GetNextElement()) {
             $item = $facade->GetFields();
@@ -58,7 +64,11 @@ class Element implements Iterator
 
             if (is_iterable($this->options['PROPERTIES'])) {
                 foreach ($this->options['PROPERTIES'] as $code) {
-                    $item['PROPERTIES'][$code] = $facade->GetProperty($code);
+                    // TODO: Оптимизировать, если будет много свойств, то тогда будет много запросов к базе данных
+                    $property = $facade->GetProperty($code);
+                    if (!empty($property)) {
+                        $item['PROPERTIES'][$code] = $property;
+                    }
                 }
             }
 
