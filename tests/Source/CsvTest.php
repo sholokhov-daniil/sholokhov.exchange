@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 use Sholokhov\Exchange\Helper\Helper;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+/**
+ * @package Tests\Source
+ */
 class CsvTest extends TestCase
 {
     /**

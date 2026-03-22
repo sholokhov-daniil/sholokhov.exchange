@@ -5,6 +5,9 @@ namespace Sholokhov\Exchange\Source;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @package Tests\Source
+ */
 class JsonTest extends TestCase
 {
     #[DataProvider('jsonDataProvider')]

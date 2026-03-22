@@ -7,6 +7,9 @@ use Sholokhov\Exchange\Exception\Source\InvalidJsonFileException;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+/**
+ * @package Tests\Source
+ */
 class JsonFileTest extends TestCase
 {
     /**
