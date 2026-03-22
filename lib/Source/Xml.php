@@ -7,6 +7,7 @@ use CIBlockXMLFile;
 use EmptyIterator;
 use ArrayIterator;
 
+use Sholokhov\Exchange\Exception\Source\SourceException;
 use Sholokhov\Exchange\ORM\Factory;
 use Sholokhov\Exchange\ORM\AbstractXmlDynamic;
 
@@ -25,7 +26,6 @@ use Bitrix\Main\SystemException;
  * Рекомендуется использовать, если объем XML файла большой и мы готовы подождать
  *
  * @package Source
- * @version 1.0.0
  */
 class Xml extends AbstractXml
 {
@@ -38,11 +38,18 @@ class Xml extends AbstractXml
     public function __construct(string $path)
     {
         parent::__construct($path);
-        Loader::includeModule('iblock');
+
+        if (!Loader::includeModule('iblock')) {
+            throw new SourceException('Не установлен модуль iblock');
+        }
     }
 
     public function __destruct()
     {
+        if (!$this->dataManager) {
+            return;
+        }
+
         $entity = $this->dataManager::getEntity();
         $entity->getConnection()->dropTable($entity->getDBTableName());
     }
