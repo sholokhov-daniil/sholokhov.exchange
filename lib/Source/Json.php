@@ -14,6 +14,8 @@ use Sholokhov\Exchange\Helper\Helper;
  */
 class Json implements Iterator
 {
+    use IterableTrait;
+
     /**
      * JSON строка
      *
@@ -27,11 +29,6 @@ class Json implements Iterator
      * @var array
      */
     private readonly array $options;
-
-    /**
-     * @var Iterator
-     */
-    private Iterator $iterator;
 
     /**
      * @param string $json JSON строка
@@ -53,42 +50,12 @@ class Json implements Iterator
         return (bool)$this->options['multiple'];
     }
 
-    public function current(): mixed
-    {
-        return $this->getIterator()->current();
-    }
-
-    public function next(): void
-    {
-        $this->getIterator()->next();
-    }
-
-    public function key(): mixed
-    {
-        return $this->getIterator()->key();
-    }
-
-    public function valid(): bool
-    {
-        return $this->getIterator()->valid();
-    }
-
-    public function rewind(): void
-    {
-        $this->getIterator()->rewind();
-    }
-
-    private function getIterator(): Iterator
-    {
-        return $this->iterator ??= $this->loadIterator();
-    }
-
     /**
      * Загрузка данных
      *
      * @return Iterator
      */
-    private function loadIterator(): Iterator
+    private function load(): Iterator
     {
         $data = $this->loadData();
         return $this->isMultiple() && is_array($data) ? new ArrayIterator($data) : new ArrayIterator([$data]);

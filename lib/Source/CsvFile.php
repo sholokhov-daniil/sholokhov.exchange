@@ -6,13 +6,16 @@ use Iterator;
 use SplFileObject;
 
 /**
- * Источник данных на csv файла
+ * Источник данных на основе CSV-файла.
+ *
+ * Позволяет последовательно читать строки CSV-файла без загрузки всего файла в память.
+ * Поддерживает настройку разделителя, символа-ограничителя, символа экранирования и максимальной длины строки.
  *
  * @package Source
  */
 class CsvFile implements Iterator
 {
-    private SplFileObject $file;
+    use IterableTrait;
 
     /**
      * @param string $path Путь до файла
@@ -23,94 +26,111 @@ class CsvFile implements Iterator
         private readonly string $encoding = 'UTF-8',
     )
     {
-        $this->file = new SplFileObject($this->path);
-        $this->file->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY);
     }
 
     /**
-     * Устанавливают значение, которое больше самой длинной строки в CSV-файле,
-     * иначе строка разбивается на части заданной длины, если только место разделения не встретится внутри символов-ограничителей.
-     * Длина строк измеряется в символах с учётом символов конца строки, которыми завершаются строки.
+     * Устанавливает максимальную длину читаемой строки CSV.
      *
-     * @param int $length
+     * Если строка длиннее установленного значения, она будет обрезана.
+     * Длина измеряется в символах с учётом конца строки.
+     *
+     * @param int $length Максимальная длина строки
      * @return $this
      *
-     * @see fgetcsv
+     * @see SplFileObject::setMaxLineLen()
      */
     public function setLength(int $length): self
     {
-        $this->file->setMaxLineLen($length);
+        $this->getIterator()->setMaxLineLen($length);
         return $this;
     }
 
     /**
-     * Символ-разделитель полей и принимает только один однобайтовый символ
+     * Устанавливает символ-разделитель полей.
      *
-     * @param string $separator
+     * Принимает только один однобайтовый символ.
+     *
+     * @param string $separator Символ-разделитель
      * @return $this
      *
-     * @see fgetcsv
+     * @see SplFileObject::setCsvControl()
      */
     public function setSeparator(string $separator): self
     {
-        [, $enclosure, $escape] = $this->file->getCsvControl();
-        $this->file->setCsvControl($separator, $enclosure, $escape);
+        [, $enclosure, $escape] = $this->getIterator()->getCsvControl();
+        $this->getIterator()->setCsvControl($separator, $enclosure, $escape);
         return $this;
     }
 
     /**
-     * Устанавливает символ-ограничитель значения поля и принимает только один однобайтовый символ
+     * Устанавливает символ-ограничитель значения поля.
      *
-     * @param string $enclosure
+     * Принимает только один однобайтовый символ.
+     *
+     * @param string $enclosure Символ-ограничитель
      * @return $this
      *
-     * @see fgetcsv
+     * @see SplFileObject::setCsvControl()
      */
     public function setEnclosure(string $enclosure): self
     {
-        [$separator, ,$escape] = $this->file->getCsvControl();
-        $this->file->setCsvControl($separator, $enclosure, $escape);
+        [$separator, ,$escape] = $this->getIterator()->getCsvControl();
+        $this->getIterator()->setCsvControl($separator, $enclosure, $escape);
 
         return $this;
     }
 
     /**
-     * Устанавливает символ экранирования и принимает только один однобайтовый символ или пустую строку.
-     * Пустая строка "" отключает внутренний механизм экранирования
+     * Устанавливает символ экранирования для полей CSV.
      *
-     * @param string $escape
+     * Пустая строка "" отключает механизм экранирования.
+     *
+     * @param string $escape Символ экранирования
      * @return $this
+     *
+     * @see SplFileObject::setCsvControl()
      */
     public function setEscape(string $escape): self
     {
-        [$separator, $enclosure] = $this->file->getCsvControl();
-        $this->file->setCsvControl($separator, $enclosure, $escape);
+        [$separator, $enclosure] = $this->getIterator()->getCsvControl();
+        $this->getIterator()->setCsvControl($separator, $enclosure, $escape);
         return $this;
     }
 
+    /**
+     * Возвращает текущую строку CSV-файла.
+     *
+     * @return array|null Массив значений строки или null, если строка невалидна
+     *
+     * @inheritDoc
+     * @see Iterator::current()
+     */
     public function current(): ?array
     {
-        $row = $this->file->current();
+        $row = $this->getIterator()->current();
         return is_array($row) ? $row : null;
     }
 
-    public function next(): void
+    /**
+     * Инициализация внутреннего итератора для чтения CSV-файла.
+     *
+     * @return SplFileObject Итератор для чтения CSV
+     */
+    protected function load(): SplFileObject
     {
-        $this->file->next();
+        $file = new SplFileObject($this->path);
+        $file->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY);
+
+        return $file;
     }
 
-    public function key(): int|false
+    /**
+     * Получение итератора CSV-файла.
+     *
+     * @return SplFileObject Итератор CSV-файла
+     */
+    protected function getIterator(): SplFileObject
     {
-        return $this->file->key();
-    }
-
-    public function valid(): bool
-    {
-        return $this->file->valid();
-    }
-
-    public function rewind(): void
-    {
-        $this->file->rewind();
+        return $this->iterator ??= $this->load();
     }
 }
