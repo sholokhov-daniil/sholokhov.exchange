@@ -3,13 +3,12 @@
 namespace Sholokhov\Exchange\Provider\Entity;
 
 use CIBlockResult;
-use CIBlockElement;
-
+use CIBlockSection;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 
 /**
- * Провайдер элементов информационного блока (IBlock).
+ * Провайдер разделов информационного блока (IBlock).
  *
  * Обеспечивает удобный интерфейс для конфигурации запроса к элементам ИБ
  * через сеттеры фильтра, сортировки, выборки полей, лимита и смещения.
@@ -18,7 +17,7 @@ use Bitrix\Main\LoaderException;
  *
  * @package Provider
  */
-class IBlockElementProvider implements IBlockProviderInterface
+class IBlockSectionProvider implements IBlockProviderInterface
 {
     use ProviderSelectionTrait;
 
@@ -38,11 +37,11 @@ class IBlockElementProvider implements IBlockProviderInterface
      */
     public function query(): ?CIBlockResult
     {
-        return CIBlockElement::GetList(
+        return CIBlockSection::GetList(
             arOrder: $this->order,
             arFilter: $this->filter,
+            arSelect: $this->select,
             arNavStartParams: $this->getNav(),
-            arSelectFields: $this->select
         ) ?: null;
     }
 

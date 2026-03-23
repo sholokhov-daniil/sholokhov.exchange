@@ -2,11 +2,11 @@
 
 namespace Sholokhov\Exchange\Source\Entities\IBlock;
 
-use Iterator;
 use CIBlockResult;
 
+use Sholokhov\Exchange\Source\Entities\AbstractEntitySource;
 use Sholokhov\Exchange\Provider\Entity\IBlockElementProvider;
-use Sholokhov\Exchange\Provider\Entity\IBlockElementProviderInterface;
+use Sholokhov\Exchange\Provider\Entity\IBlockProviderInterface;
 
 /**
  * Источник данных основан на элементах информационного блока (IBlock)
@@ -21,29 +21,8 @@ use Sholokhov\Exchange\Provider\Entity\IBlockElementProviderInterface;
  *
  * @package Source
  */
-class Element implements Iterator
+class Element extends AbstractEntitySource
 {
-    /**
-     * Размер пакета данных (батч)
-     *
-     * @var int
-     */
-    protected int $limit = 2000;
-
-    /**
-     * Последний обработанный ID (для батчевой загрузки)
-     *
-     * @var int
-     */
-    protected int $lastId = 0;
-
-    /**
-     * Фильтр для выборки элементов ИБ
-     *
-     * @var array
-     */
-    protected array $filter = [];
-
     /**
      * Поля для выборки
      *
@@ -59,45 +38,18 @@ class Element implements Iterator
     protected array $properties = [];
 
     /**
-     * Текущий батч элементов
-     *
-     * @var array
-     */
-    protected array $batch = [];
-
-    /**
-     * Признак окончания итерации
-     *
-     * @var bool
-     */
-    protected bool $finished = false;
-
-    /**
      * Провайдер элементов ИБ
      *
-     * @var IBlockElementProviderInterface
+     * @var IBlockProviderInterface
      */
-    protected readonly IBlockElementProviderInterface $provider;
+    protected readonly IBlockProviderInterface $provider;
 
     /**
-     * @param IBlockElementProviderInterface|null $provider Провайдер элементов ИБ
+     * @param IBlockProviderInterface|null $provider Провайдер элементов ИБ
      */
-    public function __construct(?IBlockElementProviderInterface $provider = null)
+    public function __construct(?IBlockProviderInterface $provider = null)
     {
         $this->provider = $provider ?? new IBlockElementProvider;
-    }
-
-    /**
-     * Устанавливает лимит элементов на один батч
-     *
-     * @param int $limit
-     *
-     * @return $this
-     */
-    public function setLimit(int $limit): static
-    {
-        $this->limit = $limit;
-        return $this;
     }
 
     /**
@@ -110,38 +62,7 @@ class Element implements Iterator
     public function setIBlockId(int $id): static
     {
         $this->filter['=IBLOCK_ID'] = $id;
-        return $this;
-    }
-
-    /**
-     * Устанавливает фильтр для выборки элементов
-     *
-     * @param array $filter Ассоциативный массив фильтра Bitrix
-     *
-     * @return $this
-     */
-    public function setFilter(array $filter): static
-    {
-        $this->filter = $filter;
         $this->rewind();
-        return $this;
-    }
-
-    /**
-     * Устанавливает поля выборки элементов
-     *
-     * @param array $select Список полей
-     *
-     * @return $this
-     */
-    public function setSelect(array $select): static
-    {
-        $this->select = $select;
-
-        if (!in_array('ID', $this->select)) {
-            $this->select[] = 'ID';
-        }
-
         return $this;
     }
 
@@ -156,68 +77,6 @@ class Element implements Iterator
     {
         $this->properties = $properties;
         return $this;
-    }
-
-    /**
-     * Возвращает текущий элемент итератора
-     *
-     * @return mixed
-     */
-    public function current(): mixed
-    {
-        return current($this->batch);
-    }
-
-    /**
-     * Переводит итератор на следующий элемент
-     *
-     * Если текущий батч закончился, подгружает следующий батч.
-     *
-     * @return void
-     */
-    public function next(): void
-    {
-        next($this->batch);
-
-        if (!$this->valid()) {
-            $this->fetchBatch();
-        }
-    }
-
-    /**
-     * Возвращает ключ текущего элемента итератора
-     *
-     * @return mixed
-     */
-    public function key(): mixed
-    {
-        return key($this->batch);
-    }
-
-    /**
-     * Проверяет валидность текущего элемента
-     *
-     * @return bool true, если элемент существует, false — если батч закончился
-     */
-    public function valid(): bool
-    {
-        $key = $this->key();
-        return $key !== null && $key !== false;
-    }
-
-    /**
-     * Сбрасывает итератор
-     *
-     * Перезапускает итерацию с самого начала
-     *
-     * @return void
-     */
-    public function rewind(): void
-    {
-        $this->lastId = 0;
-        $this->finished = false;
-        $this->batch = [];
-        $this->fetchBatch();
     }
 
     /**
@@ -246,21 +105,6 @@ class Element implements Iterator
         }
 
         $this->processResult($result);
-    }
-
-    /**
-     * Строит фильтр для запроса к элементам ИБ
-     *
-     * Добавляет условие по последнему ID для батчевой загрузки.
-     *
-     * @return array
-     */
-    protected function buildFilter(): array
-    {
-        return array_merge(
-            $this->filter,
-            ['>ID' => $this->lastId]
-        );
     }
 
     /**

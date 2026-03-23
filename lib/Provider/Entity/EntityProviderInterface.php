@@ -2,14 +2,14 @@
 
 namespace Sholokhov\Exchange\Provider\Entity;
 
-use CIBlockResult;
-
-interface IBlockElementProviderInterface
+interface EntityProviderInterface
 {
     /**
-     * @return CIBlockResult|null
+     * Выполнить запрос на получение данных
+     *
+     * @return object|null
      */
-    public function query(): ?CIBlockResult;
+    public function query(): ?object;
 
     /**
      * Установка фильтра запроса
@@ -46,13 +46,4 @@ interface IBlockElementProviderInterface
      * @return $this
      */
     public function setLimit(int $limit): static;
-
-    /**
-     * Установка смещения запроса
-     *
-     * @param int $offset
-     *
-     * @return $this
-     */
-    public function setOffset(int $offset): static;
 }

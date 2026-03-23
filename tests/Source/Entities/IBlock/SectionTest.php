@@ -3,19 +3,19 @@
 namespace Sholokhov\Exchange\Source\Entities\IBlock;
 
 use CIBlockResult;
-use _CIBElement;
 
 use Sholokhov\Exchange\Provider\Entity\IBlockProviderInterface;
 
+use Bitrix\Main\Loader;
+
 use PHPUnit\Framework\TestCase;
+
 /**
- * Тесты для класса Element.
- *
  * Проверяет корректность работы источника данных на основе элементов информационного блока (IBlock).
  *
  * @package Test\Source
  */
-class ElementTest extends TestCase
+class SectionTest extends TestCase
 {
     /**
      * Проверяет работу метода load() через итератор.
@@ -27,21 +27,17 @@ class ElementTest extends TestCase
      */
     public function testLoadReturnsIterator(): void
     {
-        // Создаем моки элементов _CIBElement
-        $element1 = $this->createMock(_CIBElement::class);
-        $element1->method('GetFields')->willReturn(['ID' => 1, 'NAME' => 'Alice']);
-        $element1->method('GetProperties')->willReturn([]);
-
-        $element2 = $this->createMock(_CIBElement::class);
-        $element2->method('GetFields')->willReturn(['ID' => 2, 'NAME' => 'Bob']);
-        $element2->method('GetProperties')->willReturn([]);
+        Loader::includeModule('iblock');
 
         // Массив элементов для батчей
-        $allElements = [$element1, $element2];
+        $allElements = [
+            ['ID' => 1, 'NAME' => 'Alice'],
+            ['ID' => 2, 'NAME' => 'Bob']
+        ];
 
         // Мок CIBlockResult
         $resultMock = $this->createMock(CIBlockResult::class);
-        $resultMock->method('GetNextElement')->willReturnCallback(function () use (&$allElements) {
+        $resultMock->method('Fetch')->willReturnCallback(function () use (&$allElements) {
             return array_shift($allElements) ?: null;
         });
 
@@ -54,7 +50,7 @@ class ElementTest extends TestCase
         $providerMock->method('query')->willReturn($resultMock);
 
         // Создаем объект Element с моканным провайдером
-        $source = new Element($providerMock);
+        $source = new Section($providerMock);
 
         // Итерация через foreach
         $items = [];
@@ -68,17 +64,17 @@ class ElementTest extends TestCase
         // Проверяем содержимое
         $this->assertEquals(1, $items[0]['ID']);
         $this->assertEquals('Alice', $items[0]['NAME']);
-        $this->assertEquals([], $items[0]['PROPERTIES']);
 
         $this->assertEquals(2, $items[1]['ID']);
         $this->assertEquals('Bob', $items[1]['NAME']);
-        $this->assertEquals([], $items[1]['PROPERTIES']);
     }
 
     public function testPaginationWorks(): void
     {
-        // Создадим 5 элементов
-        $elementsData = [
+        Loader::includeModule('iblock');
+
+        $limit = 2;
+        $sectionData = [
             ['ID' => 1, 'NAME' => 'Alice'],
             ['ID' => 2, 'NAME' => 'Bob'],
             ['ID' => 3, 'NAME' => 'Charlie'],
@@ -86,36 +82,54 @@ class ElementTest extends TestCase
             ['ID' => 5, 'NAME' => 'Eve'],
         ];
 
-        $elements = [];
-        foreach ($elementsData as $data) {
-            $elementMock = $this->createMock(_CIBElement::class);
-            $elementMock->method('GetFields')->willReturn($data);
-            $elementMock->method('GetProperties')->willReturn([]);
-            $elements[] = $elementMock;
-        }
-
-        // Разобьём элементы на батчи по 2
-        $allElements = $elements;
-
-        // Мок CIBlockResult
-        $resultMock = $this->createMock(CIBlockResult::class);
-        $resultMock->method('GetNextElement')->willReturnCallback(function () use (&$allElements) {
-            return array_shift($allElements) ?: null;
-        });
+        $allSections = $sectionData;
 
         // Мок провайдера
         $providerMock = $this->createMock(IBlockProviderInterface::class);
-        $providerMock->method('setFilter')->willReturnSelf();
+        $providerMock->method('setFilter')->willReturnCallback(
+            function(array $filter) use (&$allSections, $sectionData, $providerMock, $limit) {
+                if (!isset($filter['>ID'])) {
+                    return $providerMock;
+                }
+
+                $lastId = $filter['>ID'];
+
+                $allSections = array_filter(
+                    $sectionData,
+                    fn(array $i) => $i['ID'] > $lastId
+                );
+
+                $allSections = array_slice($allSections, 0, $limit);
+
+                return $providerMock;
+            }
+        );
+
         $providerMock->method('setOrder')->willReturnSelf();
         $providerMock->method('setSelect')->willReturnSelf();
         $providerMock->method('setLimit')->willReturnSelf();
-        $providerMock->method('query')->willReturn($resultMock);
+        $providerMock->method('query')
+            ->willReturnCallback(function () use (&$allSections) {
+
+                $resultMock = $this->createMock(CIBlockResult::class);
+
+                $localData = $allSections;
+
+                $resultMock->method('Fetch')->willReturnCallback(
+                    function () use (&$localData) {
+                        return array_shift($localData) ?: null;
+                    }
+                );
+
+                return $resultMock;
+            });
 
         // Создаём источник с лимитом 2, чтобы проверить батчи
-        $source = new Element($providerMock);
-        $source->setLimit(2);
+        $source = new Section($providerMock);
+        $source->setLimit($limit);
 
         $items = [];
+
         foreach ($source as $item) {
             $items[] = $item;
         }
@@ -124,10 +138,9 @@ class ElementTest extends TestCase
         $this->assertCount(5, $items);
 
         // Проверяем данные каждого элемента
-        foreach ($elementsData as $index => $data) {
+        foreach ($sectionData as $index => $data) {
             $this->assertEquals($data['ID'], $items[$index]['ID']);
             $this->assertEquals($data['NAME'], $items[$index]['NAME']);
-            $this->assertEquals([], $items[$index]['PROPERTIES']);
         }
     }
 }
