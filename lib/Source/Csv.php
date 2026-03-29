@@ -16,9 +16,10 @@ use Bitrix\Main\Text\Encoding;
  * Позволяет последовательно читать строки CSV-файла без загрузки всего файла в память.
  * Поддерживает настройку разделителя, символа-ограничителя, символа экранирования и максимальной длины строки.
  *
+ * @final
  * @package Source
  */
-class Csv implements Iterator
+final class Csv implements Iterator
 {
     /**
      * Текущая строка CSV

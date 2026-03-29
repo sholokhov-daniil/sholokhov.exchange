@@ -2,8 +2,10 @@
 
 namespace Sholokhov\Exchange\Source;
 
-use PHPUnit\Framework\Attributes\DataProvider;
+use Sholokhov\Exchange\Reader\MemoryReader;
+
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @package Tests\Source
@@ -13,7 +15,8 @@ class JsonTest extends TestCase
     #[DataProvider('jsonDataProvider')]
     public function testValidSingleJson(string $json, array $options, array $expected): void
     {
-        $source = new Json($json, $options);
+        $reader = new MemoryReader($json);
+        $source = new Json($reader, $options);
 
         $result = [];
 
@@ -24,6 +27,9 @@ class JsonTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return array[]
+     */
     public static function jsonDataProvider(): array
     {
         return [

@@ -6,22 +6,18 @@ use Iterator;
 use ArrayIterator;
 
 use Sholokhov\Exchange\Helper\Helper;
+use Sholokhov\Exchange\Reader\DataReaderInterface;
+use Sholokhov\Exchange\Exception\Reader\ReaderException;
 
 /**
  * Источник данных на основе json строки
  *
+ * @final
  * @package Source
  */
-class Json implements Iterator
+final class Json implements Iterator
 {
     use IterableTrait;
-
-    /**
-     * JSON строка
-     *
-     * @var string
-     */
-    private readonly string $json;
 
     /**
      * Конфигурация источника данных
@@ -31,12 +27,19 @@ class Json implements Iterator
     private readonly array $options;
 
     /**
-     * @param string $json JSON строка
+     * Провайдер данных
+     *
+     * @var DataReaderInterface
+     */
+    private DataReaderInterface $reader;
+
+    /**
+     * @param DataReaderInterface $reader Провайдер данных
      * @param array $options Конфигурация источника
      */
-    public function __construct(string $json, array $options = [])
+    public function __construct(DataReaderInterface $reader, array $options = [])
     {
-        $this->json = $json;
+        $this->reader = $reader;
         $this->options = $options;
     }
 
@@ -54,6 +57,7 @@ class Json implements Iterator
      * Загрузка данных
      *
      * @return Iterator
+     * @throws ReaderException
      */
     private function load(): Iterator
     {
@@ -65,23 +69,38 @@ class Json implements Iterator
      * Загрузка данных из json файла
      *
      * @return mixed
+     * @throws ReaderException
      */
     private function loadData(): mixed
     {
-        if (!json_validate($this->json)) {
+        $resource = $this->getResource();
+        $json = stream_get_contents($resource, -1, 0);
+        fclose($resource);
+
+        if (!json_validate($json)) {
             return null;
         }
 
-        $data = json_decode($this->json, true);
+        $data = json_decode($json, true);
 
         if (!is_array($data)) {
             return null;
         }
 
-
         $sourceKey = $this->getSourceKey();
 
         return $sourceKey ? Helper::getArrValueByPath($data, $sourceKey) : $data;
+    }
+
+    /**
+     * Возвращает поток Json
+     *
+     * @return resource
+     * @throws ReaderException
+     */
+    private function getResource()
+    {
+        return $this->resource ??= $this->reader->read();
     }
 
     /**
