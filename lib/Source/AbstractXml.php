@@ -3,7 +3,9 @@
 namespace Sholokhov\Exchange\Source;
 
 use Iterator;
-use EmptyIterator;
+
+use Sholokhov\Exchange\Reader\DataReaderInterface;
+use Sholokhov\Exchange\Exception\Reader\ReaderException;
 
 /**
  * Базовое представление xml источников данных
@@ -24,10 +26,18 @@ abstract class AbstractXml implements Iterator
     protected string $rootTag = 'data';
 
     /**
-     * @param string $path Путь до xml файла
+     * Провайдер данных
+     *
+     * @var DataReaderInterface
      */
-    public function __construct(protected readonly string $path)
+    protected readonly DataReaderInterface $reader;
+
+    /**
+     * @param DataReaderInterface $reader Провайдер данных
+     */
+    public function __construct(DataReaderInterface $reader)
     {
+        $this->reader = $reader;
     }
 
     /**
@@ -61,15 +71,15 @@ abstract class AbstractXml implements Iterator
      * Загрузка данных источника
      *
      * @return Iterator
+     * @throws ReaderException
      */
     final protected function load(): Iterator
     {
-        $resource = fopen($this->path, 'r');
+        $resource = $this->reader->read();
+        $iterator = $this->parsing($resource);
+        fclose($resource);
 
-        if (!$resource) {
-            return new EmptyIterator();
-        }
 
-        return $this->parsing($resource);
+        return $iterator;
     }
 }

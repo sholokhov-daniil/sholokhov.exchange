@@ -23,7 +23,7 @@ class SimpleXml extends AbstractXml
     /**
      * Чтение и парсинг xml файла
      *
-     * @param mixed $resource
+     * @param resource $resource
      * @return Iterator
      */
     protected function parsing(mixed $resource): Iterator

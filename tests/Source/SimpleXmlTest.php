@@ -5,6 +5,7 @@ namespace Sholokhov\Exchange\Source;
 use Sholokhov\Exchange\Helper\Helper;
 
 use PHPUnit\Framework\TestCase;
+use Sholokhov\Exchange\Reader\LocalFileReader;
 
 
 /**
@@ -34,8 +35,9 @@ class SimpleXmlTest extends TestCase
     public function testParseSimpleXml(): void
     {
         $filePath = $this->getUploadFolder() . 'simple.xml';
-        $source = new SimpleXml($filePath);
+        $reader = new LocalFileReader($filePath);
 
+        $source = new SimpleXml($reader);
         $source->setRootTag('item');
 
         $result = iterator_to_array($source);
@@ -57,7 +59,9 @@ class SimpleXmlTest extends TestCase
     public function testEmptyFile(): void
     {
         $filePath = $this->getUploadFolder() . 'empty.xml';
-        $source = new SimpleXml($filePath);
+        $reader = new LocalFileReader($filePath);
+
+        $source = new SimpleXml($reader);
 
         $this->assertEmpty(iterator_to_array($source));
     }
@@ -72,8 +76,9 @@ class SimpleXmlTest extends TestCase
     public function testCustomRootTag(): void
     {
         $filePath = $this->getUploadFolder() . 'custom_root.xml';
-        $source = new SimpleXml($filePath);
+        $reader = new LocalFileReader($filePath);
 
+        $source = new SimpleXml($reader);
         $source->setRootTag('item');
         $result = iterator_to_array($source);
 
@@ -95,7 +100,9 @@ class SimpleXmlTest extends TestCase
     public function testIteration(): void
     {
         $filePath = $this->getUploadFolder() . 'iteration.xml';
-        $source = new SimpleXml($filePath);
+        $reader = new LocalFileReader($filePath);
+
+        $source = new SimpleXml($reader);
         // Тег в iteration.xml — "data"
         $source->setRootTag('item');
 
@@ -116,7 +123,9 @@ class SimpleXmlTest extends TestCase
     public function testMissingRootTag(): void
     {
         $filePath = $this->getUploadFolder() . 'missing_root.xml';
-        $source = new SimpleXml($filePath);
+        $reader = new LocalFileReader($filePath);
+
+        $source = new SimpleXml($reader);
         // Тег, которого нет
         $source->setRootTag('non_existing_tag');
 
@@ -135,9 +144,10 @@ class SimpleXmlTest extends TestCase
      */
     public function testComplexLogic(): void
     {
-        $path = $this->getUploadFolder() . 'complex.xml';
-        $source = new SimpleXml($path);
+        $filePath = $this->getUploadFolder() . 'complex.xml';
+        $reader = new LocalFileReader($filePath);
 
+        $source = new SimpleXml($reader);
         $source->setRootTag('items.item');
         $result = iterator_to_array($source);
 

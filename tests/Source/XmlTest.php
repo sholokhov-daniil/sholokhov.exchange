@@ -5,6 +5,7 @@ namespace Sholokhov\Exchange\Source;
 use PHPUnit\Framework\TestCase;
 use Sholokhov\Exchange\Exception\Source\SourceException;
 use Sholokhov\Exchange\Helper\Helper;
+use Sholokhov\Exchange\Reader\LocalFileReader;
 
 /**
  * Тестирование источника данных Xml.
@@ -29,8 +30,9 @@ class XmlTest extends TestCase
     public function testParseSimpleXml(): void
     {
         $filePath = $this->getUploadFolder() . 'simple.xml';
-        $source = new Xml($filePath);
+        $reader = new LocalFileReader($filePath);
 
+        $source = new Xml($reader);
         $source->setRootTag('data');
 
         $result = iterator_to_array($source);
@@ -50,7 +52,8 @@ class XmlTest extends TestCase
     public function testEmptyFile(): void
     {
         $filePath = $this->getUploadFolder() . 'empty.xml';
-        $source = new Xml($filePath);
+        $reader = new LocalFileReader($filePath);
+        $source = new Xml($reader);
 
         $this->assertEmpty(iterator_to_array($source));
     }
@@ -63,9 +66,11 @@ class XmlTest extends TestCase
     public function testCustomRootTag(): void
     {
         $filePath = $this->getUploadFolder() . 'custom_root.xml';
-        $source = new Xml($filePath);
+        $reader = new LocalFileReader($filePath);
 
+        $source = new Xml($reader);
         $source->setRootTag('root');
+
         $result = iterator_to_array($source);
 
         $this->assertNotEmpty($result);
@@ -85,8 +90,9 @@ class XmlTest extends TestCase
     public function testRootTagDepth(): void
     {
         $filePath = $this->getUploadFolder() . 'complex_2.xml';
+        $reader = new LocalFileReader($filePath);
 
-        $source = new Xml($filePath);
+        $source = new Xml($reader);
         $source->setRootTag('items');
         $source->setRootTagDepth(3);
 
@@ -114,8 +120,9 @@ class XmlTest extends TestCase
     public function testIteration(): void
     {
         $filePath = $this->getUploadFolder() . 'iteration.xml';
-        $source = new Xml($filePath);
+        $reader = new LocalFileReader($filePath);
 
+        $source = new Xml($reader);
         $source->setRootTag('data');
 
         $iterator = iterator_to_array($source);
@@ -133,8 +140,9 @@ class XmlTest extends TestCase
     public function testMissingRootTag(): void
     {
         $filePath = $this->getUploadFolder() . 'missing_root.xml';
-        $source = new Xml($filePath);
+        $reader = new LocalFileReader($filePath);
 
+        $source = new Xml($reader);
         $source->setRootTag('non_existing_tag');
 
         $this->assertEmpty(iterator_to_array($source));
@@ -148,8 +156,9 @@ class XmlTest extends TestCase
     public function testComplexLogic(): void
     {
         $filePath = $this->getUploadFolder() . 'complex.xml';
-        $source = new Xml($filePath);
+        $reader = new LocalFileReader($filePath);
 
+        $source = new Xml($reader);
         $source->setRootTag('items');
 
         $result = iterator_to_array($source);

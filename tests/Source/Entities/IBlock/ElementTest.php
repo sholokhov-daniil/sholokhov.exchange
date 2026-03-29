@@ -2,12 +2,14 @@
 
 namespace Sholokhov\Exchange\Source\Entities\IBlock;
 
+use Bitrix\Main\Loader;
 use CIBlockResult;
 use _CIBElement;
 
 use Sholokhov\Exchange\Provider\Entity\IBlockProviderInterface;
 
 use PHPUnit\Framework\TestCase;
+
 /**
  * Тесты для класса Element.
  *
@@ -27,6 +29,8 @@ class ElementTest extends TestCase
      */
     public function testLoadReturnsIterator(): void
     {
+        Loader::includeModule('iblock');
+
         // Создаем моки элементов _CIBElement
         $element1 = $this->createMock(_CIBElement::class);
         $element1->method('GetFields')->willReturn(['ID' => 1, 'NAME' => 'Alice']);
@@ -77,6 +81,8 @@ class ElementTest extends TestCase
 
     public function testPaginationWorks(): void
     {
+        Loader::includeModule('iblock');
+
         // Создадим 5 элементов
         $elementsData = [
             ['ID' => 1, 'NAME' => 'Alice'],
