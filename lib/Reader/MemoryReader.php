@@ -15,6 +15,8 @@ use Sholokhov\Exchange\Exception\Reader\ReaderException;
  *
  * Поток является независимым, поэтому его изменение вне класса
  * не влияет на внутреннее состояние Reader.
+ *
+ * @package Reader
  */
 class MemoryReader implements DataReaderInterface
 {

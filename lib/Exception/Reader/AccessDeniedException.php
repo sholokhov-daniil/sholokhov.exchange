@@ -2,6 +2,8 @@
 
 namespace Sholokhov\Exchange\Exception\Reader;
 
+use Throwable;
+
 use Sholokhov\Exchange\Reader\DataReaderInterface;
 
 /**
@@ -15,7 +17,13 @@ use Sholokhov\Exchange\Reader\DataReaderInterface;
  *
  * Это исключение наследуется от {@see ReaderException}, поэтому его
  * можно ловить как специфически, так и через базовое исключение для всех ошибок чтения.
+ *
+ * @package Reader
  */
 class AccessDeniedException extends ReaderException
 {
+    public function __construct(string $message = 'Access denied', int $code = 0, ?Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
 }

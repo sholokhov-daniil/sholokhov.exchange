@@ -15,6 +15,8 @@ use Sholokhov\Exchange\Reader\DataReaderInterface;
  * что позволяет:
  * - ловить все reader-ошибки через один тип
  * - обрабатывать специфические ошибки по отдельности
+ *
+ * @package Reader
  */
 class ReaderException extends ExchangeException
 {

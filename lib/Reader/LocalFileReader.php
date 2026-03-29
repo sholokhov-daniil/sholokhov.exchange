@@ -9,9 +9,9 @@ use Sholokhov\Exchange\Exception\Reader\FileNotFountException;
 /**
  * Производит чтение из локальных файлов
  *
- * @final
+ * @package Reader
  */
-final class LocalFileReader implements DataReaderInterface
+class LocalFileReader implements DataReaderInterface
 {
     public function __construct(
         private readonly string $path

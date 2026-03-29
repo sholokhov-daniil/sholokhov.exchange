@@ -20,6 +20,8 @@ use Sholokhov\Exchange\Exception\Reader\ReaderException;
  * - Метод read() должен возвращать поток, готовый к чтению с начала.
  * - Ответственность за закрытие потока лежит на вызывающем коде.
  * - Реализация может выбрасывать исключения в случае ошибок доступа.
+ *
+ * @package Reader
  */
 interface DataReaderInterface
 {

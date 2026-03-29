@@ -2,10 +2,10 @@
 
 namespace Sholokhov\Exchange\Source;
 
-use PHPUnit\Framework\TestCase;
-use Sholokhov\Exchange\Exception\Source\SourceException;
 use Sholokhov\Exchange\Helper\Helper;
 use Sholokhov\Exchange\Reader\LocalFileReader;
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * Тестирование источника данных Xml.
@@ -85,7 +85,6 @@ class XmlTest extends TestCase
      * не напрямую под root, а на определённой глубине.
      *
      * @return void
-     * @throws SourceException
      */
     public function testRootTagDepth(): void
     {
@@ -181,7 +180,7 @@ class XmlTest extends TestCase
     /**
      * Возвращает путь к папке с XML-файлами для тестирования.
      *
-     * Используется для всех тестов: $this->getUploadFolder() . 'file.xml'
+     * Используется для всех тестов: $this->getUploadFolder(). 'file.xml'
      *
      * @return string Путь к директории с тестовыми XML
      */

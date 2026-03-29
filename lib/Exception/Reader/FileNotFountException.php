@@ -14,6 +14,8 @@ use Sholokhov\Exchange\Reader\DataReaderInterface;
  *
  * Это исключение наследуется от {@see ReaderException}, поэтому его
  * можно ловить как специфически, так и через базовое исключение для всех reader-ошибок.
+ *
+ * @package Reader
  */
 class FileNotFountException extends ReaderException
 {
