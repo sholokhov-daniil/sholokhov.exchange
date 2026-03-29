@@ -2,10 +2,7 @@
 
 namespace Sholokhov\Exchange\Reader;
 
-use RuntimeException;
-use InvalidArgumentException;
-
-use Psr\Http\Message\StreamInterface;
+use Sholokhov\Exchange\Exception\Reader\ReaderException;
 
 /**
  * Интерфейс для получения данных из различных источников.
@@ -29,10 +26,8 @@ interface DataReaderInterface
     /**
      * Возвращает поток данных из источника.
      *
-     * @return StreamInterface Поток для чтения данных
-     *
-     * @throws RuntimeException Если не удалось получить данные
-     * @throws InvalidArgumentException Если переданы некорректные параметры источника
+     * @return resource Поток для чтения данных
+     * @throws ReaderException
      */
-    public function read(): StreamInterface;
+    public function read();
 }
