@@ -3,6 +3,8 @@
 namespace Sholokhov\Exchange\Source;
 
 use Sholokhov\Exchange\Helper\Helper;
+use Sholokhov\Exchange\Reader\LocalFileReader;
+use Sholokhov\Exchange\Exception\Reader\ReaderException;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -28,8 +30,9 @@ class CsvTest extends TestCase
     public function testCsvIteration(string $fixture, string $separator, array $expected): void
     {
         $path = $this->getUploadFolder() . $fixture;
+        $reader = new LocalFileReader($path);
 
-        $csv = new CsvFile($path);
+        $csv = new Csv($reader);
         $csv->setSeparator($separator);
 
         $result = [];
@@ -47,11 +50,14 @@ class CsvTest extends TestCase
      * а после rewind() указатель возвращается в начало файла.
      *
      * @return void
+     * @throws ReaderException
      */
     public function testRewindAndKey(): void
     {
         $path = $this->getUploadFolder() . 'simple.csv';
-        $csv = new CsvFile($path);
+        $reader = new LocalFileReader($path);
+
+        $csv = new Csv($reader);
 
         $csv->next(); // идем на вторую строку
         $firstKey = $csv->key();
@@ -70,12 +76,41 @@ class CsvTest extends TestCase
     public function testSetEnclosureAndEscape(): void
     {
         $path = $this->getUploadFolder() . 'quoted.csv';
-        $csv = new CsvFile($path);
+        $reader = new LocalFileReader($path);
+
+        $csv = new Csv($reader);
         $csv->setEnclosure('"');
         $csv->setEscape('\\');
 
         $rows = iterator_to_array($csv);
-        $this->assertEquals('She said "Hi!"', $rows[2][2]);
+
+        $this->assertEquals('She said "Hi!"', $rows[1][2]);
+    }
+
+    /**
+     * Тестируем игнорирование заголовка csv
+     *
+     * @return void
+     * @throws ReaderException
+     */
+    public function testSetSkipHeader(): void
+    {
+        $path = $this->getUploadFolder() . 'simple.csv';
+        $reader = new LocalFileReader($path);
+
+        $csv = new Csv($reader);
+        $csv->setSkipHeader(true);
+
+        $rows = iterator_to_array($csv);
+
+        // Проверяем, что строки всё ещё читаются корректно
+        $this->assertEquals('Alice', $rows[0][1]);
+
+        $csv->setSkipHeader(false);
+        $csv->rewind();
+
+        $rows = iterator_to_array($csv);
+        $this->assertEquals(['id', 'name', 'age'], $rows[0]);
     }
 
     /**
@@ -86,13 +121,32 @@ class CsvTest extends TestCase
     public function testSetLength(): void
     {
         $path = $this->getUploadFolder() . 'simple.csv';
-        $csv = new CsvFile($path);
+        $reader = new LocalFileReader($path);
+
+        $csv = new Csv($reader);
 
         $csv->setLength(12); // ставим ограничение
         $rows = iterator_to_array($csv);
 
         // Проверяем, что строки всё ещё читаются корректно
-        $this->assertEquals('Alice', $rows[1][1]);
+        $this->assertEquals('Alice', $rows[0][1]);
+    }
+
+    /**
+     * Проверка конвертирования содержимого из других кодировок
+     *
+     * @return void
+     */
+    public function testEncoding(): void
+    {
+        $path = $this->getUploadFolder() . 'cp1251.csv';
+        $reader = new LocalFileReader($path);
+
+        $csv = new Csv($reader, 'UTF-8');
+        $rows = iterator_to_array($csv);
+
+        $this->assertCount(1, $rows);
+        $this->assertEquals(['Даниил', 'Шолохов'], $rows[0]);
     }
 
     /**
@@ -109,7 +163,6 @@ class CsvTest extends TestCase
                 'simple.csv', // fixture
                 ',',          // separator
                 [
-                    ['id', 'name', 'age'],
                     ['1', 'Alice', '30'],
                     ['2', 'Bob', '25'],
                     ['3', 'Charlie', '40'],
@@ -119,7 +172,6 @@ class CsvTest extends TestCase
                 'semicolon.csv',
                 ';',
                 [
-                    ['id', 'name', 'city'],
                     ['1', 'Alice', 'NY'],
                     ['2', 'Bob', 'LA'],
                 ],
@@ -128,7 +180,6 @@ class CsvTest extends TestCase
                 'quoted.csv',
                 ',',
                 [
-                    ['id', 'name', 'note'],
                     ['1', 'Alice', 'Hello, world'],
                     ['2', 'Bob', 'She said "Hi!"'],
                 ],
