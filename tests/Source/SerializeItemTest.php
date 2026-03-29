@@ -2,6 +2,8 @@
 
 namespace Sholokhov\Exchange\Source;
 
+use Sholokhov\Exchange\Reader\MemoryReader;
+
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -21,7 +23,8 @@ class SerializeItemTest extends TestCase
     #[DataProvider('multipleDataProvider')]
     public function testIterationMultiple(string $serialized, array $expected): void
     {
-        $source = new SerializeItem($serialized, true);
+        $reader = new MemoryReader($serialized);
+        $source = new SerializeItem($reader, true);
 
         // Сохраняем ключи массива
         $result = iterator_to_array($source, true);
@@ -37,7 +40,9 @@ class SerializeItemTest extends TestCase
     public function testIterationSingle(): void
     {
         $data = serialize('hello');
-        $source = new SerializeItem($data, false);
+        $reader = new MemoryReader($data);
+
+        $source = new SerializeItem($reader, false);
 
         $rows = iterator_to_array($source);
         $this->assertEquals(['hello'], $rows);
@@ -52,7 +57,9 @@ class SerializeItemTest extends TestCase
     public function testIterationFetchReplacement(): void
     {
         $data = serialize([10, 20, 30]);
-        $source = new SerializeItem($data, true);
+        $reader = new MemoryReader($data);
+
+        $source = new SerializeItem($reader, true);
 
         // получаем все элементы итератора
         $values = iterator_to_array($source);
@@ -69,7 +76,9 @@ class SerializeItemTest extends TestCase
     public function testRewindAndKey(): void
     {
         $data = serialize([100, 200]);
-        $source = new SerializeItem($data, true);
+        $reader = new MemoryReader($data);
+
+        $source = new SerializeItem($reader, true);
 
         $source->next();
         $firstKey = $source->key();
@@ -86,7 +95,9 @@ class SerializeItemTest extends TestCase
     public function testInvalidSerializedString(): void
     {
         $data = 'invalid_string';
-        $source = new SerializeItem($data, true);
+        $reader = new MemoryReader($data);
+
+        $source = new SerializeItem($reader, true);
 
         // Проверяем, что при некорректной строке возвращается массив с false
         $rows = iterator_to_array($source);

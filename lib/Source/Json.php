@@ -73,7 +73,7 @@ final class Json implements Iterator
      */
     private function loadData(): mixed
     {
-        $resource = $this->getResource();
+        $resource = $this->reader->read();
         $json = stream_get_contents($resource, -1, 0);
         fclose($resource);
 
@@ -90,17 +90,6 @@ final class Json implements Iterator
         $sourceKey = $this->getSourceKey();
 
         return $sourceKey ? Helper::getArrValueByPath($data, $sourceKey) : $data;
-    }
-
-    /**
-     * Возвращает поток Json
-     *
-     * @return resource
-     * @throws ReaderException
-     */
-    private function getResource()
-    {
-        return $this->resource ??= $this->reader->read();
     }
 
     /**
