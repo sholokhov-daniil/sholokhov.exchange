@@ -45,6 +45,16 @@ trait ProviderSelectionTrait
     }
 
     /**
+     * Возвращает фильтр запроса
+     *
+     * @return array
+     */
+    public function getFilter(): array
+    {
+        return $this->filter;
+    }
+
+    /**
      * Устанавливает порядок сортировки элементов.
      *
      * @param array $order Ассоциативный массив вида ['FIELD' => 'ASC|DESC']

@@ -2,9 +2,12 @@
 
 namespace Sholokhov\Exchange\Provider\Entity;
 
-use CIBlockResult;
 use CIBlockSection;
+
+use Sholokhov\Exchange\Converter\DbResultConverter;
+
 use Bitrix\Main\Loader;
+use Bitrix\Main\DB\Result;
 use Bitrix\Main\LoaderException;
 
 /**
@@ -17,7 +20,7 @@ use Bitrix\Main\LoaderException;
  *
  * @package Provider
  */
-class IBlockSectionProvider implements IBlockProviderInterface
+class IBlockSectionProvider implements EntityProviderInterface
 {
     use ProviderSelectionTrait;
 
@@ -33,16 +36,18 @@ class IBlockSectionProvider implements IBlockProviderInterface
     /**
      * Выполняет запрос к элементам ИБ с текущей конфигурацией фильтра, сортировки, выборки и навигации.
      *
-     * @return CIBlockResult|null Возвращает объект CIBlockResult или null, если запрос не удался
+     * @return Result|null Возвращает объект CIBlockResult или null, если запрос не удался
      */
-    public function query(): ?CIBlockResult
+    public function query(): ?Result
     {
-        return CIBlockSection::GetList(
+        $result =  CIBlockSection::GetList(
             arOrder: $this->order,
             arFilter: $this->filter,
             arSelect: $this->select,
             arNavStartParams: $this->getNav(),
         ) ?: null;
+
+        return $result ?  DbResultConverter::fromOld($result) : null;
     }
 
     /**

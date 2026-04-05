@@ -2,14 +2,16 @@
 
 namespace Sholokhov\Exchange\Provider\Entity;
 
+use Bitrix\Main\DB\Result;
+
 interface EntityProviderInterface
 {
     /**
      * Выполнить запрос на получение данных
      *
-     * @return object|null
+     * @return Result|null
      */
-    public function query(): ?object;
+    public function query(): ?Result;
 
     /**
      * Установка фильтра запроса
@@ -19,6 +21,13 @@ interface EntityProviderInterface
      * @return $this
      */
     public function setFilter(array $filter): static;
+
+    /**
+     * Возвращает фильтр запроса
+     *
+     * @return array
+     */
+    public function getFilter(): array;
 
     /**
      * Установка порядка сортировки
