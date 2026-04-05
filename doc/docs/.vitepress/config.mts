@@ -11,13 +11,13 @@ import {
 export default defineConfig({
     title: 'sholokhov.exchange',
     description: 'Документация по модулю sholokhov.exchange',
-    base: '/sholokhov.exchange.doc/',
+    base: '/sholokhov.exchange/',
     cleanUrls: true,
     rewrites: generateVersionRewrites(),
     head: [
         [
             'link',
-            {rel: 'icon', href: '/sholokhov.exchange.doc/favicon.ico'}
+            {rel: 'icon', href: '/sholokhov.exchange/favicon.ico'}
         ]
     ],
 
