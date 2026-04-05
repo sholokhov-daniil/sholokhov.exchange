@@ -1,0 +1,157 @@
+[
+  {
+    "text": "Начало работы",
+    "items": [
+      {
+        "text": "Установка",
+        "link": "/"
+      },
+      {
+        "text": "Конфигурация",
+        "link": "/guide/config"
+      },
+      {
+        "text": "Карта обмена",
+        "link": "/guide/map/",
+        "items": [
+          {
+            "text": "Базовое свойство",
+            "link": "/guide/map/base"
+          },
+          {
+            "text": "Информационный блок",
+            "link": "/guide/map/iblock"
+          },
+          {
+            "text": "Экспорт xml",
+            "link": "/guide/map/export-xml"
+          }
+        ]
+      },
+      {
+        "text": "Создание обмена",
+        "link": "/guide/start"
+      }
+    ]
+  },
+  {
+    "text": "Источники данных",
+    "items": [
+      {
+        "text": "Быстрый XML",
+        "link": "/source/xml-simple"
+      },
+      {
+        "text": "Медленный XML",
+        "link": "/source/xml-db"
+      },
+      {
+        "text": "Json",
+        "link": "/source/json"
+      },
+      {
+        "text": "csv",
+        "link": "/source/csv"
+      },
+      {
+        "text": "Сериализация",
+        "link": "/source/serialize"
+      },
+      {
+        "text": "Сущность",
+        "link": "/source/entity"
+      }
+    ]
+  },
+  {
+    "text": "Data Readers",
+    "link": "/reader/index",
+    "items": [
+      {
+        "text": "Локальные файлы",
+        "link": "/reader/local-file"
+      },
+      {
+        "text": "HTTP файлы",
+        "link": "/reader/http"
+      },
+      {
+        "text": "Память сервера",
+        "link": "/reader/memory"
+      }
+    ]
+  },
+  {
+    "text": "Provider",
+    "items": [
+      {
+        "text": "Сущность",
+        "link": "/provider/entity",
+        "items": [
+          {
+            "text": "Пользователи",
+            "link": "/provider/entity/user"
+          },
+          {
+            "text": "Элементы инфоблока",
+            "link": "/provider/entity/iblock-element"
+          },
+          {
+            "text": "Разделы инфоблока",
+            "link": "/provider/entity/iblock-section"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "Импорт",
+    "items": [
+      {
+        "text": "Файл",
+        "link": "/import/file"
+      },
+      {
+        "text": "Инфоблок",
+        "items": [
+          {
+            "text": "Элемент",
+            "link": "/import/iblock/element"
+          },
+          {
+            "text": "Раздел",
+            "link": "/import/iblock/section"
+          },
+          {
+            "text": "Свойства",
+            "items": [
+              {
+                "text": "Значения списка",
+                "link": "/import/iblock/property/enum-value"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "text": "Элемент справочника",
+        "link": "/import/hl/element"
+      },
+      {
+        "text": "Пользовательские свойства (UF)",
+        "items": [
+          {
+            "text": "Значение списка",
+            "link": "/import/uf/enum-value"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "Экспорт",
+    "items": [
+      {"text": 'XML', "link": "/export/xml"}
+    ]
+  }
+]
