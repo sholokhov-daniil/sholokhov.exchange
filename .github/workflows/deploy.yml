@@ -32,6 +32,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: doc/package-lock.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -42,6 +43,7 @@ jobs:
 
       # Если VP_ROOT="docs", соберет docs/.vitepress/dist; если ".", то .vitepress/dist
       - name: Build with VitePress
+        working-directory: doc
         run: npx --no-install vitepress build "$VP_ROOT"
 
       - name: Upload artifact
