@@ -37,6 +37,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
+        working-directory: doc
         run: npm ci
 
       # Если VP_ROOT="docs", соберет docs/.vitepress/dist; если ".", то .vitepress/dist
