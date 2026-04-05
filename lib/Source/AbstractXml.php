@@ -3,7 +3,9 @@
 namespace Sholokhov\Exchange\Source;
 
 use Iterator;
-use EmptyIterator;
+
+use Sholokhov\Exchange\Reader\DataReaderInterface;
+use Sholokhov\Exchange\Exception\Reader\ReaderException;
 
 /**
  * Базовое представление xml источников данных
@@ -11,8 +13,6 @@ use EmptyIterator;
  * @internal
  *
  * @package Source
- * @since 1.0.0
- * @version 1.0.0
  */
 abstract class AbstractXml implements Iterator
 {
@@ -22,20 +22,22 @@ abstract class AbstractXml implements Iterator
      * Родительский тег элементов
      *
      * @var string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     protected string $rootTag = 'data';
 
     /**
-     * @param string $path Путь до xml файла
+     * Провайдер данных
      *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @var DataReaderInterface
      */
-    public function __construct(protected readonly string $path)
+    protected readonly DataReaderInterface $reader;
+
+    /**
+     * @param DataReaderInterface $reader Провайдер данных
+     */
+    public function __construct(DataReaderInterface $reader)
     {
+        $this->reader = $reader;
     }
 
     /**
@@ -43,9 +45,6 @@ abstract class AbstractXml implements Iterator
      *
      * @param mixed $resource
      * @return Iterator
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     abstract protected function parsing(mixed $resource): Iterator;
 
@@ -56,9 +55,6 @@ abstract class AbstractXml implements Iterator
      *
      * @param string $rootTag
      * @return $this
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function setRootTag(string $rootTag): self
     {
@@ -75,18 +71,15 @@ abstract class AbstractXml implements Iterator
      * Загрузка данных источника
      *
      * @return Iterator
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws ReaderException
      */
     final protected function load(): Iterator
     {
-        $resource = fopen($this->path, 'r');
+        $resource = $this->reader->read();
+        $iterator = $this->parsing($resource);
+        fclose($resource);
 
-        if (!$resource) {
-            return new EmptyIterator();
-        }
 
-        return $this->parsing($resource);
+        return $iterator;
     }
 }

@@ -2,178 +2,294 @@
 
 namespace Sholokhov\Exchange\Source;
 
+use Iterator;
 use SplFileObject;
 
+use Sholokhov\Exchange\Reader\DataReaderInterface;
+use Sholokhov\Exchange\Exception\Reader\ReaderException;
+
+use Bitrix\Main\Text\Encoding;
+
 /**
- * Источник данных на csv файла
+ * Источник данных на основе CSV формата.
  *
- * @internal Наследуемся на свой страх и риск
+ * Позволяет последовательно читать строки CSV-файла без загрузки всего файла в память.
+ * Поддерживает настройку разделителя, символа-ограничителя, символа экранирования и максимальной длины строки.
  *
+ * @final
  * @package Source
- * @since 1.0.0
- * @version 1.0.0
  */
-class Csv implements \Iterator
+final class Csv implements Iterator
 {
-    private SplFileObject $file;
+    /**
+     * Текущая строка CSV
+     *
+     * @var array|null
+     */
+    private ?array $current = null;
 
     /**
-     * @param string $path Путь до файла
-     * @param string $encoding Кодировка файла
+     * Индекс текущей строки
      *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @var int
      */
-    public function __construct(
-        private readonly string $path,
-        private readonly string $encoding = 'UTF-8',
-    )
+    private int $key = 0;
+
+    /**
+     * Максимальная длина строки
+     *
+     * @var int
+     */
+    private int $length = 0;
+
+    /**
+     * Символ разделителя полей
+     *
+     * @var string
+     */
+    private string $separator = ",";
+
+    /**
+     * Символ ограничителя поля
+     *
+     * @var string
+     */
+    private string $enclosure = "\"";
+
+    /**
+     * Символ экранирования
+     *
+     * @var string
+     */
+    private string $escape = '\\';
+
+    /**
+     * Ресурс потока CSV
+     *
+     * @var resource|null
+     */
+    private $resource = null;
+
+    /**
+     * Пропускать ли первую строку (заголовок)
+     *
+     * @var bool
+     */
+    private bool $skipHeader = true;
+
+    /**
+     * Провайдер данных
+     *
+     * @var DataReaderInterface
+     */
+    private DataReaderInterface $reader;
+
+    /**
+     * Кодировка в которую необходимо конвертировать
+     *
+     * @var string
+     */
+    private string $encoding;
+
+    /**
+     * @param DataReaderInterface $reader Провайдер данных
+     * @param string|null $encoding Кодировка файла
+     */
+    public function __construct(DataReaderInterface $reader, ?string $encoding = null)
     {
-        $this->file = new SplFileObject($this->path);
+        $this->reader = $reader;
+        $this->encoding = $encoding ?? SITE_CHARSET;
     }
 
-    /**
-     * Получение текущего значения
-     *
-     * @return array|null
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function current(): ?array
+    public function __destruct()
     {
-        if (!$this->valid()) {
-            return null;
+        if (is_resource($this->resource)) {
+            fclose($this->resource);
         }
-
-        $lastLine = $this->file->key();
-        $data = $this->file->fgetcsv(...$this->file->getCsvControl());
-        $this->file->seek($lastLine);
-
-        return is_array($data) ? $data : null;
     }
 
     /**
-     * Устанавливают значение, которое больше самой длинной строки в CSV-файле,
-     * иначе строка разбивается на части заданной длины, если только место разделения не встретится внутри символов-ограничителей.
-     * Длина строк измеряется в символах с учётом символов конца строки, которыми завершаются строки.
+     * Указывает, нужно ли пропускать заголовок CSV
      *
-     * @param int $length
+     * @param bool $skipHeader
+     * @return $this
+     */
+    public function setSkipHeader(bool $skipHeader = false): static
+    {
+        $this->skipHeader = $skipHeader;
+        return $this;
+    }
+
+    /**
+     * Устанавливает максимальную длину читаемой строки CSV.
+     *
+     * Если строка длиннее установленного значения, она будет обрезана.
+     * Длина измеряется в символах с учётом конца строки.
+     *
+     * @param int $length Максимальная длина строки
      * @return $this
      *
-     * @see fgetcsv
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @see SplFileObject::setMaxLineLen()
      */
     public function setLength(int $length): self
     {
-        $this->file->setMaxLineLen($length);
+        $this->length = $length;
         return $this;
     }
 
     /**
-     * Символ-разделитель полей и принимает только один однобайтовый символ
+     * Устанавливает символ-разделитель полей.
      *
-     * @param string $separator
+     * Принимает только один однобайтовый символ.
+     *
+     * @param string $separator Символ-разделитель
      * @return $this
      *
-     * @see fgetcsv
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @see SplFileObject::setCsvControl()
      */
     public function setSeparator(string $separator): self
     {
-        $this->file->setCsvControl($separator);
+        $this->separator = $separator;
         return $this;
     }
 
     /**
-     * Устанавливает символ-ограничитель значения поля и принимает только один однобайтовый символ
+     * Устанавливает символ-ограничитель значения поля.
      *
-     * @param string $enclosure
+     * Принимает только один однобайтовый символ.
+     *
+     * @param string $enclosure Символ-ограничитель
      * @return $this
      *
-     * @see fgetcsv
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @see SplFileObject::setCsvControl()
      */
     public function setEnclosure(string $enclosure): self
     {
-        $control = $this->file->getCsvControl();
-        $this->file->setCsvControl($control[0], $enclosure, $control[1]);
-
+        $this->enclosure = $enclosure;
         return $this;
     }
 
     /**
-     * Устанавливает символ экранирования и принимает только один однобайтовый символ или пустую строку.
-     * Пустая строка "" отключает внутренний механизм экранирования
+     * Устанавливает символ экранирования для полей CSV.
      *
-     * @param string $escape
+     * Пустая строка "" отключает механизм экранирования.
+     *
+     * @param string $escape Символ экранирования
      * @return $this
      *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @see SplFileObject::setCsvControl()
      */
     public function setEscape(string $escape): self
     {
-        $control = $this->file->getCsvControl();
-        $this->file->setCsvControl($control[0], $control[1], $escape);
+        $this->escape = $escape;
         return $this;
     }
 
     /**
-     * Последняя позиция указателя в файле
+     * Возвращает текущую строку CSV
+     *
+     * @return array|null
+     */
+    public function current(): ?array
+    {
+        return $this->current;
+    }
+
+    /**
+     * Возвращает индекс текущей строки
+     *
+     * @return int
+     */
+    public function key(): int
+    {
+        return $this->key;
+    }
+
+    /**
+     * Переходит к следующей строке CSV
      *
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws ReaderException
      */
     public function next(): void
     {
-        $this->file->next();
+        $this->current = $this->read();
+        $this->key++;
     }
 
     /**
-     * Позиция указателя в файле
-     *
-     * @return int|false
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function key(): int|false
-    {
-        return $this->file->ftell();
-    }
-
-    /**
-     * Флаг окончания потока данных
-     *
-     * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function valid(): bool
-    {
-        return $this->file->valid();
-    }
-
-    /**
-     * Поместить указатель в начало файла
+     * Перематывает итератор в начало CSV
      *
      * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws ReaderException
      */
     public function rewind(): void
     {
-        $this->file->rewind();
+        $resource = $this->getResource();
+
+        if (stream_get_meta_data($resource)['seekable']) {
+            rewind($resource);
+        }
+
+        $this->key = 0;
+
+        // Пропускаем заголовок только если нужно
+        if ($this->skipHeader) {
+            $this->read();
+        }
+
+        // Читаем первую строку данных
+        $this->current = $this->read();
+    }
+
+    /**
+     * Проверяет, есть ли текущая строка
+     *
+     * @return bool
+     */
+    public function valid(): bool
+    {
+        return $this->current() !== null;
+    }
+
+    /**
+     * Читает текущую строку CSV из потока переводя внутренний указатель потока на следующую строку
+     *
+     * @return array|null
+     * @throws ReaderException
+     */
+    private function read(): ?array
+    {
+        $line = fgetcsv($this->getResource(), $this->length, $this->separator, $this->enclosure, $this->escape);
+
+        if (!is_array($line)) {
+            return null;
+        }
+
+        foreach ($line as &$value) {
+            if ($value !== null && $value !== '') {
+                // Определяем кодировку строки
+                $detected = mb_detect_encoding($value, ['UTF-8', 'CP1251', 'WINDOWS-1251', 'ISO-8859-1'], true);
+
+                // Если определена и отличается от нужной — конвертируем через Bitrix
+                if ($detected !== false && strtoupper($detected) !== strtoupper($this->encoding)) {
+                    $value = Encoding::convertEncoding($value, $detected, $this->encoding);
+                }
+            }
+        }
+        unset($value);
+
+        return $line;
+    }
+
+    /**
+     * Возвращает поток CSV
+     *
+     * @return resource
+     * @throws ReaderException
+     */
+    private function getResource()
+    {
+        return $this->resource ??= $this->reader->read();
     }
 }

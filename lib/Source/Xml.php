@@ -4,12 +4,13 @@ namespace Sholokhov\Exchange\Source;
 
 use Iterator;
 use CIBlockXMLFile;
-use EmptyIterator;
 use ArrayIterator;
 
+use Sholokhov\Exchange\Exception\Source\SourceException;
 use Sholokhov\Exchange\ORM\Factory;
 use Sholokhov\Exchange\ORM\AbstractXmlDynamic;
 
+use Bitrix\Main\LoaderException;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\DB\SqlQueryException;
 use Bitrix\Main\Loader;
@@ -25,7 +26,6 @@ use Bitrix\Main\SystemException;
  * Рекомендуется использовать, если объем XML файла большой и мы готовы подождать
  *
  * @package Source
- * @version 1.0.0
  */
 class Xml extends AbstractXml
 {
@@ -35,14 +35,12 @@ class Xml extends AbstractXml
     private ?string $dataManager = null;
     private int $rootTagDepth = 0;
 
-    public function __construct(string $path)
-    {
-        parent::__construct($path);
-        Loader::includeModule('iblock');
-    }
-
     public function __destruct()
     {
+        if (!$this->dataManager) {
+            return;
+        }
+
         $entity = $this->dataManager::getEntity();
         $entity->getConnection()->dropTable($entity->getDBTableName());
     }
@@ -79,13 +77,19 @@ class Xml extends AbstractXml
      * @return Iterator
      * @throws ArgumentException
      * @throws ObjectPropertyException
+     * @throws SourceException
      * @throws SqlQueryException
      * @throws SystemException
+     * @throws LoaderException
      */
     protected function parsing(mixed $resource): Iterator
     {
         if (!$resource) {
-            return new EmptyIterator();
+            return new ArrayIterator;
+        }
+
+        if (!Loader::includeModule('iblock')) {
+            throw new SourceException('Не установлен модуль iblock');
         }
 
         $entity = $this->makeEntity();

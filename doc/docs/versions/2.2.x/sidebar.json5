@@ -1,0 +1,108 @@
+[
+  {
+    "text": "Начало работы",
+    "items": [
+      {
+        "text": "Установка",
+        "link": "/"
+      },
+      {
+        "text": "Конфигурация",
+        "link": "/guide/config"
+      },
+      {
+        "text": "Карта обмена",
+        "link": "/guide/map/",
+        "items": [
+          {
+            "text": "Базовое свойство",
+            "link": "/guide/map/base"
+          },
+          {
+            "text": "Информационный блок",
+            "link": "/guide/map/iblock"
+          },
+          {
+            "text": "Экспорт xml",
+            "link": "/guide/map/export-xml"
+          }
+        ]
+      },
+      {
+        "text": "Создание обмена",
+        "link": "/guide/start"
+      }
+    ]
+  },
+  {
+    "text": "Источники данных",
+    "items": [
+      {
+        "text": "Быстрый XML",
+        "link": "/source/xml-simple"
+      },
+      {
+        "text": "Медленный XML",
+        "link": "/source/xml-db"
+      },
+      {
+        "text": "Json",
+        "link": "/source/json"
+      },
+      {
+        "text": "Json файл",
+        "link": "/source/json-file"
+      }
+    ]
+  },
+  {
+    "text": "Импорт",
+    "items": [
+      {
+        "text": "Файл",
+        "link": "/import/file"
+      },
+      {
+        "text": "Инфоблок",
+        "items": [
+          {
+            "text": "Элемент",
+            "link": "/import/iblock/element"
+          },
+          {
+            "text": "Раздел",
+            "link": "/import/iblock/section"
+          },
+          {
+            "text": "Свойства",
+            "items": [
+              {
+                "text": "Значения списка",
+                "link": "/import/iblock/property/enum-value"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "text": "Элемент справочника",
+        "link": "/import/hl/element"
+      },
+      {
+        "text": "Пользовательские свойства (UF)",
+        "items": [
+          {
+            "text": "Значение списка",
+            "link": "/import/uf/enum-value"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "text": "Экспорт",
+    "items": [
+      {"text": 'XML', "link": "/export/xml"}
+    ]
+  }
+]

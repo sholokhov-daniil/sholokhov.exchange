@@ -5,115 +5,44 @@ namespace Sholokhov\Exchange\Source;
 use Iterator;
 use ArrayIterator;
 
+use Sholokhov\Exchange\Reader\DataReaderInterface;
+use Sholokhov\Exchange\Exception\Reader\ReaderException;
+
 /**
  * Источник данных на основе сериализованной строки
  *
- * @internal Наследуемся на свой страх и риск
- *
+ * @final
  * @package Source
- * @since 1.0.0
- * @version 1.0.0
  */
-class SerializeItem implements Iterator
+final class SerializeItem implements Iterator
 {
-    private Iterator $iterator;
+    use IterableTrait;
 
     /**
-     * @param string $data Строка с данными
+     * @param DataReaderInterface $reader Провайдер данных
      * @param bool $multiple Данные являются множественными
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function __construct(
-        private readonly string $data,
+        private readonly DataReaderInterface $reader,
         private readonly bool $multiple = true,
     )
     {
     }
 
     /**
-     * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function fetch(): mixed
-    {
-        $this->iterator ??= $this->load();
-        return $this->iterator->fetch();
-    }
-
-    /**
      * Инициализация итератора данных из сериализованной строки
      *
      * @return Iterator
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws ReaderException
      */
     protected function load(): Iterator
     {
-        $data = unserialize($this->data);
+        $resource = $this->reader->read();
+        $data = stream_get_contents($resource, -1, 0);
+        fclose($resource);
+
+        $data = @unserialize($data);
+
         return $this->multiple && is_array($data) ? new ArrayIterator($data) : new ArrayIterator([$data]);
-    }
-
-    /**
-     * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function current(): mixed
-    {
-        if (!isset($this->iterator)) {
-            $this->iterator = $this->load();
-        }
-
-        return $this->iterator->current();
-    }
-
-    /**
-     * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function next(): void
-    {
-        $this->iterator->next();
-    }
-
-    /**
-     * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function key(): mixed
-    {
-        return $this->iterator->key();
-    }
-
-    /**
-     * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function valid(): bool
-    {
-        return $this->iterator->valid();
-    }
-
-    /**
-     * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function rewind(): void
-    {
-        $this->iterator->rewind();
     }
 }

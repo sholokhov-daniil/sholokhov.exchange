@@ -2,9 +2,8 @@
 
 namespace Sholokhov\Exchange\Source;
 
-use ArrayIterator;
 use Iterator;
-use EmptyIterator;
+use ArrayIterator;
 
 use Sholokhov\Exchange\Helper\Helper;
 
@@ -24,21 +23,31 @@ class SimpleXml extends AbstractXml
     /**
      * Чтение и парсинг xml файла
      *
-     * @param mixed $resource
+     * @param resource $resource
      * @return Iterator
      */
     protected function parsing(mixed $resource): Iterator
     {
         if (!$resource) {
-            return new EmptyIterator();
+            return new ArrayIterator;
         }
 
-        $encoder = new XmlEncoder();
-        $data = $encoder->decode(stream_get_contents($resource), XmlEncoder::FORMAT);
+        $content = stream_get_contents($resource);
+        if (trim($content) === '') {
+            return new ArrayIterator;
+        }
+
+        $encoder = new XmlEncoder;
+        $data = $encoder->decode($content, XmlEncoder::FORMAT);
+
+        if (!is_array($data)) {
+            return new ArrayIterator;
+        }
+
         $data = Helper::getArrValueByPath($data, $this->rootTag);
 
         if (!$data) {
-            return new EmptyIterator();
+            return new ArrayIterator;
         }
 
         return array_is_list($data) ? new ArrayIterator($data) : new ArrayIterator([$data]);

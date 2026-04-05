@@ -1,0 +1,30 @@
+{
+  "name": "sholokhov.exchange.doc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "serve": "vitepress serve docs --port 4172"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sholokhov-daniil/sholokhov.exchange.doc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sholokhov-daniil/sholokhov.exchange.doc/issues"
+  },
+  "homepage": "https://github.com/sholokhov-daniil/sholokhov.exchange.doc#readme",
+  "description": "",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  },
+  "dependencies": {
+    "@types/node": "^24.8.1",
+    "json5": "^2.2.3"
+  }
+}

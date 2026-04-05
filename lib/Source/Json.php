@@ -4,103 +4,62 @@ namespace Sholokhov\Exchange\Source;
 
 use Iterator;
 use ArrayIterator;
+
 use Sholokhov\Exchange\Helper\Helper;
+use Sholokhov\Exchange\Reader\DataReaderInterface;
+use Sholokhov\Exchange\Exception\Reader\ReaderException;
 
 /**
  * Источник данных на основе json строки
  *
+ * @final
  * @package Source
- * @since 1.0.0
- * @version 1.0.0
  */
-class Json implements Iterator
+final class Json implements Iterator
 {
-    /**
-     * JSON строка
-     *
-     * @var string
-     * @version 1.0.0
-     * @since 1.0.0
-     */
-    private readonly string $json;
+    use IterableTrait;
 
     /**
      * Конфигурация источника данных
      *
      * @var array
-     * @version 1.0.0
-     * @since 1.0.0
      */
     private readonly array $options;
 
     /**
-     * JSON хранит множественное значение
+     * Провайдер данных
      *
-     * @var bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @var DataReaderInterface
      */
-    private bool $multiple = false;
+    private DataReaderInterface $reader;
 
     /**
-     * @var Iterator
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    private Iterator $iterator;
-
-    /**
-     * @param string $json JSON строка
+     * @param DataReaderInterface $reader Провайдер данных
      * @param array $options Конфигурация источника
-     * @since 1.0.0
-     * @version 1.0.0
      */
-    public function __construct(string $json, array $options = [])
+    public function __construct(DataReaderInterface $reader, array $options = [])
     {
-        $this->json = $json;
+        $this->reader = $reader;
         $this->options = $options;
     }
 
     /**
-     * @return mixed
+     * Значение является множественным
      *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function current(): mixed
-    {
-        return $this->getIterator()->current();
-    }
-
-
-    /**
-     * Значение является можественным
      * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
     public function isMultiple(): bool
     {
         return (bool)$this->options['multiple'];
     }
 
-    private function getIterator(): Iterator
-    {
-        return $this->iterator ??= $this->loadIterator();
-    }
-
     /**
      * Загрузка данных
      *
      * @return Iterator
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws ReaderException
      */
-    private function loadIterator(): Iterator
+    private function load(): Iterator
     {
         $data = $this->loadData();
         return $this->isMultiple() && is_array($data) ? new ArrayIterator($data) : new ArrayIterator([$data]);
@@ -110,22 +69,23 @@ class Json implements Iterator
      * Загрузка данных из json файла
      *
      * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
+     * @throws ReaderException
      */
     private function loadData(): mixed
     {
-        if (!json_validate($this->json)) {
+        $resource = $this->reader->read();
+        $json = stream_get_contents($resource, -1, 0);
+        fclose($resource);
+
+        if (!json_validate($json)) {
             return null;
         }
 
-        $data = json_decode($this->json, true);
+        $data = json_decode($json, true);
 
         if (!is_array($data)) {
             return null;
         }
-
 
         $sourceKey = $this->getSourceKey();
 
@@ -133,58 +93,11 @@ class Json implements Iterator
     }
 
     /**
-     * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function next(): void
-    {
-        $this->getIterator()->next();
-    }
-
-    /**
-     * @return mixed
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function key(): mixed
-    {
-        return $this->getIterator()->key();
-    }
-
-    /**
-     * @return bool
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function valid(): bool
-    {
-        return $this->getIterator()->valid();
-    }
-
-    /**
-     * @return void
-     *
-     * @since 1.0.0
-     * @version 1.0.0
-     */
-    public function rewind(): void
-    {
-        $this->getIterator()->rewind();
-    }
-
-    /**
      * Ключ в котором хранятся данные источника
      *
      * @return string
-     *
-     * @since 1.0.0
-     * @version 1.0.0
      */
-    protected function getSourceKey(): string
+    private function getSourceKey(): string
     {
         return (string)($this->options['source_key'] ?? '');
     }

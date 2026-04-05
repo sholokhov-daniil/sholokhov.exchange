@@ -3,3 +3,8 @@
 /*.log
 /build
 /docs
+/tests/var/logs
+/tests/.phpunit.cache
+
+/doc/node_modules/
+/doc/docs/.vitepress/cache
