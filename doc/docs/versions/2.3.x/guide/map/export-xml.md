@@ -1,6 +1,6 @@
 # Описание тега в xml экспорте
 
-Класс: **Sholokhov\Exchange\Fields\Export\XmlField**
+Класс: `Sholokhov\Exchange\Fields\Export\XmlField`
 
 Класс является наследником [стандартного свойства](/2.1.x/guide/map/) и поведение идентично ему.
 

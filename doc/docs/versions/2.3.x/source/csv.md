@@ -1,6 +1,6 @@
 # Источник данных CSV
 
-Класс: **Sholokhov\Exchange\Source\Csv**
+Класс: `Sholokhov\Exchange\Source\Csv`
 
 ## Введение
 

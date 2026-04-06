@@ -1,6 +1,6 @@
 # Импорт элементов справочника
 
-Класс: **Sholokhov\Exchange\Target\Import\Highloadblock\Element**
+Класс: `Sholokhov\Exchange\Target\Import\Highloadblock\Element`
 
 ## Конфигурация
 

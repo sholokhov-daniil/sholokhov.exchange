@@ -1,6 +1,6 @@
 # Медленный XML
 
-Класс: **Sholokhov\Exchange\Source\Xml**
+Класс: `Sholokhov\Exchange\Source\Xml`
 
 ## Введение
 

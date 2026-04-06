@@ -1,6 +1,6 @@
 # Источник данных SerializeItem
 
-Класс: **Sholokhov\Exchange\Source\SerializeItem**
+Класс: `Sholokhov\Exchange\Source\SerializeItem`
 
 ## Введение
 

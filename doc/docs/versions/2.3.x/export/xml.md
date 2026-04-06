@@ -1,6 +1,6 @@
 # Экспорт данных в xml формате
 
-Класс: **Sholokhov\Exchange\Target\Export\Xml**
+Класс: `Sholokhov\Exchange\Target\Export\Xml`
 
 ## Введение
 

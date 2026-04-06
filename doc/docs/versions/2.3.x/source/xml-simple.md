@@ -1,6 +1,6 @@
 # Быстрый XML
 
-Класс: **Sholokhov\Exchange\Source\SimpleXml**
+Класс: `Sholokhov\Exchange\Source\SimpleXml`
 
 
 ## Введение

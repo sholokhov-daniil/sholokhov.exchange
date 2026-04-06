@@ -1,6 +1,6 @@
 # Провайдер разделов IBlock
 
-Класс: **Sholokhov\Exchange\Provider\Entity\IBlockSectionProvider**
+Класс: `Sholokhov\Exchange\Provider\Entity\IBlockSectionProvider`
 
 ## Введение
 

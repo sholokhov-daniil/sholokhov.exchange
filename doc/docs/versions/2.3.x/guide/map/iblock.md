@@ -1,6 +1,6 @@
 # Свойство информационного блока
 
-Класс: **Sholokhov\Exchange\Fields\IBlock\IBlockElementField**
+Класс: `Sholokhov\Exchange\Fields\IBlock\IBlockElementField`
 
 Класс является наследником [стандартного свойства](/2.1.x/guide/map/) и поведение идентично ему.
 
