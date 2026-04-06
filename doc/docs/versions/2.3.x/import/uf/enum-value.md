@@ -1,6 +1,6 @@
 # Импорт значения списка пользовательского свойства (UF)
 
-Класс: **Sholokhov\Exchange\Target\Import\UserFields\Enumeration**
+Класс: `Sholokhov\Exchange\Target\Import\UserFields\Enumeration`
 
 ## Введение
 

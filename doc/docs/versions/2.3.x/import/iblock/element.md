@@ -1,6 +1,6 @@
 # Импорт элементов инфоблока
 
-Класс: **Sholokhov\Exchange\Target\Import\IBlock\Element**
+Класс: `Sholokhov\Exchange\Target\Import\IBlock\Element`
 
 ## Конфигурация
 Конфигурация импорта производится через DTO **Sholokhov\Exchange\Target\Options\Import\IBlock\IBlockOption**.

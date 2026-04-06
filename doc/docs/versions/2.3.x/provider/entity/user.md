@@ -1,6 +1,6 @@
 # Провайдер пользователей Bitrix
 
-Класс: **Sholokhov\Exchange\Provider\Entity\UserProvider**
+Класс: `Sholokhov\Exchange\Provider\Entity\UserProvider`
 
 ## Введение
 

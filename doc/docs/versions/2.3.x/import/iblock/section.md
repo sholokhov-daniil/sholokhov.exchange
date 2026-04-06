@@ -1,6 +1,6 @@
 # Импорт разделов инфоблока
 
-Класс: **Sholokhov\Exchange\Target\Import\IBlock\Section**
+Класс: `Sholokhov\Exchange\Target\Import\IBlock\Section`
 
 ## Конфигурация
 

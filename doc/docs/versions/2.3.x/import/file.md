@@ -1,6 +1,6 @@
 # Импорт файлов
 
-Класс: **Sholokhov\Exchange\Target\Import\File**
+Класс: `Sholokhov\Exchange\Target\Import\File`
 
 ## Введение
 

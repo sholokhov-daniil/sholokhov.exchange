@@ -1,6 +1,6 @@
 # Источник данных EntitySource
 
-Класс: **Sholokhov\Exchange\Source\Entities\EntitySource**
+Класс: `Sholokhov\Exchange\Source\Entities\EntitySource`
 
 ## Введение
 

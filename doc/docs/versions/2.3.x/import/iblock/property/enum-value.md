@@ -1,6 +1,6 @@
 # Импорт значения списка
 
-Класс: **Sholokhov\Exchange\Target\Import\IBlock\Property\PropertyEnumeration**
+Класс: `Sholokhov\Exchange\Target\Import\IBlock\Property\PropertyEnumeration`
 
 ## Введение
 

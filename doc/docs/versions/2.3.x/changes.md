@@ -1,192 +1,123 @@
-# Что изменилось в версии 2.2.x
+# Что изменилось в версии 2.3.x
 
 > ⚠️ Нарушена обратная совестимость
 
-Текущая версия содержит глобальные изменения в области конфигурации и изменения структуры библиотеки. 
-Что негативно сказалось на обратной совместимости. При переходе на текущую версию необходимо уделить должное внимание проверке работоспособности обменов, чтобы выполненное действие не привело к потере работоспособности функционала.
+Текущая версия содержит глобальные изменения в области конфигурации и изменения структуры библиотеки.
+Что негативно сказалось на обратной совместимости. При переходе на текущую версию необходимо уделить должное внимание
+проверке работоспособности обменов, чтобы выполненное действие не привело к потере работоспособности функционала.
 
-## Изменено пространство имен импортов
+## Добавлены провайдеры данных
 
-### Было
+[EntitySource](/2.3.x/provider/entity/) - провайдер сущностей предназначен для выполнения запросов к источникам данных (например, элементам инфоблоков Bitrix) и
+предоставляет единый интерфейс для работы с фильтрацией, выборкой и сортировкой данных. Провайдеры предназначены, для
+использования источника `Sholokhov\Exchange\Source\Entities\EntitySource`
+
+## Добавлены способы чтения данных
+
+[Data Reader](/2.3.x/reader/) - это базовый контракт для всех классов, которые читают данные из разных источников. Он определяет единый интерфейс, через который Source получает доступ к данным, не заботясь о том, откуда они приходят.
+
+## Добавлены новые источники данных
+
+### EntitySource
+
+Класс: `Sholokhov\Exchange\Source\Entities\EntitySource`
+
+Источник данных возвращает элементы произвольной [сущности](/2.3.x/source/entity) (пользователи, элементы инфоблока и
+т.д.).   
+Работа с сущностью производится через провайдер данных `Sholokhov\Exchange\Provider\Entity\EntityProviderInterface`
+
 ```php
-use Sholokhov\Exchange\Target\File;
+$provider = new UserProvider;
+$source = new EntitySource($provider);
 ```
 
-### Стало
+### SerializeItem
+
+Класс: `Sholokhov\Exchange\Source\Entities\SerializeItem`  
+
+Источник данных занимается десериализацией строки в массив
+
 ```php
-use Sholokhov\Exchange\Target\Import\File;
+use Sholokhov\Exchange\Source\SerializeItem;
+use Sholokhov\Exchange\Reader\LocalFileReader;
+
+$reader = new LocalFileReader('/local/www/file.txt');;
+new SerializeItem($reader);
 ```
 
-Все импорты были перемещены в директорию **Import**
+## Удалены источники данных
 
-## Изменен формат данных конфигурации обмена
+`Sholokhov\Exchange\Source\JsonFile` - Вместо него необходимо использовать `Sholokhov\Exchange\Source\Json`  
+`Sholokhov\Exchange\Source\Entites\IBlock\Element` - Вместо него необходимо использовать `\Sholokhov\Exchange\Source\Entities\EntitySource`
 
-### Было
+## Конфигурация источников данных
+
+### Csv
+
+Логика получения файла вынесена в отдельный [класс](/2.3.x/reader/), который по установленной логике читает файл. Теперь источник отвечает только за правило парсинга файла. Доступна возможность указания своего способа чтения файла.
+
+#### Было
 ```php
-$config = [
-    'iblock_id' => 13,
-    'hash' => 'test',
-];
+use Sholokhov\Exchange\Source\Csv;
 
-new Exchange($config);
+$source = new Csv('/local/www/file.csv');
 ```
 
-### Стало
+#### Стало
+
 ```php
-use Sholokhov\Exchange\Target\Options\Import\IBlock\IBlockOption;
+use Sholokhov\Exchange\Source\Csv;
+use Sholokhov\Exchange\Reader\LocalFileReader;
 
-$option = new IBlockOption(13);
-$option->hash = 'test';
-
-new Exchange($config);
+$reader = new LocalFileReader('/local/www/file.csv');
+$source = new Csv($reader);
 ```
 
-Теперь все конфигурации импорта и экспорта выполнены в виде отдельных классов(DTO).  
-У каждого обмена используется свой собственный класс. 
+### Json
 
-Все доступные конфигурационные объекты размещаются в директории
-```
-/lib/Target/Options
-```
+Логика получения файла вынесена в отдельный [класс](/2.3.x/reader/), который по установленной логике читает файл. Теперь источник отвечает только за правило парсинга файла. Доступна возможность указания своего способа чтения файла.
 
-## Удаление поддержки метода configuration в обмене
-
-Базовый класс обмена **Sholokhov\Exchange\AbstractExchange** больше не имеет конструктора и вся логика инициализации ложится на плечи разработчика обмена
-
-### Было
+#### Было
 ```php
-use Sholokhov\Exchange\AbstractExchange;
+use Sholokhov\Exchange\Source\Json;
 
-class MyExchange extends AbstractExchange
-{
-    protected function configuration(): void 
-    {
-        parent::configuration();
-        // logic...
-    }
-}
+$source = new Json('/local/www/file.json');
 ```
 
-### Стало
+#### Стало
+
 ```php
-use Sholokhov\Exchange\AbstractExchange;
+use Sholokhov\Exchange\Source\Json;
+use Sholokhov\Exchange\Reader\LocalFileReader;
 
-class MyExchange extends AbstractExchange
-{
-    public function __construct() {
-        $this->configuration();
-    }
-
-    protected function configuration(): void 
-    {
-        // logic...
-    }
-}
+$reader = new LocalFileReader('/local/www/file.json');
+$source = new Json($reader);
 ```
 
-## Закрытие параметров в базовом классе обмена
-Все параметры базового класса **Sholokhov\Exchange\AbstractExchange** были закрыты, и теперь доступ производится через геттеры
+### Xml и SimpleXml
 
-### Было
+Логика получения файла вынесена в отдельный [класс](/2.3.x/reader/), который по установленной логике читает файл. Теперь источник отвечает только за правило парсинга файла. Доступна возможность указания своего способа чтения файла.
+
+#### Было
 ```php
-use Sholokhov\Exchange\AbstractExchange;
+use Sholokhov\Exchange\Source\Xml;
 
-class MyExchange extends AbstractExchange
-{
-    protected function myMethod(): void 
-    {
-        $this->cache->set('key', 'value');
-        foreach($this->validators as $validator) {
-            // ...
-        }
-    }
-}
+$source = new Xml('/local/www/file.xml');
 ```
 
-### Стало
+#### Стало
+
 ```php
-use Sholokhov\Exchange\AbstractExchange;
+use Sholokhov\Exchange\Source\Xml;
+use Sholokhov\Exchange\Reader\LocalFileReader;
 
-class MyExchange extends AbstractExchange
-{
-    protected function myMethod(): void 
-    {
-        $this->getCache()->set('key', 'value');
-        foreach($this->getValidators() as $validator) {
-            // ...
-        }
-    }
-}
+$reader = new LocalFileReader('/local/www/file.xml');
+$source = new Xml($reader);
 ```
 
-## Удалено свойство хранения конфигурации обмена
 
-### Было
-```php
-use Sholokhov\Exchange\AbstractExchange;
+## Сопутствующие обновления
 
-class MyExchange extends AbstractExchange
-{
-    protected function myMethod(): void 
-    {
-        $this->options->set('key', 'value');
-    }
-}
-```
-
-### Стало
-```php
-use Sholokhov\Exchange\AbstractExchange;
-use Sholokhov\Exchange\Repository\Types\Memory;
-
-class MyExchange extends AbstractExchange
-{
-    protected Memory $options;
-
-    protected function myMethod(): void 
-    {
-        $this->options->set('key', 'value');
-    }
-}
-```
-
-Роль хранилища конфигурации выступают DTO объекты(**/lib/Target/Options**), которые приходят из вне.
-
-## Изменена логика деактивации
-
-Был закрыт доступ к методу **deactivate** - вся логика должна храниться в методе **doDeactivate**.  
-Запуск деактивации уходит под управление каждому импорту. По умолчанию деактивация недоступна
-
-### Было
-```php
-use Sholokhov\Exchange\AbstractImport;
-
-class MyExchange extends AbstractImport
-{
-    protected function deactivate(): void 
-    {
-        // ...
-    }
-}
-```
-
-### Стало
-```php
-use Sholokhov\Exchange\AbstractImport;
-use Sholokhov\Exchange\Target\Options\Import\BaseImportOption;
-
-class MyExchange extends AbstractImport
-{
-    private BaseImportOption $option;
-
-    protected function doDeactivate(): void 
-    {
-        // ...
-    }
-    
-    protected function canDeactivate(): bool 
-    {
-        return $this->option->deactivate;
-    }
-}
-```
+- Устранены баг перебора данных в источниках
+- Активное добавление unit-тестов
+- Документация вынесена в модуль
